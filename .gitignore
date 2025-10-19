@@ -1,7 +1,7 @@
 .idea/
 target/
 node_modules/
-.mvn/wrapper
+.mvn/
 *.iml
 *.log
 *.jar
