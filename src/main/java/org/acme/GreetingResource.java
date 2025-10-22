@@ -23,7 +23,7 @@ public class GreetingResource {
 
     @GET
     public List<MyEntity> get() {
-        return entityManager.createNamedQuery("Fruits.findAll", MyEntity.class)
+        return entityManager.createNamedQuery("MyEntity.findAll", MyEntity.class)
                 .getResultList();
     }
 }
