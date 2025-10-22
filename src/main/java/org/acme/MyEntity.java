@@ -3,6 +3,7 @@ package org.acme;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 
 /**
  * Example JPA entity.
@@ -23,10 +24,16 @@ import jakarta.persistence.Id;
  * }
  */
 @Entity
+@NamedQuery(name = "MyEntity.findAll", query = "SELECT f FROM Fruit f ORDER BY f.field")
 public class MyEntity {
     @Id
     @GeneratedValue
     public Long id;
 
     public String field;
+
+    @Override
+    public String toString() {
+        return id + ", " + field;
+    }
 }
