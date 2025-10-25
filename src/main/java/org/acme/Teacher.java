@@ -24,8 +24,8 @@ import jakarta.persistence.NamedQuery;
  * }
  */
 @Entity
-@NamedQuery(name = "MyEntity.findAll", query = "SELECT f FROM Fruit f ORDER BY f.field")
-public class MyEntity {
+@NamedQuery(name = "MyEntity.findAll", query = "SELECT f FROM Teacher")
+public class Teacher {
     @Id
     @GeneratedValue
     public Long id;

@@ -1,16 +1,38 @@
 package org.acme.model;
 
-import java.util.ArrayList;
+import jakarta.persistence.*;
 import java.util.List;
-import java.util.Objects;
 
-public record Exercise(String description, String difficulty, List<String> concepts, String signatureAndBody, String UnitTests, String solution) {
-    public Exercise {
-        description = Objects.requireNonNull(description);
-        difficulty = Objects.requireNonNull(difficulty);
-        concepts = Objects.requireNonNull(concepts);
-        signatureAndBody = Objects.requireNonNull(signatureAndBody);
-        UnitTests = Objects.requireNonNull(UnitTests);
-        solution = Objects.requireNonNull(solution);
+@Entity
+@NamedQuery(name = "Exercise.findAll", query = "SELECT e FROM Exercise e")
+public class Exercise {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long id;
+
+    public String description;
+    public String difficulty;
+    @ElementCollection
+    public List<String> concepts;
+    @Lob
+    public String signatureAndBody;
+    @Lob
+    public String unitTests;
+    @Lob
+    public String solution;
+
+    public Exercise() {}
+
+    public Exercise(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Exercise{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                '}';
     }
 }
