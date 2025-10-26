@@ -5,10 +5,10 @@
     <!-- Formulaire de création -->
     <form @submit.prevent="createExercise">
       <input
-        v-model="description"
-        type="text"
-        placeholder="Enter exercise description"
-        required
+          v-model="description"
+          type="text"
+          placeholder="Enter exercise description"
+          required
       />
       <button type="submit">Create</button>
     </form>
@@ -31,13 +31,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-const description = ref('')
-const exercises = ref([])
-const message = ref('')
-const loading = ref(false)
+interface Exercise {
+  id: number
+  description: string
+}
+
+const description = ref<string>('')
+const exercises = ref<Exercise[]>([])
+const message = ref<string>('')
+const loading = ref<boolean>(false)
 
 async function fetchExercises() {
   try {
@@ -77,7 +82,7 @@ async function createExercise() {
   }
 }
 
-async function deleteExercise(id) {
+async function deleteExercise(id: number) {
   if (!confirm('Are you sure you want to delete this exercise?')) return
   try {
     const res = await fetch(`/api/exercises/${id}`, { method: 'DELETE' })
