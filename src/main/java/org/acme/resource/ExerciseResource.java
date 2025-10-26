@@ -6,9 +6,12 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.Teacher;
 import org.acme.model.Exercise;
+import org.acme.llm.JlamaService;
 import jakarta.persistence.EntityManager;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Path("/api/exercises")
 @Produces(MediaType.APPLICATION_JSON)
@@ -17,12 +20,22 @@ public class ExerciseResource {
 
     @Inject
     EntityManager em;
+    @Inject
+    JlamaService jlamaService;
 
     @POST
-    @Transactional
-    public Exercise create(Exercise exercise) {
-        em.persist(exercise);
+    public Exercise create(Exercise exercise) throws IOException {
+        Objects.requireNonNull(exercise);
+        var generated = jlamaService.generateExercise(exercise.description);
+        exercise.description = generated.description;
+        persistExercise(generated);
         return exercise;
+    }
+
+    @Transactional
+    public void persistExercise(Exercise exercise) {
+        Objects.requireNonNull(exercise);
+        em.persist(exercise);
     }
 
     @GET
