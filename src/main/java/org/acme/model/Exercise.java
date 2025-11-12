@@ -2,6 +2,7 @@ package org.acme.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @NamedQuery(name = "Exercise.findAll", query = "SELECT e FROM Exercise e")
@@ -22,9 +23,12 @@ public class Exercise {
     @Lob
     public String solution;
 
-    public Exercise() {}
+    public Exercise() {
+        super();
+    }
 
     public Exercise(String description) {
+        Objects.requireNonNull(description);
         this.description = description;
     }
 
