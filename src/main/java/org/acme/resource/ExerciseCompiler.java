@@ -1,44 +1,72 @@
 package org.acme.resource;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
+import javax.tools.JavaCompiler;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import javax.tools.ToolProvider;
 
 @ApplicationScoped
 public class ExerciseCompiler {
-    public void createTemporaryFiles(String unitTests, String solution) throws IOException {
-        Objects.requireNonNull(unitTests);
-        Objects.requireNonNull(solution);
-        var currentDirectory = Paths.get("").toAbsolutePath();
-        var path = currentDirectory.resolve("tmpDirectory");
+
+    @Inject
+    ExerciseParser exerciseParser;
+
+    private final static Path tmpDirectory = Paths.get("").toAbsolutePath().resolve("tmpDirectory");
+
+    public void createTemporaryDirectory() {
         try {
-            Files.createDirectories(path);
+            Files.createDirectories(tmpDirectory);
         } catch (IOException e) {
+            System.out.println("Directory creation failed: " + e.getMessage());
             throw new AssertionError(e);
         }
-        var testFile = path.resolve("TmpTest.java");
-        var solutionFile = path.resolve("Solution.java");
-        System.out.println(unitTests);
-        System.out.println(testFile);
-        Files.writeString(testFile, unitTests);
-        Files.writeString(solutionFile, solution);
-        System.out.println("CREATING FILES...");
-        System.out.println("Temp files created in: " + path.toAbsolutePath());
     }
 
-    public boolean compileCode(String unitTests, String solution) throws IOException {
-        Objects.requireNonNull(unitTests);
-        Objects.requireNonNull(solution);
-        return true;
+    public Path createTemporaryFiles(String program) {
+        Objects.requireNonNull(program);
+        System.out.println("Creating temporary file: " + program);
+        var fileDirectory = tmpDirectory.resolve(exerciseParser.getClassName(program));
+        try {
+            Files.writeString(fileDirectory, program);
+            System.out.println("CREATING FILE...");
+            System.out.println("Temp file created in: " + tmpDirectory.toAbsolutePath());
+        } catch (IOException e) {
+            System.out.println("File creation failed: " + e.getMessage());
+            throw new AssertionError(e);
+        }
+        return fileDirectory;
     }
 
-    public boolean applyTests(String unitTests, String solution) throws IOException {
-        Objects.requireNonNull(unitTests);
-        Objects.requireNonNull(solution);
-        return true;
+    public boolean compileCode(String program, Path directory) {
+        Objects.requireNonNull(program);
+        Objects.requireNonNull(directory);
+        var compiler = ToolProvider.getSystemJavaCompiler();
+        var result = compiler.run(null, null, null, directory.toString());
+        System.out.println(result);
+        return result == 0;
+    }
+
+    public void cleanDirectory() {
+        var directory = tmpDirectory.toFile();
+        var files = directory.listFiles();
+        if (directory.exists()) {
+            try {
+                if (files != null) {
+                    for (var file : files) {
+                        Files.deleteIfExists(file.toPath());
+                    }
+                }
+                Files.deleteIfExists(tmpDirectory);
+            } catch (IOException e) {
+                throw new AssertionError(e);
+            }
+        }
     }
 
 }

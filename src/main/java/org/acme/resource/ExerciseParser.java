@@ -42,4 +42,9 @@ public class ExerciseParser {
         return Arrays.stream(words).toList();
     }
 
+    public String getClassName(String code) {
+        Objects.requireNonNull(code);
+        return matchPattern(code, Pattern.compile("class (.*)\\{")) + ".java";
+    }
+
 }

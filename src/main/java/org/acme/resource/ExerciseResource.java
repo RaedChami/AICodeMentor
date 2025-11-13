@@ -29,8 +29,15 @@ public class ExerciseResource {
         Objects.requireNonNull(exercise);
         var generated = jlamaService.generateExercise(exercise.description);
         exercise.description = generated.description;
-        exerciseCompiler.createTemporaryFiles(generated.unitTests,  generated.solution);
+        exerciseCompiler.createTemporaryDirectory();
+        var testPath = exerciseCompiler.createTemporaryFiles(generated.unitTests);
+        var solutionPath = exerciseCompiler.createTemporaryFiles(generated.solution);
+        if (!exerciseCompiler.compileCode(generated.unitTests, testPath) || !exerciseCompiler.compileCode(generated.solution, solutionPath)) {
+            System.out.println("Compilation failed");
+            exerciseCompiler.cleanDirectory();
+        }
         persistExercise(generated);
+        exerciseCompiler.cleanDirectory();
         return exercise;
     }
 
