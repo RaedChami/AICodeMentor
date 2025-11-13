@@ -30,6 +30,7 @@ public class ExerciseResource {
         var generated = jlamaService.generateExercise(exercise.description);
         exercise.description = generated.description;
         exerciseCompiler.createTemporaryFiles(generated.unitTests,  generated.solution);
+        exerciseCompiler.compileCode(generated.unitTests, generated.solution);
         persistExercise(generated);
         return exercise;
     }
