@@ -22,12 +22,14 @@ public class ExerciseResource {
     EntityManager em;
     @Inject
     JlamaService jlamaService;
-
+    @Inject
+    ExerciseCompiler exerciseCompiler;
     @POST
     public Exercise create(Exercise exercise) throws IOException {
         Objects.requireNonNull(exercise);
         var generated = jlamaService.generateExercise(exercise.description);
         exercise.description = generated.description;
+        exerciseCompiler.createTemporaryFiles(generated.unitTests,  generated.solution);
         persistExercise(generated);
         return exercise;
     }
@@ -47,7 +49,7 @@ public class ExerciseResource {
     @DELETE
     @Path("/{id}")
     @Transactional
-    public void delete(@PathParam("id") Long id) {
+    public void delete(@PathParam("id") long id) {
         Exercise exercise = em.find(Exercise.class, id);
         if (exercise != null) {
             em.remove(exercise);
