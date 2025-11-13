@@ -29,6 +29,7 @@ public class JlamaService {
         var systemPrompt = """
             Vous êtes un expert en création d'exercices de programmation Java.
             Vous ne confondez pas les LISTES et les TABLEAUX.
+            La balise <SOLUTION> doit toujours se fermer.
             Vous devez OBLIGATOIREMENT et TOUJOURS structurer votre réponse avec ces balises exactes :
             
             <ENONCE>
@@ -54,6 +55,7 @@ public class JlamaService {
             <SOLUTION>
             Écrivez la solution complète de l'exercice sans oublier les éventuels imports de librairie
             </SOLUTION>
+            
             """;
 
         var userPrompt = String.format("""
