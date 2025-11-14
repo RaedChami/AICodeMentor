@@ -17,7 +17,7 @@
     <!-- LOADING -->
     <div v-if="mode === 'loading'">
       <h3>Génération de l'exercice...</h3>
-      <p>Veuillez patienter, cela peut prendre quelques secondes.</p>
+      <p>Veuillez patienter, cela peut prendre quelques minutes.</p>
     </div>
 
     <div v-if="mode === 'result'">
@@ -55,6 +55,7 @@
         <pre>{{ generatedExercise.solution }}</pre>
       </div>
       <button @click="reset">Créer un autre exercice</button>
+      <button @click="revise">Réviser votre prompt initial</button>
     </div>
   </div>
 </template>
@@ -88,6 +89,11 @@ async function createExercise() {
 
 function reset() {
   description.value = ''
+  generatedExercise.value = null
+  mode.value = 'form'
+}
+
+function revise() {
   generatedExercise.value = null
   mode.value = 'form'
 }
