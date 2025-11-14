@@ -54,6 +54,7 @@
         <strong>Solution :</strong>
         <pre>{{ generatedExercise.solution }}</pre>
       </div>
+      <button @click="saveExercise">Valider</button>
       <button @click="reset">Créer un autre exercice</button>
       <button @click="revise">Réviser votre prompt initial</button>
     </div>
@@ -85,6 +86,24 @@ async function createExercise() {
   const data = await res.json()
   generatedExercise.value = data
   mode.value = 'result'
+}
+
+async function saveExercise() {
+  if (!generatedExercise.value) return;
+
+  const res = await fetch('/api/teacher/generate/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(generatedExercise.value)
+  });
+
+  if (!res.ok) {
+    alert('Erreur lors de la sauvegarde');
+    return;
+  }
+
+  alert('Exercice enregistré avec succès !');
+  reset();
 }
 
 function reset() {

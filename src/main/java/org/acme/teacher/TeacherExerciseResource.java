@@ -26,17 +26,26 @@ public class TeacherExerciseResource {
     @Inject
     ExerciseCompiler exerciseCompiler;
     @POST
-    public Exercise create(Exercise exercise) throws IOException {
+    public Exercise generate(Exercise exercise) throws IOException {
         Objects.requireNonNull(exercise);
-        var finalExercise = generateAndCompile(exercise.description);
+        var finalExercise = compile(exercise.description);
         while (finalExercise == null) {
-            finalExercise = generateAndCompile(exercise.description);
+            finalExercise = compile(exercise.description);
         }
-        persistExercise(finalExercise);
         return finalExercise;
     }
 
-    private Exercise generateAndCompile(String description) {
+
+    @POST
+    @Transactional
+    @Path("/save")
+    public Exercise save(Exercise exercise) {
+        Objects.requireNonNull(exercise);
+        persistExercise(exercise);
+        return exercise;
+    }
+
+    private Exercise compile(String description) {
         Objects.requireNonNull(description);
         try {
             var generated = jlamaService.generateExercise(description);
