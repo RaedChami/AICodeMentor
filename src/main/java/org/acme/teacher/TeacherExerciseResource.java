@@ -28,17 +28,29 @@ public class TeacherExerciseResource {
     @POST
     public Exercise create(Exercise exercise) throws IOException {
         Objects.requireNonNull(exercise);
-        var generated = jlamaService.generateExercise(exercise.description);
-        exerciseCompiler.createTemporaryDirectory();
-        var testPath = exerciseCompiler.createTemporaryFiles(generated.unitTests);
-        var solutionPath = exerciseCompiler.createTemporaryFiles(generated.solution);
-        if (!exerciseCompiler.compileCode(generated.unitTests, testPath) || !exerciseCompiler.compileCode(generated.solution, solutionPath)) {
-            System.out.println("Compilation failed");
+        var finalExercise = generateAndCompile(exercise.description);
+        while (finalExercise == null) {
+            finalExercise = generateAndCompile(exercise.description);
+        }
+        persistExercise(finalExercise);
+        return finalExercise;
+    }
+
+    private Exercise generateAndCompile(String description) {
+        Objects.requireNonNull(description);
+        try {
+            var generated = jlamaService.generateExercise(description);
+            exerciseCompiler.createTemporaryDirectory();
+            var testPath = exerciseCompiler.createTemporaryFiles(generated.unitTests);
+            var solutionPath = exerciseCompiler.createTemporaryFiles(generated.solution);
+            if (!exerciseCompiler.compileCode(generated.unitTests, testPath) || !exerciseCompiler.compileCode(generated.solution, solutionPath)) {
+                System.out.println("Compilation failed, Exercise regeneration");
+                return null;
+            }
+            return generated;
+        } finally {
             exerciseCompiler.cleanDirectory();
         }
-        persistExercise(generated);
-        exerciseCompiler.cleanDirectory();
-        return generated;
     }
 
     @Transactional

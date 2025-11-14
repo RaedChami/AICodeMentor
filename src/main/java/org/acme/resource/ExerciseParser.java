@@ -19,8 +19,11 @@ public class ExerciseParser {
         exercise.difficulty = matchPattern(answer, Pattern.compile("<DIFFICULTE>(.*)</DIFFICULTE>", Pattern.DOTALL));
         exercise.concepts = stockConcepts(answer, Pattern.compile("<CONCEPTS>(.*)</CONCEPTS>", Pattern.DOTALL));
         exercise.signatureAndBody = matchPattern(answer, Pattern.compile("<SIGNATURE>(.*)</SIGNATURE>", Pattern.DOTALL));
-        exercise.unitTests = matchPattern(answer, Pattern.compile("<TESTS>(.*)</TESTS>", Pattern.DOTALL));
-        exercise.solution = matchPattern(answer, Pattern.compile("<SOLUTION>(.*)</SOLUTION>", Pattern.DOTALL));
+        exercise.unitTests = matchPattern(answer, Pattern.compile(
+                "<TESTS>\\s*(?:```(?:java)?\\s*)?([\\s\\S]*?)(?:```\\s*)?(?=</TESTS>|$)", Pattern.DOTALL));
+        exercise.solution = matchPattern(answer, Pattern.compile(
+                "<SOLUTION>*>\\s*(?:```(?:java)?\\s*)?([\\s\\S]*?)(?:```\\s*)?(?=</SOLUTION>|$)",
+                Pattern.DOTALL | Pattern.CASE_INSENSITIVE));
         return exercise;
     }
 
