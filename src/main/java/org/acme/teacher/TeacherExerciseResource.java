@@ -1,42 +1,68 @@
 package org.acme.teacher;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Objects;
 
 import org.acme.model.Exercise;
 import org.acme.llm.JlamaService;
+import org.acme.resource.ExerciseCompiler;
 
-@Path("/api/teacher/exercises")
+@Path("/api/teacher/generate")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TeacherExerciseResource {
 
     @Inject
+    EntityManager em;
+    @Inject
     JlamaService jlamaService;
-
-    private final List<Exercise> exercises = new ArrayList<>();
-
-    @GET
-    public Response listExercises() {
-        return Response.ok(exercises).build();
-    }
-
-    public record PromptRequest(String prompt) {
-    }
-
+    @Inject
+    ExerciseCompiler exerciseCompiler;
     @POST
-    @Path("/generate")
-    public Response generateExercise(PromptRequest req) throws IOException {
-        Objects.requireNonNull(req);
-        Exercise ex = jlamaService.generateExercise(req.prompt());
-        exercises.add(ex);
-        return Response.ok(ex).build();
+    public Exercise create(Exercise exercise) throws IOException {
+        Objects.requireNonNull(exercise);
+        var generated = jlamaService.generateExercise(exercise.description);
+        exerciseCompiler.createTemporaryDirectory();
+        var testPath = exerciseCompiler.createTemporaryFiles(generated.unitTests);
+        var solutionPath = exerciseCompiler.createTemporaryFiles(generated.solution);
+        if (!exerciseCompiler.compileCode(generated.unitTests, testPath) || !exerciseCompiler.compileCode(generated.solution, solutionPath)) {
+            System.out.println("Compilation failed");
+            exerciseCompiler.cleanDirectory();
+        }
+        persistExercise(generated);
+        exerciseCompiler.cleanDirectory();
+        return generated;
+    }
+
+    @Transactional
+    public void persistExercise(Exercise exercise) {
+        Objects.requireNonNull(exercise);
+        em.persist(exercise);
+    }
+
+    @Path("/exercises")
+    @GET
+    public List<Exercise> get() {
+      return em.createNamedQuery("Exercise.findAll", Exercise.class)
+              .getResultList();
+    }
+
+    @Path("/{id}")
+    @DELETE
+    @Transactional
+    public void delete(@PathParam("id") long id) {
+        Exercise exercise = em.find(Exercise.class, id);
+        if (exercise != null) {
+            em.remove(exercise);
+        } else {
+            throw new NotFoundException("Exercise with id " + id + " not found");
+        }
     }
 }
