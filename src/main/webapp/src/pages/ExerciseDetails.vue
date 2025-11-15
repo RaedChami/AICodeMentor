@@ -13,7 +13,9 @@
         <pre>{{ exercise.difficulty }}</pre>
 
         <p><strong>Concepts :</strong></p>
-        <pre>{{ exercise.concepts }}</pre>
+        <ul>
+          <li v-for="(concept, index) in exercise.concepts" :key="index">{{ concept }}</li>
+        </ul>
 
         <p><strong>Signature & Corps :</strong></p>
         <pre>{{ exercise.signatureAndBody }}</pre>
@@ -36,13 +38,21 @@
         <p><strong>Difficulté :</strong></p>
         <input v-model="exercise.difficulty" type="text" />
 
-        <p><strong>Concepts (séparés par des virgules) :</strong></p>
-        <input v-model="conceptsInput" type="text" />
+        <div>
+          <label>Concepts :</label>
+          <div class="concept-list">
+            <div v-for="(_concept, index) in exercise.concepts" :key="index" class="concept-item">
+              <input v-model="exercise.concepts[index]" type="text" placeholder="Nom du concept" />
+              <button @click="removeConcept(index)">Supprimer</button>
+            </div>
+          </div>
+          <button @click="addConcept">Ajouter un concept</button>
+        </div>
 
         <p><strong>Signature & Corps :</strong></p>
         <textarea v-model="exercise.signatureAndBody" rows="5"></textarea>
 
-        <p><strong>Unit Tests :</strong></p>
+        <p><strong>Tests JUnit :</strong></p>
         <textarea v-model="exercise.unitTests" rows="5"></textarea>
 
         <p><strong>Solution :</strong></p>
@@ -68,7 +78,6 @@ const router = useRouter()
 const exercise = ref<any>(null)
 const loading = ref(true)
 const mode = ref<'view' | 'modify'>('view')
-const conceptsInput = ref('')
 
 async function fetchExercise() {
   try {
@@ -78,7 +87,6 @@ async function fetchExercise() {
     if (res.ok) {
       const data = await res.json()
       exercise.value = data
-      conceptsInput.value = data.concepts?.join(', ') || ''
     } else {
       exercise.value = null
     }
@@ -90,15 +98,13 @@ async function fetchExercise() {
 async function deleteExercise(id: number) {
   const res = await fetch(`/api/teacher/generate/exercises/${id}`, { method: "DELETE" })
   if (res.ok) {
-    router.push(`/teacher/generate/exercises`)
+    router.push('/teacher/generate/exercises')
   } else {
     alert('Impossible de supprimer')
   }
 }
 
 async function saveExercise() {
-  exercise.value.concepts = conceptsInput.value.split(',').map((c: string) => c.trim())
-
   const res = await fetch(`/api/teacher/generate/save`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -115,9 +121,33 @@ async function saveExercise() {
   }
 }
 
+function addConcept() {
+  if (!exercise.value.concepts) {
+    exercise.value.concepts = []
+  }
+  exercise.value.concepts.push("")
+}
+
+function removeConcept(index: number) {
+  exercise.value.concepts.splice(index, 1)
+}
+
 function goBack() {
   router.back()
 }
 
 onMounted(fetchExercise)
 </script>
+
+<style scoped>
+.concept-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.concept-item input {
+  flex: 1;
+}
+</style>
