@@ -4,39 +4,70 @@ import jakarta.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
+@Access(AccessType.FIELD)
 @Entity
 @NamedQuery(name = "Exercise.findAll", query = "SELECT e FROM Exercise e")
 public class Exercise {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    public String description;
-    public String difficulty;
+    private String description;
+    private Difficulty difficulty;
     @ElementCollection
-    public List<String> concepts;
+    private List<String> concepts;
     @Lob
-    public String signatureAndBody;
+    private String signatureAndBody;
     @Lob
-    public String unitTests;
+    private String unitTests;
     @Lob
-    public String solution;
+    private String solution;
 
     public Exercise() {
         super();
     }
 
-    public Exercise(String description) {
+    public Exercise(String description, Difficulty difficulty, List<String> concepts, String signatureAndBody, String unitTests, String solution) {
         Objects.requireNonNull(description);
+        Objects.requireNonNull(difficulty);
+        Objects.requireNonNull(concepts);
+        Objects.requireNonNull(signatureAndBody);
+        Objects.requireNonNull(unitTests);
+        Objects.requireNonNull(solution);
         this.description = description;
+        this.difficulty = difficulty;
+        this.concepts = concepts;
+        this.signatureAndBody = signatureAndBody;
+        this.unitTests = unitTests;
+        this.solution = solution;
     }
 
-    @Override
-    public String toString() {
-        return "Exercise{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                '}';
+    public Long getId() {
+        return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public List<String> getConcepts() {
+        return concepts;
+    }
+
+    public String getSignatureAndBody() {
+        return signatureAndBody;
+    }
+
+    public String getUnitTests() {
+        return unitTests;
+    }
+
+    public String getSolution() {
+        return solution;
     }
 }
