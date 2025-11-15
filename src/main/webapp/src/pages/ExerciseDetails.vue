@@ -83,7 +83,7 @@ async function fetchExercise() {
   try {
     loading.value = true
     const id = route.params.id
-    const res = await fetch(`/api/teacher/generate/exercises/${id}`)
+    const res = await fetch(`/api/teacher/exercises/${id}`)
     if (res.ok) {
       const data = await res.json()
       exercise.value = data
@@ -96,9 +96,9 @@ async function fetchExercise() {
 }
 
 async function deleteExercise(id: number) {
-  const res = await fetch(`/api/teacher/generate/exercises/${id}`, { method: "DELETE" })
+  const res = await fetch(`/api/teacher/exercises/${id}`, { method: "DELETE" })
   if (res.ok) {
-    router.push('/teacher/generate/exercises')
+    router.push('/teacher/exercises')
   } else {
     alert('Impossible de supprimer')
   }
