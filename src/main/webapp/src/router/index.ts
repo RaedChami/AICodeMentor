@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 import HomeView from "../pages/HomeView.vue"
-import ExerciseEditor from "../pages/ExerciseEditor.vue"
 import ExercisesViewer from "../pages/ExercisesViewer.vue"
+import ExerciseDetails from "../pages/ExerciseDetails.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -9,7 +9,7 @@ const router = createRouter({
     { path: "/", component: HomeView },
     { path: "/teacher/generate", component: HomeView },
     { path: "/teacher/generate/exercises", component: ExercisesViewer },
-    { path: "/teacher/generate/exercises/editor", component: ExerciseEditor }
+    { path: "/teacher/generate/exercises/:id", component: ExerciseDetails }
   ]
 })
 

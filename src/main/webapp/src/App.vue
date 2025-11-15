@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <!-- Barre de navigation -->
+    <h1 class="main-title">AICodeMentor</h1>
     <nav class="navbar">
       <router-link to="/teacher/generate" class="nav-link">
       Accueil
@@ -10,7 +10,6 @@
       </router-link>
     </nav>
 
-    <!-- Zone où les pages s’affichent -->
     <main class="content">
       <router-view />
     </main>
@@ -21,6 +20,12 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+}
+
+.main-title {
+  text-align: center;
+  font-size: 2rem;
+  margin: 20px 0;
 }
 
 .navbar {

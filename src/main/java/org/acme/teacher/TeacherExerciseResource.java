@@ -41,7 +41,12 @@ public class TeacherExerciseResource {
     @Path("/save")
     public Exercise save(Exercise exercise) {
         Objects.requireNonNull(exercise);
-        persistExercise(exercise);
+        return (exercise.id != null) ? em.merge(exercise) : returnPersist(exercise);
+    }
+
+    private Exercise returnPersist(Exercise exercise) {
+        Objects.requireNonNull(exercise);
+        em.persist(exercise);
         return exercise;
     }
 
@@ -62,12 +67,6 @@ public class TeacherExerciseResource {
         }
     }
 
-    @Transactional
-    public void persistExercise(Exercise exercise) {
-        Objects.requireNonNull(exercise);
-        em.persist(exercise);
-    }
-
     @Path("/exercises")
     @GET
     public List<Exercise> get() {
@@ -75,7 +74,7 @@ public class TeacherExerciseResource {
               .getResultList();
     }
 
-    @Path("/{id}")
+    @Path("/exercises/{id}")
     @DELETE
     @Transactional
     public void delete(@PathParam("id") long id) {
@@ -85,5 +84,12 @@ public class TeacherExerciseResource {
         } else {
             throw new NotFoundException("Exercise with id " + id + " not found");
         }
+    }
+
+    @Path("/exercises/{id}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Exercise getById(@PathParam("id") long id) {
+        return em.find(Exercise.class, id);
     }
 }
