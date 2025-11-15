@@ -27,7 +27,7 @@ const router = useRouter()
 async function fetchExercises() {
   try {
     loading.value = true
-    const res = await fetch('/api/teacher/generate/exercises')
+    const res = await fetch('/api/teacher/exercises')
     exercises.value = res.ok ? await res.json() : []
   } finally {
     loading.value = false
@@ -35,7 +35,7 @@ async function fetchExercises() {
 }
 
 function openExercise(id: number) {
-  router.push(`/teacher/generate/exercises/${id}`)
+  router.push(`/teacher/exercises/${id}`)
 }
 
 onMounted(fetchExercises)

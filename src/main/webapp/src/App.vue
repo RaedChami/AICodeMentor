@@ -5,7 +5,7 @@
       <router-link to="/teacher/generate" class="nav-link">
       Accueil
       </router-link>
-      <router-link to="/teacher/generate/exercises" class="nav-link">
+      <router-link to="/teacher/exercises" class="nav-link">
       Consulter mes exercice
       </router-link>
     </nav>
