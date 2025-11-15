@@ -4,69 +4,83 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.acme.model.Difficulty;
 import org.acme.model.Exercise;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ExerciseParser {
-
-    //private static Pattern pattern = Pattern.compile()
+    private static final Pattern classPattern = Pattern.compile("class (.*)\\{");
+    private static final Pattern enoncePattern = Pattern.compile("<ENONCE>(.*)</ENONCE>", Pattern.DOTALL);
+    private static final Pattern difficultyPattern = Pattern.compile("<DIFFICULTE>(.*)</DIFFICULTE>", Pattern.DOTALL);
+    private static final Pattern conceptsPattern = Pattern.compile("<CONCEPTS>(.*)</CONCEPTS>", Pattern.DOTALL);
+    private static final Pattern signatureBodyPattern = Pattern.compile("<SIGNATURE>(.*)</SIGNATURE>", Pattern.DOTALL);
+    private static final Pattern testsPattern = Pattern.compile("<TESTS>\\s*(?:```(?:java)?\\s*)?([\\s\\S]*?)(?:```\\s*)?(?=</TESTS>|$)", Pattern.DOTALL);
+    private static final Pattern solutionPattern = Pattern.compile("<SOLUTION>*>\\s*(?:```(?:java)?\\s*)?([\\s\\S]*?)(?:```\\s*)?(?=</SOLUTION>|$)",
+            Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     public Exercise parse(String answer) {
         Objects.requireNonNull(answer);
-        var description = matchPattern(answer, Pattern.compile("<ENONCE>(.*)</ENONCE>", Pattern.DOTALL));
+        var description = matchPattern(answer, enoncePattern);
         var difficulty = matchDifficultyPattern(answer);
-        var concepts = stockConcepts(answer, Pattern.compile("<CONCEPTS>(.*)</CONCEPTS>", Pattern.DOTALL));
-        var signatureAndBody = matchPattern(answer, Pattern.compile("<SIGNATURE>(.*)</SIGNATURE>", Pattern.DOTALL));
-        var unitTests = matchPattern(answer, Pattern.compile(
-                "<TESTS>\\s*(?:```(?:java)?\\s*)?([\\s\\S]*?)(?:```\\s*)?(?=</TESTS>|$)", Pattern.DOTALL));
-        var solution = matchPattern(answer, Pattern.compile(
-                "<SOLUTION>*>\\s*(?:```(?:java)?\\s*)?([\\s\\S]*?)(?:```\\s*)?(?=</SOLUTION>|$)",
-                Pattern.DOTALL | Pattern.CASE_INSENSITIVE));
-        if (difficulty == null) {
+        var concepts = stockConcepts(answer);
+        var signatureAndBody = matchPattern(answer, signatureBodyPattern);
+        var unitTests = matchPattern(answer, testsPattern);
+        var solution = matchPattern(answer, solutionPattern);
+        if (description.isEmpty() || difficulty.isEmpty() || concepts.isEmpty() || signatureAndBody.isEmpty()
+                || unitTests.isEmpty() || solution.isEmpty()) {
             return null;
         }
-        return new Exercise(description, difficulty, concepts, signatureAndBody, unitTests, solution);
+        return new Exercise(
+                description.get(),
+                difficulty.get(),
+                concepts.get(),
+                signatureAndBody.get(),
+                unitTests.get(),
+                solution.get()
+        );
     }
 
-    private Difficulty matchDifficultyPattern(String answer) {
+    private Optional<Difficulty> matchDifficultyPattern(String answer) {
         Objects.requireNonNull(answer);
-        var checkDifficulty = matchPattern(answer, Pattern.compile("<DIFFICULTE>(.*)</DIFFICULTE>", Pattern.DOTALL));
-        if (!checkDifficulty.isBlank()) {
+        var checkDifficulty = matchPattern(answer, difficultyPattern);
+        if (checkDifficulty.isPresent()) {
             try {
-                return Difficulty.valueOf(checkDifficulty.toUpperCase().trim());
+                return Optional.of(Difficulty.valueOf(checkDifficulty.get().toUpperCase().trim()));
             } catch (IllegalArgumentException e) {
-                return null;
+                return Optional.empty();
             }
         }
-        return null;
+        return Optional.empty();
     }
 
-    private String matchPattern(String answer, Pattern pattern) {
+    private Optional<String> matchPattern(String answer, Pattern pattern) {
         Objects.requireNonNull(answer);
         Objects.requireNonNull(pattern);
         var matcher = pattern.matcher(answer);
         if (matcher.find()) {
-            return matcher.group(1).trim();
+            return Optional.of(matcher.group(1).trim());
         }
-        return "";
+        return Optional.empty();
     }
 
-    private List<String> stockConcepts(String answer, Pattern pattern) {
+    private Optional<List<String>> stockConcepts(String answer) {
         Objects.requireNonNull(answer);
-        Objects.requireNonNull(pattern);
-        var matcher = matchPattern(answer, pattern);
-        var words = matcher.split(",");
-        return Arrays.stream(words).toList();
+        Objects.requireNonNull(ExerciseParser.conceptsPattern);
+        var matcher = matchPattern(answer, ExerciseParser.conceptsPattern);
+        if (matcher.isEmpty()) {
+            return Optional.empty();
+        }
+        var words = matcher.get().split(",");
+        var concepts = Arrays.stream(words).map(String::trim).toList();
+        return Optional.of(concepts);
     }
 
     public String getClassName(String code) {
         Objects.requireNonNull(code);
-        return matchPattern(code, Pattern.compile("class (.*)\\{")) + ".java";
+        return matchPattern(code, classPattern).map(name -> name + ".java").orElse(null);
     }
 
 }

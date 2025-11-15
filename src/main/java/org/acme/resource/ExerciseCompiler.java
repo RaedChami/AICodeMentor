@@ -30,7 +30,6 @@ public class ExerciseCompiler {
 
     public Path createTemporaryFiles(String program) {
         Objects.requireNonNull(program);
-//        System.out.println("Creating temporary file: " + program);
         var fileDirectory = tmpDirectory.resolve(exerciseParser.getClassName(program));
         try {
             Files.writeString(fileDirectory, program);
