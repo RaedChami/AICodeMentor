@@ -4,9 +4,8 @@
 
     <div v-if="loading">Loading exercises...</div>
     <ul v-else>
-      <li v-for="exercise in exercises" :key="exercise.id">
-        {{ exercise.description }}
-        <button class="delete" @click="deleteExercise(exercise.id)">🗑️ Delete</button>
+      <li v-for="exercise in exercises" :key="exercise.id" @click="openExercise(exercise.id)" class="exercise-item">
+        {{ exercise.id }} - {{ exercise.description }}
       </li>
     </ul>
   </div>
@@ -14,6 +13,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 interface Exercise {
   id: number
@@ -22,6 +22,7 @@ interface Exercise {
 
 const exercises = ref<Exercise[]>([])
 const loading = ref(false)
+const router = useRouter()
 
 async function fetchExercises() {
   try {
@@ -33,9 +34,9 @@ async function fetchExercises() {
   }
 }
 
-async function deleteExercise(id: number) {
-  await fetch(`/api/teacher/generate/exercises/${id}`, { method: "DELETE" })
-  exercises.value = exercises.value.filter(e => e.id !== id)
+function openExercise(id: number) {
+  router.push(`/teacher/generate/exercises/${id}`)
 }
+
 onMounted(fetchExercises)
 </script>

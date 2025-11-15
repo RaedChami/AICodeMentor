@@ -71,7 +71,6 @@ public class JlamaService {
                 systemPrompt, userPrompt
         );
         var answer = model.chat(fullPrompt);
-        System.out.println(answer);
         return parser.parse(answer);
     }
 
