@@ -14,7 +14,6 @@
       </form>
     </div>
 
-    <!-- LOADING -->
     <div v-if="mode === 'loading'">
       <h3>Génération de l'exercice...</h3>
       <p>Veuillez patienter, cela peut prendre quelques minutes.</p>
@@ -74,7 +73,7 @@ async function createExercise() {
   const res = await fetch('/api/teacher/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ description: description.value })
+    body: JSON.stringify({ prompt: description.value })
   })
 
   if (!res.ok) {

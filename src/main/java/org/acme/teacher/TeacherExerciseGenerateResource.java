@@ -10,6 +10,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.llm.JlamaService;
 import org.acme.model.Exercise;
+import org.acme.model.UserPrompt;
 import org.acme.resource.ExerciseCompiler;
 
 import java.io.IOException;
@@ -28,11 +29,11 @@ public class TeacherExerciseGenerateResource {
     ExerciseCompiler exerciseCompiler;
 
     @POST
-    public Exercise generate(Exercise exercise) throws IOException {
-        Objects.requireNonNull(exercise);
+    public Exercise generate(UserPrompt prompt) throws IOException {
+        Objects.requireNonNull(prompt);
         Exercise finalExercise = null;
         while (finalExercise == null) {
-            finalExercise = compile(exercise.getDescription());
+            finalExercise = compile(prompt.prompt());
         }
         return finalExercise;
     }

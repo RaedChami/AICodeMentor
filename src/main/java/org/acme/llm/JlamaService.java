@@ -19,10 +19,6 @@ public class JlamaService {
     @Inject
     ExerciseParser parser;
 
-    public String ask(String prompt) {
-        Objects.requireNonNull(prompt);
-        return model.chat(prompt);
-    }
     public Exercise generateExercise(String userDescription) {
         Objects.requireNonNull(userDescription);
 
