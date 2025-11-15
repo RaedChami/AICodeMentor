@@ -32,7 +32,7 @@ public class TeacherExerciseGenerateResource {
         Objects.requireNonNull(exercise);
         Exercise finalExercise = null;
         while (finalExercise == null) {
-            finalExercise = compile(exercise.description);
+            finalExercise = compile(exercise.getDescription());
         }
         return finalExercise;
     }
@@ -42,7 +42,7 @@ public class TeacherExerciseGenerateResource {
     @Path("/save")
     public Exercise save(Exercise exercise) {
         Objects.requireNonNull(exercise);
-        return (exercise.id != null) ? em.merge(exercise) : returnPersist(exercise);
+        return (exercise.getId() != null) ? em.merge(exercise) : returnPersist(exercise);
     }
 
     private Exercise returnPersist(Exercise exercise) {
@@ -56,9 +56,9 @@ public class TeacherExerciseGenerateResource {
         try {
             var generated = jlamaService.generateExercise(description);
             exerciseCompiler.createTemporaryDirectory();
-            var testPath = exerciseCompiler.createTemporaryFiles(generated.unitTests);
-            var solutionPath = exerciseCompiler.createTemporaryFiles(generated.solution);
-            if (!exerciseCompiler.compileCode(generated.unitTests, testPath) || !exerciseCompiler.compileCode(generated.solution, solutionPath)) {
+            var testPath = exerciseCompiler.createTemporaryFiles(generated.getUnitTests());
+            var solutionPath = exerciseCompiler.createTemporaryFiles(generated.getSolution());
+            if (!exerciseCompiler.compileCode(generated.getUnitTests(), testPath) || !exerciseCompiler.compileCode(generated.getSolution(), solutionPath)) {
                 System.out.println("Compilation failed, Exercise regeneration");
                 return null;
             }
