@@ -8,9 +8,11 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.acme.dto.ExerciseDTO;
 import org.acme.llm.JlamaService;
+import org.acme.mapper.ExerciseMapper;
 import org.acme.model.Exercise;
-import org.acme.model.UserPrompt;
+import org.acme.dto.UserPrompt;
 import org.acme.resource.ExerciseCompiler;
 
 import java.io.IOException;
@@ -29,27 +31,27 @@ public class TeacherExerciseGenerateResource {
     ExerciseCompiler exerciseCompiler;
 
     @POST
-    public Exercise generate(UserPrompt prompt) throws IOException {
+    public ExerciseDTO generate(UserPrompt prompt) throws IOException {
         Objects.requireNonNull(prompt);
         Exercise finalExercise = null;
         while (finalExercise == null) {
             finalExercise = compile(prompt.prompt());
         }
-        return finalExercise;
+        return ExerciseMapper.convertToDTO(finalExercise);
     }
 
     @POST
     @Transactional
     @Path("/save")
-    public Exercise save(Exercise exercise) {
-        Objects.requireNonNull(exercise);
-        return (exercise.getId() != null) ? em.merge(exercise) : returnPersist(exercise);
-    }
-
-    private Exercise returnPersist(Exercise exercise) {
-        Objects.requireNonNull(exercise);
-        em.persist(exercise);
-        return exercise;
+    public ExerciseDTO save(ExerciseDTO dtoExercise) {
+        Objects.requireNonNull(dtoExercise);
+        var exercise = ExerciseMapper.convertToEntity(dtoExercise);
+        if (dtoExercise.id() != null) {
+            exercise = em.merge(exercise);
+        } else {
+            em.persist(exercise);
+        }
+        return ExerciseMapper.convertToDTO(exercise);
     }
 
     private Exercise compile(String description) {

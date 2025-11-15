@@ -1,4 +1,4 @@
-package org.acme.model;
+package org.acme.dto;
 
 import java.util.Objects;
 
