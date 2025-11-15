@@ -29,6 +29,9 @@ public class TeacherExerciseResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Exercise getById(@PathParam("id") long id) {
+        if (id < 0) {
+            throw new IllegalArgumentException("exercise ID is < 0");
+        }
         return em.find(Exercise.class, id);
     }
 
@@ -36,6 +39,9 @@ public class TeacherExerciseResource {
     @DELETE
     @Transactional
     public void delete(@PathParam("id") long id) {
+        if (id < 0) {
+            throw new IllegalArgumentException("exercise ID is < 0");
+        }
         Exercise exercise = em.find(Exercise.class, id);
         if (exercise != null) {
             em.remove(exercise);
