@@ -21,7 +21,7 @@ public class ExerciseMapper {
 
     public static Exercise convertToEntity(ExerciseDTO exerciseDTO) {
         Objects.requireNonNull(exerciseDTO);
-        return new Exercise(
+        var exercise =  new Exercise(
                 exerciseDTO.description(),
                 exerciseDTO.difficulty(),
                 exerciseDTO.concepts(),
@@ -29,5 +29,17 @@ public class ExerciseMapper {
                 exerciseDTO.unitTests(),
                 exerciseDTO.solution()
         );
+        if (exerciseDTO.id() != null) {
+            try {
+                var idField = Exercise.class.getDeclaredField("id");
+                idField.setAccessible(true);
+                idField.set(exercise, exerciseDTO.id());
+            } catch (Exception e) {
+                throw new RuntimeException("Cannot set exercise ID", e);
+            }
+        }
+
+        return exercise;
     }
+
 }
