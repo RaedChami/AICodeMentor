@@ -1,19 +1,68 @@
 <template>
-  <div class="container">
-    <h2>Mes Exercices</h2>
+  <Navbar />
+  <div class="container-fluid py-4">
+    <div class="row mb-4">
+      <div class="col">
+        <h2 class="mb-1">
+          <i class="bi bi-journal-text me-2"></i>Mes Exercices
+        </h2>
+        <p class="text-muted">Cliquez sur un exercice pour le consulter</p>
+      </div>
+    </div>
 
-    <div v-if="loading">Loading exercises...</div>
-    <ul v-else>
-      <li v-for="exercise in exercises" :key="exercise.id" @click="openExercise(exercise.id)" class="exercise-item">
-        {{ exercise.id }} - {{ exercise.description }}
-      </li>
-    </ul>
+    <!-- Loading state -->
+    <div v-if="loading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Chargement...</span>
+      </div>
+      <p class="mt-3 text-muted">Chargement des exercices...</p>
+    </div>
+
+    <!-- Empty state -->
+    <div v-else-if="exercises.length === 0" class="alert alert-info d-flex align-items-center" role="alert">
+      <i class="bi bi-info-circle me-2"></i>
+      <div>Aucun exercice disponible pour le moment.</div>
+    </div>
+
+    <!-- Exercises grid -->
+    <div v-else class="row g-3">
+      <div
+        v-for="exercise in exercises"
+        :key="exercise.id"
+        class="col-12 col-md-6 col-lg-4 col-xl-3"
+      >
+        <div
+          class="card h-100 exercise-card shadow-sm"
+          @click="openExercise(exercise.id)"
+          role="button"
+          tabindex="0"
+          @keypress.enter="openExercise(exercise.id)"
+        >
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex align-items-start mb-3">
+              <div class="flex-grow-1">
+                <span class="badge bg-primary mb-2">Exercice #{{ exercise.id }}</span>
+              </div>
+            </div>
+            <p class="card-text flex-grow-1 mb-3">
+              {{ exercise.description }}
+            </p>
+            <div class="mt-auto">
+              <button class="btn btn-outline-primary btn-sm w-100">
+                <i class="bi bi-eye me-1"></i>Consulter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import Navbar from '../components/NavBar.vue'
 
 interface Exercise {
   id: number
@@ -40,3 +89,26 @@ function openExercise(id: number) {
 
 onMounted(fetchExercises)
 </script>
+
+<style scoped>
+.exercise-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.exercise-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.exercise-card:active {
+  transform: translateY(-2px);
+}
+
+.card-text {
+  color: #6c757d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+</style>
