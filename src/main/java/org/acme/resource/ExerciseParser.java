@@ -30,21 +30,6 @@ public class ExerciseParser {
         var unitTests = matchPattern(answer, testsPattern);
         var solution = matchPattern(answer, solutionPattern);
 
-        // LOGS POUR DÉBOGUER
-        System.out.println("Description present: " + description.isPresent());
-        System.out.println("Difficulty present: " + difficulty.isPresent());
-        System.out.println("Concepts present: " + concepts.isPresent());
-        System.out.println("Signature present: " + signatureAndBody.isPresent());
-        System.out.println("Tests present: " + unitTests.isPresent());
-        System.out.println("Solution present: " + solution.isPresent());
-
-        if (description.isEmpty()) System.out.println("MANQUE: Description");
-        if (difficulty.isEmpty()) System.out.println("MANQUE: Difficulty");
-        if (concepts.isEmpty()) System.out.println("MANQUE: Concepts");
-        if (signatureAndBody.isEmpty()) System.out.println("MANQUE: Signature");
-        if (unitTests.isEmpty()) System.out.println("MANQUE: Tests");
-        if (solution.isEmpty()) System.out.println("MANQUE: Solution");
-
         if (description.isEmpty() || difficulty.isEmpty() || concepts.isEmpty() || signatureAndBody.isEmpty()
                 || unitTests.isEmpty() || solution.isEmpty()) {
             return null;
