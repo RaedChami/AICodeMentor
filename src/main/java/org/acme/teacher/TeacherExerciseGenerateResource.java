@@ -46,11 +46,7 @@ public class TeacherExerciseGenerateResource {
     public ExerciseDTO save(ExerciseDTO dtoExercise) {
         Objects.requireNonNull(dtoExercise);
         var exercise = ExerciseMapper.convertToEntity(dtoExercise);
-        if (dtoExercise.id() != null) {
-            exercise = em.merge(exercise);
-        } else {
-            em.persist(exercise);
-        }
+        em.persist(exercise);
         return ExerciseMapper.convertToDTO(exercise);
     }
 
@@ -58,6 +54,9 @@ public class TeacherExerciseGenerateResource {
         Objects.requireNonNull(description);
         try {
             var generated = jlamaService.generateExercise(description);
+            if (generated == null) {
+                return null;
+            }
             exerciseCompiler.createTemporaryDirectory();
             var testPath = exerciseCompiler.createTemporaryFiles(generated.getUnitTests());
             var solutionPath = exerciseCompiler.createTemporaryFiles(generated.getSolution());
