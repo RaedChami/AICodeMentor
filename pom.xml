@@ -15,7 +15,6 @@
         <quarkus.platform.version>3.28.1</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.5.4</surefire-plugin.version>
-
     </properties>
 
     <dependencyManagement>
@@ -67,20 +66,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.langchain4j</groupId>
-            <artifactId>quarkus-langchain4j-jlama</artifactId>
-            <version>1.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.tjake</groupId>
-            <artifactId>jlama-core</artifactId>
-            <version>0.8.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.tjake</groupId>
-            <artifactId>jlama-native</artifactId>
-            <version>0.8.4</version>
-            <classifier>linux-x86_64</classifier>
+            <groupId>de.kherud</groupId>
+            <artifactId>llama</artifactId>
+            <version>4.2.0</version>
         </dependency>
     </dependencies>
 
@@ -156,7 +144,7 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v22.20.0</nodeVersion>
-                            <npmVersion>10.9.3</npmVersion>
+                            <npmVersion>11.6.2</npmVersion>
                         </configuration>
                     </execution>
                     <execution>
@@ -200,6 +188,38 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>io.github.download-maven-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>2.0.0</version>
+
+                <executions>
+                    <execution>
+                        <id>download-llama-model</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+
+                            <!-- ATTENTION : c'est bien 'uri' et non 'url' -->
+                            <uri>https://huggingface.co/Qwen/Qwen2.5-Coder-3B-Instruct-GGUF/resolve/main/qwen2.5-coder-3b-instruct-q4_0.gguf</uri>
+
+                            <outputDirectory>${project.basedir}/models</outputDirectory>
+
+                            <!-- Toujours inclure l'extension ! -->
+                            <outputFileName>qwen2.5-coder-3b-instruct-q4_0.gguf</outputFileName>
+
+                            <overwrite>false</overwrite>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+
+
+
         </plugins>
     </build>
 

@@ -34,17 +34,17 @@
                 </div>
                 <div class="card-body">
                   <div class="mb-3">
-                    <label class="form-label fw-bold">Énoncé:</label>
-                    <p class="text-muted">{{ exercise.description }}</p>
+                    <label class="form-label fw-bold text-light">Énoncé:</label>
+                    <p class="text-light">{{ exercise.description }}</p>
                   </div>
 
                   <div class="mb-3">
-                    <label class="form-label fw-bold">Difficulté:</label>
-                    <p class="text-muted">{{ exercise.difficulty }}</p>
+                    <label class="form-label fw-bold text-light">Difficulté:</label>
+                    <p class="text-light">{{ exercise.difficulty }}</p>
                   </div>
 
                   <div class="mb-3">
-                    <label class="form-label fw-bold">Concepts:</label>
+                    <label class="form-label fw-bold text-light">Concepts:</label>
                     <ul class="list-unstyled">
                       <li v-for="(concept, index) in exercise.concepts" :key="index" class="mb-1">
                         <span class="badge bg-secondary">{{ concept }}</span>

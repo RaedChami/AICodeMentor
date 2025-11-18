@@ -2,6 +2,7 @@
 target/
 node_modules/
 tmpDirectory/
+models/
 .mvn/
 *.iml
 *.log

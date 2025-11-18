@@ -1,27 +1,30 @@
 package org.acme.llm;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import dev.langchain4j.model.chat.ChatModel;
 
+import de.kherud.llama.LlamaModel;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.acme.model.Exercise;
 import org.acme.resource.ExerciseParser;
 
+import de.kherud.llama.ModelParameters;
+import de.kherud.llama.args.MiroStat;
+import de.kherud.llama.InferenceParameters;
 import java.util.Objects;
 
 @ApplicationScoped
 public class JlamaService {
-    private static final ObjectReader reader = new ObjectMapper().reader();
-    @Inject
-    ChatModel model;
+    private LlamaModel model;
+
     @Inject
     ExerciseParser parser;
-
     public Exercise generateExercise(String userDescription) {
         Objects.requireNonNull(userDescription);
 
+        var modelParams = new ModelParameters()
+                .setModel("models/qwen2.5-coder-3b-instruct-q4_0.gguf")
+                .setGpuLayers(43);
+        model = new LlamaModel(modelParams);
         var systemPrompt = """
             Vous êtes un expert en création d'exercices de programmation Java.
             Vous ne confondez pas les LISTES et les TABLEAUX.
@@ -66,7 +69,13 @@ public class JlamaService {
                         "<|start_header_id|>assistant<|end_header_id|>",
                 systemPrompt, userPrompt
         );
-        var answer = model.chat(fullPrompt);
+        var inferParams = new InferenceParameters(fullPrompt)
+                .setTemperature(0.7f)
+                .setPenalizeNl(true)
+                .setMiroStat(MiroStat.V2)
+                .setStopStrings("User:");
+
+        var answer = model.complete(inferParams);
         return parser.parse(answer);
     }
 
