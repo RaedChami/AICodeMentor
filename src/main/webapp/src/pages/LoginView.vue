@@ -1,6 +1,6 @@
 <template>
+    <DecoBar />
     <div>
-        <Navbar />
           <div class="container mt-5">
             <h2>Connexion</h2>
 
@@ -8,7 +8,7 @@
               <input v-model="name" class="form-control mb-2" placeholder="Prénom" />
               <input v-model="lastName" class="form-control mb-3" placeholder="Nom" />
 
-              <button type="submit" class="btn btn-primary">Se connecter</button>
+              <button type="submit" class="btn btn-info">Se connecter</button>
               <button
                   type="button"
                   class="btn btn-link mt-3"
@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { useRouter } from "vue-router"
-import Navbar from '../components/NavBar.vue'
+import DecoBar from '../components/DecoBar.vue'
 
 const router = useRouter()
 
@@ -66,7 +66,6 @@ async function login() {
       return
     }
 
-    // 🔥 Redirection selon le rôle
     if (data.role === "Teacher") {
       router.push("/teacher")
     } else {

@@ -3,14 +3,11 @@
   <div class="container-fluid py-4">
     <div class="row mb-4">
       <div class="col">
-        <h2 class="mb-1">
-          <i class="bi bi-journal-text me-2"></i>Mes Exercices
-        </h2>
+        <h2>Mes Exercices</h2>
         <p class="text-muted">Cliquez sur un exercice pour le consulter</p>
       </div>
     </div>
 
-    <!-- Loading state -->
     <div v-if="loading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Chargement...</span>
@@ -18,13 +15,10 @@
       <p class="mt-3 text-muted">Chargement des exercices...</p>
     </div>
 
-    <!-- Empty state -->
-    <div v-else-if="exercises.length === 0" class="alert alert-info d-flex align-items-center" role="alert">
-      <i class="bi bi-info-circle me-2"></i>
-      <div>Aucun exercice disponible pour le moment.</div>
+    <div v-else-if="exercises.length === 0" class="alert alert-info d-flex justify-content-center w-50 mx-auto bg-warning" role="alert">
+      <div class="text-dark"><strong>Vous n'aviez aucun exercice!</strong></div>
     </div>
 
-    <!-- Exercises grid -->
     <div v-else class="row g-3">
       <div
         v-for="exercise in exercises"
@@ -49,7 +43,7 @@
             </p>
             <div class="mt-auto">
               <button class="btn btn-outline-primary btn-sm w-100">
-                <i class="bi bi-eye me-1"></i>Consulter
+                Consulter
               </button>
             </div>
           </div>

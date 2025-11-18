@@ -1,6 +1,6 @@
 <template>
+    <DecoBar />
     <div>
-        <Navbar />
         <div class="container mt-5">
         <h2>Créer un compte</h2>
 
@@ -52,7 +52,7 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-success">
+          <button type="submit" class="btn btn-info">
             Créer le compte
           </button>
         </form>
@@ -64,7 +64,7 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { useRouter } from "vue-router"
-import Navbar from '../components/NavBar.vue'
+import DecoBar from '../components/DecoBar.vue'
 
 const router = useRouter()
 
@@ -100,7 +100,6 @@ async function createAccount() {
         return
       }
 
-      // 🔥 Redirection selon le rôle
       if (data.role === "Teacher") {
         router.push("/teacher")
       } else {
