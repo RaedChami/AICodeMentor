@@ -1,4 +1,5 @@
 <template>
+  <DecoBar />
   <div class="container-fluid py-4">
     <div class="row mb-4">
       <div class="col">
@@ -212,7 +213,7 @@
     </div>
 
     <div v-else class="alert alert-warning" role="alert">
-      <p class="mb-0">Exercice introuvable.</p>
+      <p class="mb-0">Exercice introuvable</p>
     </div>
   </div>
 </template>
@@ -220,6 +221,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import DecoBar from '../components/DecoBar.vue'
 
 const route = useRoute()
 const router = useRouter()
