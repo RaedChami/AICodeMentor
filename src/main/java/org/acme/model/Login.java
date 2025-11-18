@@ -2,6 +2,8 @@ package org.acme.model;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @NamedQuery(name = "Login.findAll", query = "SELECT l FROM Login l")
 public class Login {
@@ -20,6 +22,9 @@ public class Login {
     public Login() {}
 
     public Login(String name, String lastName, Role role) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(lastName);
+        Objects.requireNonNull(role);
         this.name = name;
         this.lastName = lastName;
         this.role = role;

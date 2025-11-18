@@ -67,7 +67,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Styles globaux pour les éléments de formulaire */
 input[type="text"],
 input[type="email"],
 input[type="password"],
