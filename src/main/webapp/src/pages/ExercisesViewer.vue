@@ -35,14 +35,14 @@
           <div class="card-body d-flex flex-column">
             <div class="d-flex align-items-start mb-3">
               <div class="flex-grow-1">
-                <span class="badge bg-primary mb-2">Exercice #{{ exercise.id }}</span>
+                <span class="badge bg-info mb-2">Exercice #{{ exercise.id }}</span>
               </div>
             </div>
             <p class="card-text flex-grow-1 mb-3">
               {{ exercise.description }}
             </p>
             <div class="mt-auto">
-              <button class="btn btn-outline-primary btn-sm w-100">
+              <button class="btn btn-outline-info btn-sm w-100">
                 Consulter
               </button>
             </div>

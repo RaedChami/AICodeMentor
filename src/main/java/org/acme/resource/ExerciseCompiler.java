@@ -23,7 +23,6 @@ public class ExerciseCompiler {
         try {
             Files.createDirectories(tmpDirectory);
         } catch (IOException e) {
-            System.out.println("Directory creation failed: " + e.getMessage());
             throw new AssertionError(e);
         }
     }
@@ -33,10 +32,7 @@ public class ExerciseCompiler {
         var fileDirectory = tmpDirectory.resolve(exerciseParser.getClassName(program));
         try {
             Files.writeString(fileDirectory, program);
-            System.out.println("CREATING FILE...");
-            System.out.println("Temp file created in: " + tmpDirectory.toAbsolutePath());
         } catch (IOException e) {
-            System.out.println("File creation failed: " + e.getMessage());
             throw new AssertionError(e);
         }
         return fileDirectory;
