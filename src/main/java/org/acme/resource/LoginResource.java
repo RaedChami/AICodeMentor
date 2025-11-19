@@ -103,14 +103,4 @@ public class LoginResource {
         return LoginMapper.convertToDTO(existing.get(0));
     }
 
-    @GET
-    @Path("/debug")
-    public List<LoginDTO> debug() {
-        return em.createQuery("SELECT l FROM Login l", Login.class)
-                .getResultList()
-                .stream()
-                .map(LoginMapper::convertToDTO)
-                .toList();
-    }
-
 }
