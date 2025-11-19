@@ -9,15 +9,11 @@ import java.util.Objects;
 public class Login {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    public String name;
-    public String lastName;
-    public Role role;
-    enum Role {
-        Student,
-        Teacher
-    }
+    private String name;
+    private String lastName;
+    private Role role;
 
     public Login() {}
 
@@ -30,6 +26,22 @@ public class Login {
         this.role = role;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
     @Override
     public String toString() {
         return "Login{" +
@@ -37,5 +49,10 @@ public class Login {
                 ", name=" + lastName +
                 ", role="+ role +'\'' +
                 '}';
+    }
+
+    public void setRole(Role role) {
+        Objects.requireNonNull(role);
+        this.role = role;
     }
 }
