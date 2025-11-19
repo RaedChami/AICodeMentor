@@ -13,7 +13,7 @@ import de.kherud.llama.InferenceParameters;
 import java.util.Objects;
 
 @ApplicationScoped
-public class JlamaService {
+public class LlamaService {
 
     @Inject
     ExerciseParser parser;
@@ -47,11 +47,11 @@ public class JlamaService {
             </SIGNATURE>
             
             <TESTS>
-            Écrivez les tests JUnit 5 complets sans oublier les imports de librairie
+            Écrivez une classe contenant les tests JUnit 5 complets sans oublier les imports de librairie
             </TESTS>
             
             <SOLUTION>
-            Écrivez la solution complète de l'exercice sans oublier les éventuels imports de librairie
+            Écrivez une classe contenant solution complète de l'exercice sans oublier les éventuels imports de librairie
             </SOLUTION>
             
             """;
@@ -67,16 +67,15 @@ public class JlamaService {
                             "%s<|im_end|>" +
                             "<|im_start|>user" +
                             "%s<|im_end|>" +
-                            "<|im_start|>assistant<|im_end|>",
+                            "<|im_start|>assistant",
                     systemPrompt, userPrompt
             );
             var inferParams = new InferenceParameters(fullPrompt)
-                    .setTemperature(0.7f)
+                    .setTemperature(0.3f)
                     .setPenalizeNl(true)
-                    .setMiroStat(MiroStat.V2)
-                    .setStopStrings("User:");
+                    .setStopStrings("<|im_end|>")
+                    .setNPredict(1024);
             var answer = model.complete(inferParams);
-            System.out.println(answer);
             return parser.parse(answer);
         }
     }

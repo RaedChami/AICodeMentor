@@ -17,8 +17,8 @@ public class ExerciseParser {
     private static final Pattern difficultyPattern = Pattern.compile("<DIFFICULTE>(.*)</DIFFICULTE>", Pattern.DOTALL);
     private static final Pattern conceptsPattern = Pattern.compile("<CONCEPTS>(.*)</CONCEPTS>", Pattern.DOTALL);
     private static final Pattern signatureBodyPattern = Pattern.compile("<SIGNATURE>(.*)</SIGNATURE>", Pattern.DOTALL);
-    private static final Pattern testsPattern = Pattern.compile("<TESTS>\\s*(?:```(?:java)?\\s*)?([\\s\\S]*?)(?:```\\s*)?(?=</TESTS>|$)", Pattern.DOTALL);
-    private static final Pattern solutionPattern = Pattern.compile("<SOLUTION>*>\\s*(?:```(?:java)?\\s*)?([\\s\\S]*?)(?:```\\s*)?(?=</SOLUTION>|$)",
+    private static final Pattern testsPattern = Pattern.compile("<TESTS>(.*)</TESTS>", Pattern.DOTALL);
+    private static final Pattern solutionPattern = Pattern.compile("<SOLUTION>(.*)</SOLUTION>",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     public Exercise parse(String answer) {

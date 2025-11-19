@@ -9,7 +9,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.dto.ExerciseDTO;
-import org.acme.llm.JlamaService;
+import org.acme.llm.LlamaService;
 import org.acme.mapper.ExerciseMapper;
 import org.acme.model.Exercise;
 import org.acme.dto.UserPrompt;
@@ -26,7 +26,7 @@ public class TeacherExerciseGenerateResource {
     @Inject
     EntityManager em;
     @Inject
-    JlamaService jlamaService;
+    LlamaService llamaService;
     @Inject
     ExerciseCompiler exerciseCompiler;
 
@@ -53,7 +53,7 @@ public class TeacherExerciseGenerateResource {
     private Exercise compile(String description) {
         Objects.requireNonNull(description);
         try {
-            var generated = jlamaService.generateExercise(description);
+            var generated = llamaService.generateExercise(description);
             if (generated == null) {
                 return null;
             }

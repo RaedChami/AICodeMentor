@@ -7,3 +7,4 @@ models/
 *.iml
 *.log
 *.jar
+mem:default;DB_CLOSE_DELAY=-1
