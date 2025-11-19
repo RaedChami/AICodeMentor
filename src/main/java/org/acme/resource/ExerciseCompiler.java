@@ -38,8 +38,7 @@ public class ExerciseCompiler {
         return fileDirectory;
     }
 
-    public boolean compileCode(String program, Path directory) {
-        Objects.requireNonNull(program);
+    public boolean compileCode(Path directory) {
         Objects.requireNonNull(directory);
         var compiler = ToolProvider.getSystemJavaCompiler();
         var result = compiler.run(null, null, null, directory.toString());

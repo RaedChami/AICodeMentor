@@ -8,6 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.acme.dto.ExerciseDTO;
 import org.acme.mapper.ExerciseMapper;
@@ -27,9 +28,10 @@ public class TeacherExerciseResource {
      */
     @Path("/")
     @GET
-    public List<Exercise> getall() {
-      return em.createNamedQuery("Exercise.findAll", Exercise.class)
-              .getResultList();
+    public List<ExerciseDTO> getall() {
+        var exercises = em.createNamedQuery("Exercise.findAll", Exercise.class)
+                            .getResultList();
+        return exercises.stream().map(ExerciseMapper::convertToDTO).collect(Collectors.toList());
     }
 
     /**
@@ -39,11 +41,15 @@ public class TeacherExerciseResource {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Exercise get(@PathParam("id") long id) {
+    public ExerciseDTO get(@PathParam("id") long id) {
         if (id < 0) {
             throw new IllegalArgumentException("exercise ID is < 0");
         }
-        return em.find(Exercise.class, id);
+        var findExercise = em.find(Exercise.class, id);
+        if (findExercise == null) {
+            throw new NotFoundException("exercise ID not found");
+        }
+        return ExerciseMapper.convertToDTO(findExercise);
     }
 
     @PUT
@@ -56,7 +62,7 @@ public class TeacherExerciseResource {
         }
         var findExercise = em.find(Exercise.class, id);
         if (findExercise == null) {
-            throw new IllegalArgumentException("exercise ID doesn't exist");
+            throw new NotFoundException("exercise ID not found");
         }
         var dtoWithId = new ExerciseDTO(
                 id,
@@ -79,7 +85,7 @@ public class TeacherExerciseResource {
         if (id < 0) {
             throw new IllegalArgumentException("exercise ID is < 0");
         }
-        Exercise exercise = em.find(Exercise.class, id);
+        var exercise = em.find(Exercise.class, id);
         if (exercise != null) {
             em.remove(exercise);
         } else {

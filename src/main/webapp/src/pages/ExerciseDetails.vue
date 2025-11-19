@@ -90,7 +90,7 @@
       <div v-else-if="mode === 'modify'">
         <form @submit.prevent="updateExercise">
           <div v-if="validationErrors.length > 0" class="alert alert-danger" role="alert">
-            <h5 class="alert-heading">⚠Veuillez corriger les erreurs suivantes :</h5>
+            <h5 class="alert-heading">Veuillez corriger les erreurs suivantes :</h5>
             <ul class="mb-0">
               <li v-for="(error, index) in validationErrors" :key="index">{{ error }}</li>
             </ul>

@@ -60,7 +60,7 @@ public class TeacherExerciseGenerateResource {
             exerciseCompiler.createTemporaryDirectory();
             var testPath = exerciseCompiler.createTemporaryFiles(generated.getUnitTests());
             var solutionPath = exerciseCompiler.createTemporaryFiles(generated.getSolution());
-            if (!exerciseCompiler.compileCode(generated.getUnitTests(), testPath) || !exerciseCompiler.compileCode(generated.getSolution(), solutionPath)) {
+            if (!exerciseCompiler.compileCode(testPath) || !exerciseCompiler.compileCode(solutionPath)) {
                 System.out.println("Compilation failed, Exercise regeneration");
                 return null;
             }
