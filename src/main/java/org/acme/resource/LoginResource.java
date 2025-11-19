@@ -33,7 +33,6 @@ public class LoginResource {
         if (login.role == null)
             throw new BadRequestException("Role is required");
 
-        // Chercher utilisateur existant (même nom + prénom)
         List<Login> existing = em.createQuery(
                         "SELECT l FROM Login l WHERE l.name = :name AND l.lastName = :lastName",
                         Login.class
@@ -45,7 +44,6 @@ public class LoginResource {
         if (!existing.isEmpty()) {
             Login found = existing.get(0);
 
-            // Si rôle différent, on met à jour le rôle
             if (found.role != login.role) {
                 found.role = login.role;
                 em.merge(found);
@@ -53,14 +51,13 @@ public class LoginResource {
 
             return found;
         }
-
-        // Nouvel utilisateur → rôle obligatoire
         em.persist(login);
         return login;
     }
 
     @GET
     public List<Login> get(Login login) {
+        Objects.requireNonNull(login);
         return em.createQuery(
                         "SELECT l FROM Login l WHERE l.name = :name AND l.lastName = :lastName",
                         Login.class
@@ -74,6 +71,9 @@ public class LoginResource {
     @Path("/{id}")
     @Transactional
     public void delete(@PathParam("id") Long id) {
+        if (id < 0) {
+            throw new IllegalArgumentException("id < 0");
+        }
         Login login = em.find(Login.class, id);
         if (login != null) {
             em.remove(login);
@@ -87,7 +87,7 @@ public class LoginResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Login checkUser(Login login) {
-
+        Objects.requireNonNull(login);
         List<Login> existing = em.createQuery(
                         "SELECT l FROM Login l WHERE l.name = :name AND l.lastName = :lastName",
                         Login.class
