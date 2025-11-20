@@ -35,7 +35,7 @@ public class LoginResource {
         if (login.role() == null)
             throw new BadRequestException("Role is required");
 
-        List<Login> existing = em.createQuery(
+        var existing = em.createQuery(
                         "SELECT l FROM Login l WHERE l.name = :name AND l.lastName = :lastName",
                         Login.class
                 )
@@ -57,14 +57,15 @@ public class LoginResource {
     }
 
     @GET
-    public List<Login> get(Login login) {
-        Objects.requireNonNull(login);
+    public List<Login> get(@QueryParam("name") String name, @QueryParam("lastName") String lastName) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(lastName);
         return em.createQuery(
                         "SELECT l FROM Login l WHERE l.name = :name AND l.lastName = :lastName",
                         Login.class
                 )
-                .setParameter("name", login.getName())
-                .setParameter("lastName", login.getLastName())
+                .setParameter("name", name)
+                .setParameter("lastName", lastName)
                 .getResultList();
     }
 
@@ -76,7 +77,7 @@ public class LoginResource {
         if (id != null && id < 0)
             throw new IllegalArgumentException("id < 0");
 
-        Login login = em.find(Login.class, id);
+        var login = em.find(Login.class, id);
         if (login != null) {
             em.remove(login);
         } else {
@@ -89,7 +90,7 @@ public class LoginResource {
     @Transactional
     public LoginDTO checkUser(LoginRequestDTO login) {
         Objects.requireNonNull(login);
-        List<Login> existing = em.createQuery(
+        var existing = em.createQuery(
                         "SELECT l FROM Login l WHERE l.name = :name AND l.lastName = :lastName",
                         Login.class
                 )
