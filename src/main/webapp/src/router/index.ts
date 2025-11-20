@@ -5,7 +5,7 @@ import StudentView from "../pages/StudentView.vue"
 import LoginView from "../pages/LoginView.vue"
 import CreateAccountView from "../pages/CreateAccountView.vue"
 import ExercisesViewer from "../pages/ExercisesViewer.vue"
-import ExerciseDetails from "../pages/ExerciseDetails.vue"
+import ModifyExercise from "../pages/ModifyExercise.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -17,7 +17,8 @@ const router = createRouter({
     { path: "/create-account", component: CreateAccountView },
     { path: "/teacher/generate", component: GenerateView },
     { path: "/teacher/exercises", component: ExercisesViewer },
-    { path: "/teacher/exercises/:id", component: ExerciseDetails }
+    { path: "/student/exercises", component: ExercisesViewer },
+    { path: "/teacher/exercises/:id", component: ModifyExercise }
   ]
 })
 

@@ -11,12 +11,12 @@
 
 
                 <button @click="createExercise"
-                        class="btn btn-primary mb-3 px-4 py-2">
+                        class="btn btn-info mb-3 px-4 py-2">
                   Créer un exercice
                 </button>
 
                 <form @submit.prevent="seeExercise">
-                  <button type="submit" class="btn btn-primary">
+                  <button type="submit" class="btn btn-info">
                     Consulter les exercices
                   </button>
                 </form>

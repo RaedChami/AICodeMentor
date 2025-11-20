@@ -8,7 +8,7 @@
               <div class="card shadow-sm border-0">
                 <div class="card-body p-5">
                     <form @submit.prevent="seeExercise">
-                      <button type="submit" class="btn btn-primary">
+                      <button type="submit" class="btn btn-info">
                         Consulter les exercices
                       </button>
                     </form>
@@ -25,6 +25,6 @@ import Navbar from '../components/NavBar.vue'
 import { useRouter } from "vue-router"
 const router = useRouter()
 async function seeExercise() {
-    router.push("/teacher/exercises")
+    router.push("/student/exercises")
 }
 </script>
