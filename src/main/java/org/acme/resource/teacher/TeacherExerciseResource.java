@@ -1,4 +1,4 @@
-package org.acme.teacher;
+package org.acme.resource.teacher;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;

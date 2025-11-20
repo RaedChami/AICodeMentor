@@ -1,9 +1,6 @@
-package org.acme.student;
+package org.acme.resource.student;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import java.util.List;
-import java.util.ArrayList;
 
 @Path("/api/student/submissions")
 public class StudentSubmissionResource {

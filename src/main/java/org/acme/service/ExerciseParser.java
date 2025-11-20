@@ -1,4 +1,4 @@
-package org.acme.resource;
+package org.acme.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import org.acme.model.Difficulty;

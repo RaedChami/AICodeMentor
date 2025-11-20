@@ -1,9 +1,8 @@
-package org.acme.resource;
+package org.acme.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import javax.tools.JavaCompiler;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
