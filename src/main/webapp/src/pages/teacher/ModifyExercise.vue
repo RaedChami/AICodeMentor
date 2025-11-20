@@ -221,7 +221,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import DecoBar from '../components/DecoBar.vue'
+import DecoBar from '../../components/DecoBar.vue'
 
 const route = useRoute()
 const router = useRouter()

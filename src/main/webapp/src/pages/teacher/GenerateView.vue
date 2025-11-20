@@ -111,7 +111,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Navbar from '../components/NavBar.vue'
+import Navbar from '../../components/NavBar.vue'
 
 const description = ref('')
 const generatedExercise = ref<any>(null)

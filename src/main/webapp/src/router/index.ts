@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router"
-import GenerateView from "../pages/GenerateView.vue"
-import TeacherView from "../pages/TeacherView.vue"
-import StudentView from "../pages/StudentView.vue"
+import GenerateView from "../pages/teacher/GenerateView.vue"
+import TeacherView from "../pages/teacher/TeacherView.vue"
+import StudentView from "../pages/student/StudentView.vue"
 import LoginView from "../pages/LoginView.vue"
 import CreateAccountView from "../pages/CreateAccountView.vue"
-import ExercisesViewer from "../pages/ExercisesViewer.vue"
-import ExerciseDetails from "../pages/ExerciseDetails.vue"
+import TeacherExercisesViewer from "../pages/teacher/TeacherExercisesViewer.vue"
+import StudentExercisesViewer from "../pages/student/StudentExercisesViewer.vue"
+import ModifyExercise from "../pages/teacher/ModifyExercise.vue"
+import StudentExercise from "../pages/student/StudentExercise.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -16,8 +18,10 @@ const router = createRouter({
     { path: "/login", component: LoginView },
     { path: "/create-account", component: CreateAccountView },
     { path: "/teacher/generate", component: GenerateView },
-    { path: "/teacher/exercises", component: ExercisesViewer },
-    { path: "/teacher/exercises/:id", component: ExerciseDetails }
+    { path: "/teacher/exercises", component: TeacherExercisesViewer },
+    { path: "/student/exercises", component: StudentExercisesViewer },
+    { path: "/teacher/exercises/:id", component: ModifyExercise },
+    { path: "/student/exercises/:id", component: StudentExercise }
   ]
 })
 

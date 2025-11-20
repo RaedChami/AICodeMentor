@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import Navbar from '../components/NavBar.vue'
+import Navbar from '../../components/NavBar.vue'
 
 interface Exercise {
   id: number
