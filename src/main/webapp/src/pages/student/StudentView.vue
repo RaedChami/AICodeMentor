@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Navbar />
+        <StudentNavBar />
         <div class="container-fluid">
           <div class="row justify-content-center">
             <div class="col-lg-100 col-xl-200">
@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import Navbar from '../components/NavBar.vue'
+import StudentNavBar from '../../components/StudentNavBar.vue'
 import { useRouter } from "vue-router"
 const router = useRouter()
 async function seeExercise() {

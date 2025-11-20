@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import Navbar from '../components/NavBar.vue'
+import Navbar from '../../components/NavBar.vue'
 import { useRouter } from "vue-router"
 
 const router = useRouter()

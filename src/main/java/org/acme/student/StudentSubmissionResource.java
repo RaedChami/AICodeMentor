@@ -8,7 +8,7 @@ import java.util.ArrayList;
 @Path("/api/student/submissions")
 public class StudentSubmissionResource {
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     public String getSubmissions()
     {
         return "";
