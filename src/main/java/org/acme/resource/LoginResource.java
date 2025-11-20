@@ -9,9 +9,11 @@ import org.acme.dto.LoginDTO;
 import org.acme.dto.LoginRequestDTO;
 import org.acme.mapper.LoginMapper;
 import org.acme.model.Login;
+import org.acme.model.Role;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Path("/api/login")
 @Produces(MediaType.APPLICATION_JSON)
@@ -24,33 +26,57 @@ public class LoginResource {
     @POST
     @Transactional
     public LoginDTO create(LoginDTO login) {
-
         Objects.requireNonNull(login);
-        if (login.name() == null || login.name().isBlank())
+        validateLoginDTO(login);
+
+        var existingLogin = findExistingLogin(login.name(), login.lastName());
+
+        if (existingLogin.isPresent()) {
+            return updateExistingLoginIfNeeded(existingLogin.get(), login.role());
+        }
+
+        return createNewLogin(login);
+    }
+
+    private void validateLoginDTO(LoginDTO login) {
+        Objects.requireNonNull(login);
+        if (login.name() == null || login.name().isBlank()) {
             throw new BadRequestException("Name is required");
-
-        if (login.lastName() == null || login.lastName().isBlank())
+        }
+        if (login.lastName() == null || login.lastName().isBlank()) {
             throw new BadRequestException("Last name is required");
-
-        if (login.role() == null)
+        }
+        if (login.role() == null) {
             throw new BadRequestException("Role is required");
+        }
+    }
 
+    private Optional<Login> findExistingLogin(String name, String lastName) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(lastName);
         var existing = em.createQuery(
                         "SELECT l FROM Login l WHERE l.name = :name AND l.lastName = :lastName",
                         Login.class
                 )
-                .setParameter("name", login.name())
-                .setParameter("lastName", login.lastName())
+                .setParameter("name", name)
+                .setParameter("lastName", lastName)
                 .getResultList();
 
-        if (!existing.isEmpty()) {
-            var found = existing.get(0);
-            if (found.getRole() != login.role()) {
-                found.setRole(login.role());
-                em.merge(found);
-            }
-            return LoginMapper.convertToDTO(found);
+        return existing.isEmpty() ? Optional.empty() : Optional.of(existing.get(0));
+    }
+
+    private LoginDTO updateExistingLoginIfNeeded(Login existingLogin, Role newRole) {
+        Objects.requireNonNull(existingLogin);
+        Objects.requireNonNull(newRole);
+        if (existingLogin.getRole() != newRole) {
+            existingLogin.setRole(newRole);
+            em.merge(existingLogin);
         }
+        return LoginMapper.convertToDTO(existingLogin);
+    }
+
+    private LoginDTO createNewLogin(LoginDTO login) {
+        Objects.requireNonNull(login);
         var entity = LoginMapper.convertToEntity(login);
         em.persist(entity);
         return LoginMapper.convertToDTO(entity);
@@ -69,15 +95,15 @@ public class LoginResource {
                 .getResultList();
     }
 
-
     @DELETE
     @Path("/{id}")
     @Transactional
     public void delete(@PathParam("id") Long id) {
-        if (id != null && id < 0)
+        if (id != null && id < 0) {
             throw new IllegalArgumentException("id < 0");
+        }
 
-        var login = em.find(Login.class, id);
+        Login login = em.find(Login.class, id);
         if (login != null) {
             em.remove(login);
         } else {
@@ -90,18 +116,12 @@ public class LoginResource {
     @Transactional
     public LoginDTO checkUser(LoginRequestDTO login) {
         Objects.requireNonNull(login);
-        var existing = em.createQuery(
-                        "SELECT l FROM Login l WHERE l.name = :name AND l.lastName = :lastName",
-                        Login.class
-                )
-                .setParameter("name", login.name())
-                .setParameter("lastName", login.lastName())
-                .getResultList();
+        Optional<Login> existingLogin = findExistingLogin(login.name(), login.lastName());
 
-        if (existing.isEmpty())
+        if (existingLogin.isEmpty()) {
             throw new NotFoundException("User not found");
+        }
 
-        return LoginMapper.convertToDTO(existing.get(0));
+        return LoginMapper.convertToDTO(existingLogin.get());
     }
-
 }

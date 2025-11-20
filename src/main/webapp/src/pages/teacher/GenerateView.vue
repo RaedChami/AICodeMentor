@@ -168,7 +168,6 @@ function revise() {
 </script>
 
 <style scoped>
-/* Style de base pour la page - Thème sombre */
 .page-wrapper {
   font-family: 'Arial', sans-serif;
   background-color: #1e1e2f;
@@ -177,7 +176,6 @@ function revise() {
   padding: 20px;
 }
 
-/* Conteneur principal */
 .content-container {
   max-width: 800px;
   margin: 0 auto;
@@ -187,12 +185,10 @@ function revise() {
   border-radius: 8px;
 }
 
-/* Mode résultat - conteneur plus large */
 .mode-result .content-container {
   max-width: 1400px;
 }
 
-/* Style pour le grand titre */
 h1 {
   font-size: 2.5em;
   color: #ffffff;
@@ -200,13 +196,11 @@ h1 {
   margin-bottom: 20px;
 }
 
-/* Styles pour le formulaire */
 .exercise-form {
   display: flex;
   flex-direction: column;
 }
 
-/* Style pour les champs de saisie */
 .form-input {
   margin-bottom: 15px;
   padding: 10px;
@@ -225,7 +219,6 @@ h1 {
   outline: none;
 }
 
-/* Style pour les boutons */
 .btn-submit {
   background-color: #007bff;
   color: white;
@@ -241,7 +234,6 @@ h1 {
   background-color: #0056b3;
 }
 
-/* Styles pour les blocs de code */
 .code-block {
   margin: 0;
   padding: 15px;
@@ -283,7 +275,6 @@ code {
   color: #b0b0c0 !important;
 }
 
-/* Responsivité */
 @media (max-width: 600px) {
   h1 {
     font-size: 2em;

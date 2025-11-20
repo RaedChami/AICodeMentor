@@ -1,14 +1,12 @@
-package org.acme.llm;
+package org.acme.service;
 
 
 import de.kherud.llama.LlamaModel;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.acme.model.Exercise;
-import org.acme.resource.ExerciseParser;
 
 import de.kherud.llama.ModelParameters;
-import de.kherud.llama.args.MiroStat;
 import de.kherud.llama.InferenceParameters;
 import java.util.Objects;
 

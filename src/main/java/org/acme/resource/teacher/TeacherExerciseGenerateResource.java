@@ -1,4 +1,4 @@
-package org.acme.teacher;
+package org.acme.resource.teacher;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -9,11 +9,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.dto.ExerciseDTO;
-import org.acme.llm.LlamaService;
+import org.acme.service.LlamaService;
 import org.acme.mapper.ExerciseMapper;
 import org.acme.model.Exercise;
 import org.acme.dto.UserPrompt;
-import org.acme.resource.ExerciseCompiler;
+import org.acme.service.ExerciseCompiler;
 
 import java.io.IOException;
 import java.util.Objects;
