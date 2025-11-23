@@ -20,7 +20,7 @@
             Retour
           </button>
           <button @click="mode = 'modify'" class="btn btn-warning">
-            Modifier
+            Modifier avec IA
           </button>
           <button class="btn btn-danger" @click="deleteExercise(exercise.id)">
             Supprimer
@@ -88,7 +88,7 @@
         </div>
 
       <div v-else-if="mode === 'modify'">
-        <form @submit.prevent="updateExercise">
+        <form @submit.prevent="modifyWithLLM">
           <div v-if="validationErrors.length > 0" class="alert alert-danger" role="alert">
             <h5 class="alert-heading">Veuillez corriger les erreurs suivantes :</h5>
             <ul class="mb-0">
@@ -96,101 +96,55 @@
             </ul>
           </div>
 
+          <div class="alert alert-info" role="alert">
+            <h5 class="alert-heading">
+              <i class="bi bi-robot"></i> Modification assistée par IA
+            </h5>
+            <p class="mb-0">
+              Décrivez les modifications que vous souhaitez apporter à cet exercice.
+              L'IA va régénérer l'exercice complet en tenant compte de vos instructions.
+            </p>
+          </div>
+
           <div class="row g-4">
-            <div class="col-lg-4">
+            <div class="col-lg-12">
               <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                  <h5 class="mb-0">Caractéristiques</h5>
+                  <h5 class="mb-0">Instructions de modification</h5>
                 </div>
                 <div class="card-body">
-                  <div class="mb-3">
-                    <label class="form-label fw-bold">Énoncé:</label>
-                    <input
-                      v-model="exercise.description"
-                      type="text"
-                      class="form-control"
-                      :class="{ 'is-invalid': !exercise.description?.trim() && showErrors }"
-                      required
-                    />
-                  </div>
-
-                  <div class="mb-3">
-                    <label class="form-label fw-bold">Difficulté:</label>
-                    <input
-                      v-model="exercise.difficulty"
-                      type="text"
-                      class="form-control"
-                      :class="{ 'is-invalid': !exercise.difficulty?.trim() && showErrors }"
-                      required
-                    />
-                  </div>
-
-                  <div class="mb-3">
-                    <label class="form-label fw-bold">Concepts:</label>
-                    <div v-for="(_concept, index) in exercise.concepts" :key="index" class="input-group mb-2">
-                      <input
-                        v-model="exercise.concepts[index]"
-                        type="text"
-                        class="form-control"
-                        :class="{ 'is-invalid': !exercise.concepts[index]?.trim() && showErrors }"
-                        placeholder="Nom du concept"
-                        required
-                      />
-                      <button type="button" class="btn btn-outline-danger" @click="removeConcept(index)">
-                        X
-                      </button>
-                    </div>
-                    <button type="button" class="btn btn-sm btn-outline-primary w-100" @click="addConcept">
-                      Ajouter un concept
-                    </button>
+                  <textarea
+                    v-model="modificationDescription"
+                    class="form-control"
+                    :class="{ 'is-invalid': !modificationDescription?.trim() && showErrors }"
+                    rows="6"
+                    placeholder="Exemple : Augmenter la difficulté à L3, ajouter un test pour les cas limites, modifier l'énoncé pour inclure des exemples avec des nombres négatifs..."
+                    required
+                  ></textarea>
+                  <div class="invalid-feedback">
+                    Veuillez décrire les modifications souhaitées
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="col-lg-8">
-              <div class="card shadow-sm mb-3">
-                <div class="card-header bg-success text-white">
-                  <h5 class="mb-0">Signature & Corps</h5>
+            <div class="col-lg-12">
+              <div class="card shadow-sm bg-light">
+                <div class="card-header bg-secondary text-white">
+                  <h5 class="mb-0">Aperçu de l'exercice actuel</h5>
                 </div>
                 <div class="card-body">
-                  <textarea
-                    v-model="exercise.signatureAndBody"
-                    class="form-control font-monospace"
-                    :class="{ 'is-invalid': !exercise.signatureAndBody?.trim() && showErrors }"
-                    rows="12"
-                    required
-                  ></textarea>
-                </div>
-              </div>
-
-              <div class="card shadow-sm mb-3">
-                <div class="card-header bg-info text-white">
-                  <h5 class="mb-0">Tests JUnit</h5>
-                </div>
-                <div class="card-body">
-                  <textarea
-                    v-model="exercise.unitTests"
-                    class="form-control font-monospace"
-                    :class="{ 'is-invalid': !exercise.unitTests?.trim() && showErrors }"
-                    rows="12"
-                    required
-                  ></textarea>
-                </div>
-              </div>
-
-              <div class="card shadow-sm mb-3">
-                <div class="card-header bg-warning text-dark">
-                  <h5 class="mb-0">Solution</h5>
-                </div>
-                <div class="card-body">
-                  <textarea
-                    v-model="exercise.solution"
-                    class="form-control font-monospace"
-                    :class="{ 'is-invalid': !exercise.solution?.trim() && showErrors }"
-                    rows="12"
-                    required
-                  ></textarea>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <p><strong>Énoncé:</strong> {{ exercise.description }}</p>
+                      <p><strong>Difficulté:</strong> {{ exercise.difficulty }}</p>
+                      <p><strong>Concepts:</strong> {{ exercise.concepts?.join(', ') }}</p>
+                    </div>
+                    <div class="col-md-6">
+                      <p><strong>Signature:</strong></p>
+                      <pre class="small bg-white p-2 rounded"><code>{{ exercise.signatureAndBody?.substring(0, 200) }}...</code></pre>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -199,11 +153,15 @@
           <div class="row mt-4">
             <div class="col">
               <div class="d-flex gap-2 justify-content-end">
-                <button type="button" class="btn btn-secondary" @click="cancelEdit">
+                <button type="button" class="btn btn-secondary" @click="cancelEdit" :disabled="isModifying">
                   Annuler
                 </button>
-                <button type="submit" class="btn btn-success">
-                  Enregistrer
+                <button type="submit" class="btn btn-success" :disabled="isModifying">
+                  <span v-if="isModifying" class="spinner-border spinner-border-sm me-2" role="status">
+                    <span class="visually-hidden">Génération en cours...</span>
+                  </span>
+                  <i v-else class="bi bi-magic me-2"></i>
+                  {{ isModifying ? 'Génération en cours...' : 'Générer avec IA' }}
                 </button>
               </div>
             </div>
@@ -230,6 +188,8 @@ const loading = ref(true)
 const mode = ref<'view' | 'modify'>('view')
 const validationErrors = ref<string[]>([])
 const showErrors = ref(false)
+const modificationDescription = ref('')
+const isModifying = ref(false)
 
 async function fetchExercise() {
   try {
@@ -260,82 +220,58 @@ async function deleteExercise(id: number) {
   }
 }
 
-function validateExercise(): boolean {
+function validateModification(): boolean {
   validationErrors.value = []
   showErrors.value = true
 
-  if (!exercise.value.description?.trim()) {
-    validationErrors.value.push("La description est obligatoire")
-  }
-
-  if (!exercise.value.difficulty?.trim()) {
-    validationErrors.value.push("La difficulté est obligatoire")
-  }
-
-  if (!exercise.value.concepts || exercise.value.concepts.length === 0) {
-    validationErrors.value.push("Au moins un concept est requis")
-  } else {
-    const emptyConcepts = exercise.value.concepts.filter((c: string) => !c?.trim())
-    if (emptyConcepts.length > 0) {
-      validationErrors.value.push("Tous les concepts doivent être renseignés (champs vides détectés)")
-    }
-  }
-
-  if (!exercise.value.signatureAndBody?.trim()) {
-    validationErrors.value.push("La signature et le corps sont obligatoires")
-  }
-
-  if (!exercise.value.unitTests?.trim()) {
-    validationErrors.value.push("Les tests JUnit sont obligatoires")
-  }
-
-  if (!exercise.value.solution?.trim()) {
-    validationErrors.value.push("La solution est obligatoire")
+  if (!modificationDescription.value?.trim()) {
+    validationErrors.value.push("La description des modifications est obligatoire")
   }
 
   return validationErrors.value.length === 0
 }
 
-async function updateExercise() {
-  if (!validateExercise()) {
+async function modifyWithLLM() {
+  if (!validateModification()) {
     window.scrollTo({ top: 0, behavior: 'smooth' })
     return
   }
 
-  const res = await fetch(`/api/teacher/exercises/${exercise.value.id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(exercise.value)
-  })
+  try {
+    isModifying.value = true
+    const res = await fetch(`/api/teacher/exercises/${exercise.value.id}/modify`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        modificationDescription: modificationDescription.value
+      })
+    })
 
-  if (res.ok) {
-    const updated = await res.json()
-    exercise.value = updated
-    mode.value = 'view'
-    validationErrors.value = []
-    showErrors.value = false
-    alert('Exercice mis à jour avec succès !')
-  } else {
-    alert('Erreur de sauvegarde')
+    if (res.ok) {
+      const updated = await res.json()
+      exercise.value = updated
+      mode.value = 'view'
+      modificationDescription.value = ''
+      validationErrors.value = []
+      showErrors.value = false
+      alert('Exercice modifié avec succès par l\'IA !')
+    } else {
+      const errorData = await res.json().catch(() => ({}))
+      alert(`Erreur lors de la modification : ${errorData.message || 'Erreur inconnue'}`)
+    }
+  } catch (error) {
+    console.error('Erreur:', error)
+    alert('Une erreur s\'est produite lors de la modification')
+  } finally {
+    isModifying.value = false
   }
-}
-
-function addConcept() {
-  if (!exercise.value.concepts) {
-    exercise.value.concepts = []
-  }
-  exercise.value.concepts.push("")
-}
-
-function removeConcept(index: number) {
-  exercise.value.concepts.splice(index, 1)
 }
 
 function cancelEdit() {
   validationErrors.value = []
   showErrors.value = false
+  modificationDescription.value = ''
   mode.value = 'view'
-  fetchExercise()
 }
 
 function goBack() {
@@ -373,5 +309,15 @@ code {
 .badge {
   font-size: 0.85rem;
   padding: 0.4rem 0.8rem;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.15rem;
+}
+
+textarea {
+  resize: vertical;
 }
 </style>

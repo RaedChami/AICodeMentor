@@ -2,6 +2,7 @@ package org.acme.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.acme.model.Exercise;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +18,22 @@ public class ExerciseCompiler {
     ExerciseParser exerciseParser;
 
     private final static Path tmpDirectory = Paths.get("").toAbsolutePath().resolve("tmpDirectory");
+
+    public boolean compile(Exercise generated) {
+        Objects.requireNonNull(generated);
+        try {
+            createTemporaryDirectory();
+            var testPath = createTemporaryFiles(generated.getUnitTests());
+            var solutionPath = createTemporaryFiles(generated.getSolution());
+            if (!compileCode(testPath) || !compileCode(solutionPath)) {
+                System.out.println("Compilation failed, Exercise regeneration");
+                return false;
+            }
+            return true;
+        } finally {
+            cleanDirectory();
+        }
+    }
 
     public void createTemporaryDirectory() {
         try {

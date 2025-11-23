@@ -9,6 +9,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import org.acme.dto.ExerciseDTO;
+import org.acme.service.ExerciseGenerationException;
 import org.acme.service.LlamaService;
 import org.acme.mapper.ExerciseMapper;
 import org.acme.model.Exercise;
@@ -34,10 +35,15 @@ public class TeacherExerciseGenerateResource {
     public ExerciseDTO generate(UserPrompt prompt) throws IOException {
         Objects.requireNonNull(prompt);
         Exercise finalExercise = null;
-        while (finalExercise == null) {
-            finalExercise = compile(prompt.prompt());
+        int attempts = 0;
+        while (attempts <= 5) {
+            finalExercise = llamaService.generateExercise(prompt.prompt());
+            if (finalExercise != null && exerciseCompiler.compile(finalExercise)) {
+                return ExerciseMapper.convertToDTO(finalExercise);
+            }
+            attempts++;
         }
-        return ExerciseMapper.convertToDTO(finalExercise);
+        throw new ExerciseGenerationException("Impossible de générer un exercise valide après 5 tentatives");
     }
 
     @POST
@@ -50,23 +56,4 @@ public class TeacherExerciseGenerateResource {
         return ExerciseMapper.convertToDTO(exercise);
     }
 
-    private Exercise compile(String description) {
-        Objects.requireNonNull(description);
-        try {
-            var generated = llamaService.generateExercise(description);
-            if (generated == null) {
-                return null;
-            }
-            exerciseCompiler.createTemporaryDirectory();
-            var testPath = exerciseCompiler.createTemporaryFiles(generated.getUnitTests());
-            var solutionPath = exerciseCompiler.createTemporaryFiles(generated.getSolution());
-            if (!exerciseCompiler.compileCode(testPath) || !exerciseCompiler.compileCode(solutionPath)) {
-                System.out.println("Compilation failed, Exercise regeneration");
-                return null;
-            }
-            return generated;
-        } finally {
-            exerciseCompiler.cleanDirectory();
-        }
-    }
 }

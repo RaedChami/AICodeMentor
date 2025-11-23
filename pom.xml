@@ -70,6 +70,11 @@
             <artifactId>llama</artifactId>
             <version>4.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.20.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -200,9 +205,9 @@
                             <goal>wget</goal>
                         </goals>
                         <configuration>
-                            <uri>https://huggingface.co/Qwen/Qwen2.5-Coder-3B-Instruct-GGUF/resolve/main/qwen2.5-coder-3b-instruct-q4_0.gguf</uri>
+                            <uri>https://huggingface.co/Qwen/Qwen2.5-Coder-3B-Instruct-GGUF/resolve/main/qwen2.5-coder-3b-instruct-q4_k_m.gguf</uri>
                             <outputDirectory>${project.basedir}/models</outputDirectory>
-                            <outputFileName>qwen2.5-coder-3b-instruct-q4_0.gguf</outputFileName>
+                            <outputFileName>qwen2.5-coder-3b-instruct-q4_k_m.gguf</outputFileName>
                             <overwrite>false</overwrite>
                         </configuration>
                     </execution>

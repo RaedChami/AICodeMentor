@@ -70,4 +70,11 @@ public class Exercise {
     public String getSolution() {
         return solution;
     }
+
+    public void setId(Long id) {
+        if (id < 0) {
+            throw new IllegalArgumentException("id < 0");
+        }
+        this.id = id;
+    }
 }

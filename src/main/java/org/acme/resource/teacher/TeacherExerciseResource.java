@@ -11,8 +11,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.acme.dto.ExerciseDTO;
+import org.acme.dto.UserModifyPrompt;
 import org.acme.mapper.ExerciseMapper;
 import org.acme.model.Exercise;
+import org.acme.service.ExerciseCompiler;
+import org.acme.service.ExerciseGenerationException;
+import org.acme.service.LlamaService;
 
 @Path("/api/teacher/exercises")
 @Produces(MediaType.APPLICATION_JSON)
@@ -21,6 +25,10 @@ public class TeacherExerciseResource {
 
     @Inject
     EntityManager em;
+    @Inject
+    LlamaService llamaService;
+    @Inject
+    ExerciseCompiler exerciseCompiler;
 
     /**
      * @return
@@ -52,11 +60,11 @@ public class TeacherExerciseResource {
         return ExerciseMapper.convertToDTO(findExercise);
     }
 
+    @Path("/{id}/modify")
     @PUT
     @Transactional
-    @Path("/{id}")
-    public ExerciseDTO update(@PathParam("id") long id, ExerciseDTO dtoExercise) {
-        Objects.requireNonNull(dtoExercise);
+    public ExerciseDTO modify(@PathParam("id") long id, UserModifyPrompt prompt) {
+        Objects.requireNonNull(prompt);
         if (id < 0) {
             throw new IllegalArgumentException("exercise ID is < 0");
         }
@@ -64,18 +72,18 @@ public class TeacherExerciseResource {
         if (findExercise == null) {
             throw new NotFoundException("exercise ID not found");
         }
-        var dtoWithId = new ExerciseDTO(
-                id,
-                dtoExercise.description(),
-                dtoExercise.difficulty(),
-                dtoExercise.concepts(),
-                dtoExercise.signatureAndBody(),
-                dtoExercise.unitTests(),
-                dtoExercise.solution()
-        );
-        var exercise = ExerciseMapper.convertToEntity(dtoWithId);
-        exercise = em.merge(exercise);
-        return ExerciseMapper.convertToDTO(exercise);
+        Exercise modified = null;
+        int attempts = 0;
+        while (attempts <= 5) {
+            modified = llamaService.modifyExercise(findExercise, prompt.modificationDescription());
+            if (modified != null && exerciseCompiler.compile(modified)) {
+                modified.setId(id);
+                modified = em.merge(modified);
+                return ExerciseMapper.convertToDTO(modified);
+            }
+            attempts++;
+        }
+        throw new ExerciseGenerationException("Impossible de générer une modification valide après 5 tentatives");
     }
 
     @Path("/{id}")
