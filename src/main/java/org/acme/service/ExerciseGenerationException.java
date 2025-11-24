@@ -1,8 +1,6 @@
 package org.acme.service;
 
-import jakarta.ws.rs.WebApplicationException;
-
-public class ExerciseGenerationException extends WebApplicationException {
+public class ExerciseGenerationException extends RuntimeException {
     public ExerciseGenerationException(String message, Throwable cause) {
         super();
     }

@@ -27,13 +27,12 @@ public class ExerciseCompiler {
 
     private final static Path tmpDirectory = Paths.get("").toAbsolutePath().resolve("tmpDirectory");
 
-    public boolean compile(Exercise generated) {
-        Objects.requireNonNull(generated);
+    public boolean compile(String program) {
+        Objects.requireNonNull(program);
         try {
             createTemporaryDirectory();
-            var testPath = createTemporaryFiles(generated.getUnitTests());
-            var solutionPath = createTemporaryFiles(generated.getSolution());
-            if (!compileCode(testPath) || !compileCode(solutionPath)) {
+            var programPath = createTemporaryFiles(program);
+            if (!compileCode(programPath)) {
                 System.out.println("Compilation failed, Exercise regeneration");
                 return false;
             }

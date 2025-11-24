@@ -36,9 +36,10 @@ public class TeacherExerciseGenerateResource {
         Objects.requireNonNull(prompt);
         Exercise finalExercise = null;
         int attempts = 0;
-        while (attempts <= 5) {
+        while (attempts <= 10) {
             finalExercise = llamaService.generateExercise(prompt.prompt());
-            if (finalExercise != null && exerciseCompiler.compile(finalExercise)) {
+            if (finalExercise != null && exerciseCompiler.compile(finalExercise.getUnitTests())
+                                    && exerciseCompiler.compile(finalExercise.getSolution())) {
                 return ExerciseMapper.convertToDTO(finalExercise);
             }
             attempts++;
