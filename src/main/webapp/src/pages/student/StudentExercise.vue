@@ -14,50 +14,91 @@
     </div>
 
     <div v-else-if="exercise">
-      <div v-if="mode === 'view'">
-        <div class="d-flex justify-content-end gap-2 mb-3">
-          <button @click="goBack" class="btn btn-primary me-auto bg-primary">
-            Retour
-          </button>
-        </div>
-        <div class="row g-4">
-            <div class="col-lg-4">
-              <div class="card shadow-sm mb-3">
-                <div class="card-header bg-primary text-white">
-                  <h5 class="mb-0">Caractéristiques</h5>
-                </div>
-                <div class="card-body">
-                  <div class="mb-3">
-                    <label class="form-label fw-bold text-light">Énoncé:</label>
-                    <p class="text-light">{{ exercise.description }}</p>
-                  </div>
+      <div class="d-flex justify-content-end gap-2 mb-3">
+        <button @click="goBack" class="btn btn-primary me-auto bg-primary">
+          Retour
+        </button>
+      </div>
 
-                  <div class="mb-3">
-                    <label class="form-label fw-bold text-light">Difficulté:</label>
-                    <p class="text-light">{{ exercise.difficulty }}</p>
-                  </div>
+      <div class="row g-4">
 
-                  <div class="mb-3">
-                    <label class="form-label fw-bold text-light">Concepts:</label>
-                    <ul class="list-unstyled">
-                      <li v-for="(concept, index) in exercise.concepts" :key="index" class="mb-1">
-                        <span class="badge bg-secondary">{{ concept }}</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+        <!-- Partie gauche : infos exercice -->
+        <div class="col-lg-4">
+          <div class="card shadow-sm mb-3">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0">Caractéristiques</h5>
             </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label fw-bold text-light">Énoncé :</label>
+                <p class="text-light">{{ exercise.description }}</p>
+              </div>
 
-            <div class="col-lg-8">
-              <div class="card shadow-sm mb-3">
-                <div class="card-body">
-                  <pre class="bg-light p-3 rounded"><code>{{ exercise.signatureAndBody }}</code></pre>
-                </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold text-light">Difficulté :</label>
+                <p class="text-light">{{ exercise.difficulty }}</p>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-bold text-light">Concepts :</label>
+                <ul class="list-unstyled">
+                  <li
+                    v-for="(concept, index) in exercise.concepts"
+                    :key="index"
+                    class="mb-1"
+                  >
+                    <span class="badge bg-secondary">{{ concept }}</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- Partie droite : code + tests -->
+        <div class="col-lg-8">
+
+          <!-- Signature -->
+          <div class="card shadow-sm mb-3">
+            <div class="card-body">
+              <pre class="bg-light p-3 rounded"><code>{{ exercise.signatureAndBody }}</code></pre>
+            </div>
+          </div>
+
+          <!-- Zone de code étudiant -->
+          <div class="card shadow-sm mb-3">
+            <div class="card-header bg-secondary text-white">
+              <h5 class="mb-0">Votre code</h5>
+            </div>
+            <div class="card-body">
+              <textarea
+                v-model="studentCode"
+                class="form-control font-monospace"
+                rows="12"
+                placeholder="Écrivez votre code Java ici..."
+              ></textarea>
+
+              <button
+                class="btn btn-success mt-3"
+                @click="runTests"
+              >
+                Lancer les tests
+              </button>
+            </div>
+          </div>
+
+          <!-- Résultats des tests -->
+          <div class="card shadow-sm" v-if="testResult !== null">
+            <div class="card-header bg-info text-white">
+              <h5 class="mb-0">Résultat des tests</h5>
+            </div>
+            <div class="card-body">
+              <pre class="bg-light p-3 rounded">{{ testResult }}</pre>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
 
     <div v-else class="alert alert-warning" role="alert">
@@ -73,21 +114,32 @@ import DecoBar from '../../components/DecoBar.vue'
 
 const route = useRoute()
 const router = useRouter()
+
 const exercise = ref<any>(null)
 const loading = ref(true)
-const mode = ref('view')
+
+const studentCode = ref("")
+const testResult = ref<string | null>(null)
+
+async function runTests() {
+  testResult.value = "Exécution des tests en cours..."
+
+  const res = await fetch(`/api/student/exercises/run-tests/${exercise.value.id}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code: studentCode.value })
+  })
+
+  const data = await res.text()
+  testResult.value = data
+}
 
 async function fetchExercise() {
   try {
     loading.value = true
     const id = route.params.id
     const res = await fetch(`/api/teacher/exercises/${id}`)
-    if (res.ok) {
-      const data = await res.json()
-      exercise.value = data
-    } else {
-      exercise.value = null
-    }
+    exercise.value = res.ok ? await res.json() : null
   } finally {
     loading.value = false
   }
@@ -110,23 +162,5 @@ pre {
   margin: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
-}
-
-code {
-  color: #212529;
-}
-
-.card {
-  border: none;
-}
-
-.card-header h5 {
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.badge {
-  font-size: 0.85rem;
-  padding: 0.4rem 0.8rem;
 }
 </style>
