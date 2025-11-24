@@ -76,7 +76,8 @@ public class TeacherExerciseResource {
         int attempts = 0;
         while (attempts <= 5) {
             modified = llamaService.modifyExercise(findExercise, prompt.modificationDescription());
-            if (modified != null && exerciseCompiler.compile(modified)) {
+            if (modified != null && exerciseCompiler.compile(modified.getUnitTests())
+                                && exerciseCompiler.compile(modified.getSolution())) {
                 modified.setId(id);
                 modified = em.merge(modified);
                 return ExerciseMapper.convertToDTO(modified);
