@@ -1,7 +1,6 @@
-package org.acme.mapper;
+package org.acme.exercise;
 
-import org.acme.dto.ExerciseDTO;
-import org.acme.model.Exercise;
+import org.acme.exercise.dto.ExerciseDTO;
 
 import java.util.Objects;
 

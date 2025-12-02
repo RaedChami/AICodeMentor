@@ -1,15 +1,10 @@
-package org.acme.resource;
+package org.acme.login;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import org.acme.dto.LoginDTO;
-import org.acme.dto.LoginRequestDTO;
-import org.acme.mapper.LoginMapper;
-import org.acme.model.Login;
-import org.acme.model.Role;
 
 import java.util.List;
 import java.util.Objects;

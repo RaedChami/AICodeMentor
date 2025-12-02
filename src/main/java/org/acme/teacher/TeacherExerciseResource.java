@@ -1,4 +1,4 @@
-package org.acme.resource.teacher;
+package org.acme.teacher;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.acme.dto.ExerciseDTO;
-import org.acme.dto.UserModifyPrompt;
-import org.acme.mapper.ExerciseMapper;
-import org.acme.model.Exercise;
-import org.acme.service.ExerciseCompiler;
-import org.acme.service.ExerciseGenerationException;
-import org.acme.service.LlamaService;
+import org.acme.exercise.dto.ExerciseDTO;
+import org.acme.exercise.dto.UserModifyPrompt;
+import org.acme.exercise.ExerciseMapper;
+import org.acme.exercise.Exercise;
+import org.acme.exercise.ExerciseCompiler;
+import org.acme.exercise.exception.ExerciseGenerationException;
+import org.acme.llm.LlamaService;
 
 @Path("/api/teacher/exercises")
 @Produces(MediaType.APPLICATION_JSON)

@@ -1,6 +1,7 @@
-package org.acme.model;
+package org.acme.exercise;
 
 import jakarta.persistence.*;
+
 import java.util.List;
 import java.util.Objects;
 

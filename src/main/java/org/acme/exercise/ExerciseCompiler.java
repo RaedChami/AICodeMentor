@@ -1,8 +1,7 @@
-package org.acme.service;
+package org.acme.exercise;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.acme.model.Exercise;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,8 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import javax.tools.ToolProvider;
-import org.junit.platform.launcher.Launcher;
-import org.junit.platform.launcher.LauncherDiscoveryRequest;
+
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.engine.discovery.DiscoverySelectors;

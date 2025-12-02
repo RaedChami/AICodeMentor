@@ -1,6 +1,4 @@
-package org.acme.dto;
-
-import org.acme.model.Role;
+package org.acme.login;
 
 import java.util.Objects;
 

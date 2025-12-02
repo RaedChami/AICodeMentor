@@ -1,9 +1,10 @@
-package org.acme.service;
+package org.acme.llm;
 
 import de.kherud.llama.LlamaModel;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.acme.model.Exercise;
+import org.acme.exercise.ExerciseParser;
+import org.acme.exercise.Exercise;
 
 import de.kherud.llama.ModelParameters;
 import de.kherud.llama.InferenceParameters;
@@ -15,11 +16,14 @@ public class LlamaService {
     @Inject
     ExerciseParser parser;
 
+    ModelParameters modelParams = new ModelParameters()
+            .setModel("models/qwen2.5-coder-3b-instruct-q4_k_m.gguf");
+
+// SetNparallel pour concurrence
+
     public Exercise generateExercise(String userDescription) {
         Objects.requireNonNull(userDescription);
-        var modelParams = new ModelParameters()
-                .setModel("models/qwen2.5-coder-3b-instruct-q4_k_m.gguf")
-                .setGpuLayers(0);
+
         try (var model = new LlamaModel(modelParams)) {
             var systemPrompt = getSystemPrompt();
             var userPrompt = String.format("""
@@ -28,9 +32,9 @@ public class LlamaService {
             """, userDescription);
             var fullPrompt = buildPrompt(systemPrompt, userPrompt);
             var inferParams = new InferenceParameters(fullPrompt)
-                    .setTemperature(0.2f)
+                    .setTemperature(0.4f)
                     .setStopStrings("<|im_end|>")
-                    .setNPredict(600);
+                    .setNPredict(1000);
             var answer = model.complete(inferParams);
             return parser.parse(answer);
         }
@@ -40,9 +44,6 @@ public class LlamaService {
         Objects.requireNonNull(existingExercise);
         Objects.requireNonNull(modificationDescription);
 
-        var modelParams = new ModelParameters()
-                .setModel("models/qwen2.5-coder-3b-instruct-q4_k_m.gguf")
-                .setGpuLayers(0);
         try (var model = new LlamaModel(modelParams)) {
             var systemPrompt = getSystemPrompt();
 
@@ -72,9 +73,10 @@ public class LlamaService {
 
             var fullPrompt = buildPrompt(systemPrompt, userPrompt);
             var inferParams = new InferenceParameters(fullPrompt)
-                    .setTemperature(0.2f)
+                    .setTemperature(0.4f)
                     .setStopStrings("<|im_end|>")
-                    .setNPredict(600);
+                    .setNPredict(1000);
+
             var answer = model.complete(inferParams);
             return parser.parse(answer);
         }
@@ -84,7 +86,6 @@ public class LlamaService {
         return """
             Vous êtes un expert en création d'exercices de programmation Java.
             Vous ne confondez pas les LISTES et les TABLEAUX.
-            La balise <SOLUTION> doit toujours se fermer.
             Vous devez OBLIGATOIREMENT et TOUJOURS structurer votre réponse avec ces balises exactes :
             
             <ENONCE>
@@ -92,7 +93,7 @@ public class LlamaService {
             </ENONCE>
             
             <DIFFICULTE>
-            Indiquez seulement le niveau académique de l'exercice : L1 ou L2 ou L3 ou M1 ou M2
+            Indiquez seulement le niveau académique de l'exercice parmi L1, L2, L3, M1, M2
             </DIFFICULTE>
             
             <CONCEPTS>

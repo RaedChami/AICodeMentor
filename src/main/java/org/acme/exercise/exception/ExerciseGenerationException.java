@@ -1,4 +1,4 @@
-package org.acme.service;
+package org.acme.exercise.exception;
 
 public class ExerciseGenerationException extends RuntimeException {
     public ExerciseGenerationException(String message, Throwable cause) {

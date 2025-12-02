@@ -1,4 +1,4 @@
-package org.acme.model;
+package org.acme.login;
 
 public enum Role {
     Student,

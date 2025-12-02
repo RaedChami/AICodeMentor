@@ -1,8 +1,6 @@
-package org.acme.service;
+package org.acme.exercise;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import org.acme.model.Difficulty;
-import org.acme.model.Exercise;
 
 import java.util.Arrays;
 import java.util.List;
