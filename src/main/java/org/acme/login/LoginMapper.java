@@ -1,9 +1,4 @@
-package org.acme.mapper;
-
-import org.acme.dto.ExerciseDTO;
-import org.acme.dto.LoginDTO;
-import org.acme.model.Exercise;
-import org.acme.model.Login;
+package org.acme.login;
 
 import java.util.Objects;
 

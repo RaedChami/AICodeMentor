@@ -1,7 +1,6 @@
-package org.acme.dto;
+package org.acme.exercise.dto;
 
-import org.acme.model.Difficulty;
-import org.acme.model.Exercise;
+import org.acme.exercise.Difficulty;
 
 import java.util.List;
 import java.util.Objects;

@@ -1,12 +1,12 @@
-package org.acme.resource.student;
+package org.acme.student;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.acme.model.Exercise;
-import org.acme.service.ExerciseCompiler;
+import org.acme.exercise.Exercise;
+import org.acme.exercise.ExerciseCompiler;
 
 @Path("/api/student/exercises")
 public class StudentSubmissionResource {

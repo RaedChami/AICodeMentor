@@ -1,4 +1,4 @@
-package org.acme.dto;
+package org.acme.exercise.dto;
 
 import java.util.Objects;
 

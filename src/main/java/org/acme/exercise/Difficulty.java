@@ -1,4 +1,4 @@
-package org.acme.model;
+package org.acme.exercise;
 
 public enum Difficulty {
     L1,

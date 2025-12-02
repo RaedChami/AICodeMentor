@@ -1,4 +1,4 @@
-package org.acme.resource.teacher;
+package org.acme.teacher;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -8,13 +8,13 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import org.acme.dto.ExerciseDTO;
-import org.acme.service.ExerciseGenerationException;
-import org.acme.service.LlamaService;
-import org.acme.mapper.ExerciseMapper;
-import org.acme.model.Exercise;
-import org.acme.dto.UserPrompt;
-import org.acme.service.ExerciseCompiler;
+import org.acme.exercise.dto.ExerciseDTO;
+import org.acme.exercise.exception.ExerciseGenerationException;
+import org.acme.llm.LlamaService;
+import org.acme.exercise.ExerciseMapper;
+import org.acme.exercise.Exercise;
+import org.acme.exercise.dto.UserPrompt;
+import org.acme.exercise.ExerciseCompiler;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -36,7 +36,7 @@ public class TeacherExerciseGenerateResource {
         Objects.requireNonNull(prompt);
         Exercise finalExercise = null;
         int attempts = 0;
-        while (attempts <= 10) {
+        while (attempts <= 100) {
             finalExercise = llamaService.generateExercise(prompt.prompt());
             if (finalExercise != null && exerciseCompiler.compile(finalExercise.getUnitTests())
                                     && exerciseCompiler.compile(finalExercise.getSolution())) {
