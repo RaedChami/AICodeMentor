@@ -6,13 +6,13 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.acme.exercise.Exercise;
-import org.acme.exercise.ExerciseCompiler;
+import org.acme.exercise.ExerciseRunJUnitTest;
 
 @Path("/api/student/exercises")
 public class StudentSubmissionResource {
 
     @Inject
-    ExerciseCompiler exerciseCompiler;
+    ExerciseRunJUnitTest exerciseRunJUnitTest;
 
     @Inject
     EntityManager em;
@@ -25,7 +25,7 @@ public class StudentSubmissionResource {
 
         Exercise exercise = em.find(Exercise.class, id);
 
-        String result = exerciseCompiler.runUnitTests(
+        String result = exerciseRunJUnitTest.runUnitTests(
                 request.code,
                 exercise.getUnitTests()
         );
