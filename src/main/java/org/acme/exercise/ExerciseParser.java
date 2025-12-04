@@ -1,6 +1,7 @@
 package org.acme.exercise;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import org.acme.exercise.exception.ExerciseGenerationException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +20,7 @@ public class ExerciseParser {
     private static final Pattern solutionPattern = Pattern.compile("<SOLUTION>(.*)</SOLUTION>",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
-    public Exercise parse(String answer) {
+    public Optional<Exercise> parse(String answer) throws ExerciseGenerationException {
         Objects.requireNonNull(answer);
         var description = matchPattern(answer, enoncePattern);
         var difficulty = matchDifficultyPattern(answer);
@@ -30,27 +31,23 @@ public class ExerciseParser {
 
         if (description.isEmpty() || difficulty.isEmpty() || concepts.isEmpty() || signatureAndBody.isEmpty()
                 || unitTests.isEmpty() || solution.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
-        return new Exercise(
-                description.get(),
-                difficulty.get(),
-                concepts.get(),
-                signatureAndBody.get(),
-                unitTests.get(),
-                solution.get()
-        );
+        return Optional.of(new Exercise(
+                description.orElseThrow(),
+                difficulty.orElseThrow(),
+                concepts.orElseThrow(),
+                signatureAndBody.orElseThrow(),
+                unitTests.orElseThrow(),
+                solution.orElseThrow()
+        ));
     }
 
-    private Optional<Difficulty> matchDifficultyPattern(String answer) {
+    private Optional<Difficulty> matchDifficultyPattern(String answer) throws ExerciseGenerationException {
         Objects.requireNonNull(answer);
         var checkDifficulty = matchPattern(answer, difficultyPattern);
         if (checkDifficulty.isPresent()) {
-            try {
-                return Optional.of(Difficulty.valueOf(checkDifficulty.get().toUpperCase().trim()));
-            } catch (IllegalArgumentException e) {
-                return Optional.empty();
-            }
+            return Optional.of(Difficulty.valueOf(checkDifficulty.orElseThrow().toUpperCase().trim()));
         }
         return Optional.empty();
     }

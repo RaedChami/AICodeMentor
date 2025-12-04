@@ -18,6 +18,7 @@ import org.acme.exercise.ExerciseCompiler;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 @Path("/api/teacher/generate")
 @Produces(MediaType.APPLICATION_JSON)
@@ -31,20 +32,39 @@ public class TeacherExerciseGenerateResource {
     @Inject
     ExerciseCompiler exerciseCompiler;
 
+    /**
+     *
+     * @param prompt Entered by the user on the web
+     * @return DTO of the generated exercise
+     * @throws ExerciseGenerationException if generation failed more than 10 times
+     */
     @POST
-    public ExerciseDTO generate(UserPrompt prompt) throws IOException {
+    public ExerciseDTO generate(UserPrompt prompt) throws ExerciseGenerationException {
         Objects.requireNonNull(prompt);
-        Exercise finalExercise = null;
         int attempts = 0;
+        var finalExercise = llamaService.generateExercise(prompt.prompt());
         while (attempts <= 100) {
-            finalExercise = llamaService.generateExercise(prompt.prompt());
-            if (finalExercise != null && exerciseCompiler.compile(finalExercise.getUnitTests())
-                                    && exerciseCompiler.compile(finalExercise.getSolution())) {
-                return ExerciseMapper.convertToDTO(finalExercise);
+            if (finalExercise.isEmpty()) {
+                finalExercise = llamaService.generateExercise(prompt.prompt());
+                attempts++;
+                continue;
             }
+            var exercise = finalExercise.orElseThrow();
+            try {
+                if (exerciseCompiler.compile(exercise)) {
+                    return ExerciseMapper.convertToDTO(exercise);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            finalExercise = llamaService.modifyExercise(exercise,
+                    "L'exercice ne compile pas. Corrigez les erreurs de compilation en vous assurant que :\n" +
+                            "1. Les imports sont corrects (notamment java.util.Arrays; si utilisé)\n" +
+                            "2. La classe Solution est bien définie\n" +
+                            "3. Les tests utilisent correctement la classe Solution\n");
             attempts++;
         }
-        throw new ExerciseGenerationException("Impossible de générer un exercise valide après 5 tentatives");
+        throw new ExerciseGenerationException("Error generating an exercise after 10 attempts.");
     }
 
     @POST

@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -63,7 +64,7 @@ public class TeacherExerciseResource {
     @Path("/{id}/modify")
     @PUT
     @Transactional
-    public ExerciseDTO modify(@PathParam("id") long id, UserModifyPrompt prompt) {
+    public ExerciseDTO modify(@PathParam("id") long id, UserModifyPrompt prompt) throws ExerciseGenerationException, IOException {
         Objects.requireNonNull(prompt);
         if (id < 0) {
             throw new IllegalArgumentException("exercise ID is < 0");
@@ -72,15 +73,15 @@ public class TeacherExerciseResource {
         if (findExercise == null) {
             throw new NotFoundException("exercise ID not found");
         }
-        Exercise modified = null;
         int attempts = 0;
         while (attempts <= 5) {
-            modified = llamaService.modifyExercise(findExercise, prompt.modificationDescription());
-            if (modified != null && exerciseCompiler.compile(modified.getUnitTests())
-                                && exerciseCompiler.compile(modified.getSolution())) {
-                modified.setId(id);
-                modified = em.merge(modified);
-                return ExerciseMapper.convertToDTO(modified);
+            var modified = llamaService.modifyExercise(findExercise, prompt.modificationDescription());
+            if (modified.isPresent()) {
+                var exercise = modified.orElseThrow();
+                if (exerciseCompiler.compile(exercise)) {
+                    exercise.setId(id);
+                    return ExerciseMapper.convertToDTO(em.merge(exercise));
+                }
             }
             attempts++;
         }

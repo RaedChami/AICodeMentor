@@ -8,7 +8,10 @@ import org.acme.exercise.Exercise;
 
 import de.kherud.llama.ModelParameters;
 import de.kherud.llama.InferenceParameters;
+import org.acme.exercise.exception.ExerciseGenerationException;
+
 import java.util.Objects;
+import java.util.Optional;
 
 @ApplicationScoped
 public class LlamaService {
@@ -21,7 +24,7 @@ public class LlamaService {
 
 // SetNparallel pour concurrence
 
-    public Exercise generateExercise(String userDescription) {
+    public Optional<Exercise> generateExercise(String userDescription) throws ExerciseGenerationException {
         Objects.requireNonNull(userDescription);
 
         try (var model = new LlamaModel(modelParams)) {
@@ -32,15 +35,17 @@ public class LlamaService {
             """, userDescription);
             var fullPrompt = buildPrompt(systemPrompt, userPrompt);
             var inferParams = new InferenceParameters(fullPrompt)
-                    .setTemperature(0.4f)
+                    .setTemperature(0.1f)
                     .setStopStrings("<|im_end|>")
-                    .setNPredict(1000);
+                    .setNPredict(1024);
+
             var answer = model.complete(inferParams);
+            System.out.println(answer);
             return parser.parse(answer);
         }
     }
 
-    public Exercise modifyExercise(Exercise existingExercise, String modificationDescription) {
+    public Optional<Exercise> modifyExercise(Exercise existingExercise, String modificationDescription) {
         Objects.requireNonNull(existingExercise);
         Objects.requireNonNull(modificationDescription);
 
@@ -73,65 +78,73 @@ public class LlamaService {
 
             var fullPrompt = buildPrompt(systemPrompt, userPrompt);
             var inferParams = new InferenceParameters(fullPrompt)
-                    .setTemperature(0.4f)
+                    .setTemperature(0.1f)
                     .setStopStrings("<|im_end|>")
-                    .setNPredict(1000);
+                    .setNPredict(1024);
 
             var answer = model.complete(inferParams);
+            System.out.println(answer);
             return parser.parse(answer);
         }
     }
 
     private String getSystemPrompt() {
         return """
-            Vous êtes un expert en création d'exercices de programmation Java.
-            Vous ne confondez pas les LISTES et les TABLEAUX.
-            Vous devez OBLIGATOIREMENT et TOUJOURS structurer votre réponse avec ces balises exactes :
-            
-            <ENONCE>
-            Rédigez un énoncé avec TOUJOURS des exemples d'entrée/sortie (ne pas inclure de code)
-            </ENONCE>
-            
-            <DIFFICULTE>
-            Indiquez seulement le niveau académique de l'exercice parmi L1, L2, L3, M1, M2
-            </DIFFICULTE>
-            
-            <CONCEPTS>
-            Listez les concepts à utiliser pour l'exercice, séparés par des virgules (ex: boucles, tableaux, récursivité)
-            </CONCEPTS>
-            
-            <SIGNATURE>
-            Écrivez la signature de la méthode à implémenter pour l'exercice (ne pas inclure de code entier à l'exception des noms de méthodes/classe)
-            -Exemple de structure à respecter STRICTEMENT:
-            public String printHelloWorld()
-            </SIGNATURE>
-            
-            <TESTS>
-            Écrivez une classe contenant les tests JUnit 5 complets sans oublier les imports de librairie.
-            -Structure à respecter STRICTEMENT:
-            package com.exercice.solution;
-            
-            import org.junit.jupiter.api.Test;
-            import static org.junit.jupiter.api.Assertions.*;
-            
-            public class SolutionTest {
-                @Test
-                public void test1() {
+                Vous êtes un expert en création d'exercices de programmation Java.
+                Vous ne confondez pas les ARRAYLISTS et les ARRAYS.
+                La balise <SOLUTION> doit toujours se fermer.
+                Vérifiez la COHÉRENCE entre signature, tests et solution
+                Vous devez OBLIGATOIREMENT et TOUJOURS structurer votre réponse avec ces balises exactes :
+                
+                <ENONCE>
+                Rédigez un énoncé avec TOUJOURS des exemples d'entrée/sortie (ne pas inclure de code)
+                </ENONCE>
+                
+                <DIFFICULTE>
+                Indiquez seulement le niveau académique de l'exercice : L1 ou L2 ou L3 ou M1 ou M2
+                </DIFFICULTE>
+                
+                <CONCEPTS>
+                Listez les concepts à utiliser pour l'exercice, séparés par des virgules (ex: boucles, tableaux, récursivité)
+                </CONCEPTS>
+                
+                <SIGNATURE>
+                Écrivez la signature de la méthode à implémenter pour l'exercice (ne pas inclure de code entier à l'exception des noms de méthodes/classe)
+                EXEMPLE:
+                public class Solution {
+                    public String printHelloWorld() {
+
+                    }
+                }
+                </SIGNATURE>
+                
+                <TESTS>
+                Écrivez une classe contenant les tests JUnit 5 complets sans oublier les imports de librairie.
+                TOUJOURS importer java.util.Arrays;java.util.List;java.util.ArrayList; si le code utilise List ou Arrays
+                EXEMPLE:
+                import org.junit.jupiter.api.Test;
+                import static org.junit.jupiter.api.Assertions.*;
+                
+                public class SolutionTest {
+                    @Test
+                    public void test1() {
+                        Solution solution = new Solution();
+                        // TODO
+                    }
+                }
+                </TESTS>
+                
+                <SOLUTION>
+                Écrivez une classe contenant solution complète de l'exercice.
+                TOUJOURS importer java.util.Arrays;java.util.List;java.util.ArrayList; si le code utilise List ou Arrays
+                import java.util.List;
+                import java.util.Arrays;
+                EXEMPLE:
+                public class Solution {
                     // TODO
                 }
-            }
-            </TESTS>
-            
-            <SOLUTION>
-            Écrivez une classe contenant solution complète de l'exercice sans oublier les éventuels imports de librairie.
-            -Structure à respecter STRICTEMENT:
-            package com.exercice.solution;
-            
-            public class Solution {
-                // TODO
-            }
-            </SOLUTION>
-            """;
+                </SOLUTION>
+                """;
     }
 
     private String buildPrompt(String systemPrompt, String userPrompt) {
