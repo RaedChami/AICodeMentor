@@ -8,6 +8,8 @@ import jakarta.ws.rs.core.Response;
 import org.acme.exercise.Exercise;
 import org.acme.exercise.ExerciseRunJUnitTest;
 
+import java.io.IOException;
+
 @Path("/api/student/exercises")
 public class StudentSubmissionResource {
 
@@ -21,7 +23,7 @@ public class StudentSubmissionResource {
     @Path("/run-tests/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response runTests(@PathParam("id") long id, CompileRequest request) {
+    public Response runTests(@PathParam("id") long id, CompileRequest request) throws IOException {
 
         Exercise exercise = em.find(Exercise.class, id);
 

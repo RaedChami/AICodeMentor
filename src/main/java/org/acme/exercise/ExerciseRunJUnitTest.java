@@ -25,24 +25,9 @@ public class ExerciseRunJUnitTest {
     @Inject
     ExerciseCompiler exerciseCompiler;
     private final static Path tmpDirectory = Paths.get("").toAbsolutePath().resolve("tmpDirectory");
-    public String runUnitTests(String studentCode, String testCode) {
-        exerciseCompiler.createTemporaryDirectory();
-
-        Path studentFile = exerciseCompiler.createTemporaryFiles(studentCode);
-        Path testFile = exerciseCompiler.createTemporaryFiles(testCode);
-
-        var compiler = ToolProvider.getSystemJavaCompiler();
-        var compileResult = compiler.run(
-                null, null, null,
-                studentFile.toString(),
-                testFile.toString()
-        );
-
-        if (compileResult != 0) {
-            exerciseCompiler.cleanDirectory();
-            return "Erreur de compilation.\n";
-        }
-
+    public String runUnitTests(String studentCode, String testCode) throws IOException {
+        Objects.requireNonNull(studentCode);
+        Objects.requireNonNull(testCode);
         try {
             URLClassLoader classLoader = new URLClassLoader(
                     new URL[]{tmpDirectory.toUri().toURL()},

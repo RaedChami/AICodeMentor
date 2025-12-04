@@ -46,7 +46,7 @@ public class ExerciseCompiler {
         Files.writeString(fileDirectory, program);
     }
 
-    public boolean compilePrograms(Path directory) {
+    private boolean compilePrograms(Path directory) {
         Objects.requireNonNull(directory);
         System.out.println("ARGUMENTS " + files);
         var compiler = ToolProvider.getSystemJavaCompiler();
