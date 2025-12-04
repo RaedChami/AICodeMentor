@@ -47,6 +47,7 @@ public class TeacherExerciseGenerateResource {
             if (finalExercise.isEmpty()) {
                 finalExercise = llamaService.generateExercise(prompt.prompt());
                 attempts++;
+                System.out.println("GENERATION FAILED");
                 continue;
             }
             var exercise = finalExercise.orElseThrow();
@@ -54,6 +55,7 @@ public class TeacherExerciseGenerateResource {
                 if (exerciseCompiler.compile(exercise)) {
                     return ExerciseMapper.convertToDTO(exercise);
                 }
+                System.out.println("COMPILATION FAILED");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
