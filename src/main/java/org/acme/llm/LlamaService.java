@@ -1,9 +1,12 @@
 package org.acme.llm;
 
 import de.kherud.llama.LlamaModel;
+import io.quarkus.runtime.Startup;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.acme.exercise.ExerciseParser;
+import org.acme.exercise.service.ExerciseParser;
 import org.acme.exercise.Exercise;
 
 import de.kherud.llama.ModelParameters;
@@ -13,36 +16,48 @@ import org.acme.exercise.exception.ExerciseGenerationException;
 import java.util.Objects;
 import java.util.Optional;
 
+@Startup
 @ApplicationScoped
 public class LlamaService {
 
+    private final ExerciseParser parser;
     @Inject
-    ExerciseParser parser;
+    LlamaService(ExerciseParser parser) {
+        this.parser = Objects.requireNonNull(parser);
+    }
 
-    ModelParameters modelParams = new ModelParameters()
+    private LlamaModel model;
+    private final ModelParameters modelParams = new ModelParameters()
             .setModel("models/qwen2.5-coder-3b-instruct-q4_k_m.gguf");
 
 // SetNparallel pour concurrence
 
+    @PostConstruct
+    void init() {
+        this.model = new LlamaModel(modelParams);
+    }
+
+    @PreDestroy
+    void destroy() {
+        this.model.close();
+    }
+
     public Optional<Exercise> generateExercise(String userDescription) throws ExerciseGenerationException {
         Objects.requireNonNull(userDescription);
+        var systemPrompt = getSystemPrompt();
+        var userPrompt = String.format("""
+        Créez un exercice de programmation Java complet pour : %s
+        Respectez STRICTEMENT le format avec les balises demandées.
+        """, userDescription);
+        var fullPrompt = buildPrompt(systemPrompt, userPrompt);
+        var inferParams = new InferenceParameters(fullPrompt)
+                .setTemperature(0.1f)
+                .setStopStrings("<|im_end|>")
+                .setNPredict(1024);
 
-        try (var model = new LlamaModel(modelParams)) {
-            var systemPrompt = getSystemPrompt();
-            var userPrompt = String.format("""
-            Créez un exercice de programmation Java complet pour : %s
-            Respectez STRICTEMENT le format avec les balises demandées.
-            """, userDescription);
-            var fullPrompt = buildPrompt(systemPrompt, userPrompt);
-            var inferParams = new InferenceParameters(fullPrompt)
-                    .setTemperature(0.1f)
-                    .setStopStrings("<|im_end|>")
-                    .setNPredict(1024);
-
-            var answer = model.complete(inferParams);
-            System.out.println(answer);
-            return parser.parse(answer);
-        }
+        var answer = model.complete(inferParams);
+        System.out.println(answer);
+        return parser.parse(answer);
     }
 
     public Optional<Exercise> modifyExercise(Exercise existingExercise, String modificationDescription) {
@@ -124,7 +139,9 @@ public class LlamaService {
                 EXEMPLE:
                 import org.junit.jupiter.api.Test;
                 import static org.junit.jupiter.api.Assertions.*;
-                
+                import java.util.List;
+                import java.util.Arrays;
+                import java.util.ArrayList;
                 public class SolutionTest {
                     @Test
                     public void test1() {
@@ -137,13 +154,15 @@ public class LlamaService {
                 <SOLUTION>
                 Écrivez une classe contenant solution complète de l'exercice.
                 TOUJOURS importer java.util.Arrays;java.util.List;java.util.ArrayList; si le code utilise List ou Arrays
+                EXEMPLE:
                 import java.util.List;
                 import java.util.Arrays;
-                EXEMPLE:
+                import java.util.ArrayList;
                 public class Solution {
                     // TODO
                 }
                 </SOLUTION>
+                
                 """;
     }
 

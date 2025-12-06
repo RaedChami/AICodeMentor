@@ -1,7 +1,8 @@
-package org.acme.exercise;
+package org.acme.exercise.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.acme.exercise.Exercise;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,18 +11,27 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.tools.ToolProvider;
 
 @ApplicationScoped
 public class ExerciseCompiler {
 
+    private final ExerciseParser exerciseParser;
     @Inject
-    ExerciseParser exerciseParser;
+    ExerciseCompiler(ExerciseParser exerciseParser) {
+        this.exerciseParser = Objects.requireNonNull(exerciseParser);
+    }
 
     private final static Path tmpDirectory = Paths.get("").toAbsolutePath().resolve("tmpDirectory");
-    private final List<String> files = new ArrayList<>();
+    private List<String> files = new ArrayList<>();
 
+    /**
+     * Creates the conditions for compilation of the JUnit tests
+     * and the solution class of an exercise
+     * @param exercise an exercise to be compiled
+     * @return result of compilation
+     * @throws IOException exception thrown by writing in files
+     */
     public boolean compile(Exercise exercise) throws IOException {
         Objects.requireNonNull(exercise);
         try {
@@ -30,7 +40,7 @@ public class ExerciseCompiler {
             createTemporaryFiles(exercise.getSolution());
             return compilePrograms(directory);
         } finally {
-            files.clear();
+            files = new ArrayList<>();
             cleanDirectory();
         }
     }
@@ -46,9 +56,13 @@ public class ExerciseCompiler {
         Files.writeString(fileDirectory, program);
     }
 
+    /**
+     * Compiles programs in a directory
+     * @param directory temporary directory for compilation
+     * @return true if compilation success, otherwise false
+     */
     private boolean compilePrograms(Path directory) {
         Objects.requireNonNull(directory);
-        System.out.println("ARGUMENTS " + files);
         var compiler = ToolProvider.getSystemJavaCompiler();
         var result = compiler.run(null, null, null, files.toArray(String[]::new));
         System.out.println(result);

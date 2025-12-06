@@ -12,25 +12,26 @@ import org.acme.exercise.dto.ExerciseDTO;
 import org.acme.exercise.exception.ExerciseGenerationException;
 import org.acme.llm.LlamaService;
 import org.acme.exercise.ExerciseMapper;
-import org.acme.exercise.Exercise;
 import org.acme.exercise.dto.UserPrompt;
-import org.acme.exercise.ExerciseCompiler;
+import org.acme.exercise.service.ExerciseCompiler;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
 
 @Path("/api/teacher/generate")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TeacherExerciseGenerateResource {
 
+    private final EntityManager entityManager;
+    private final LlamaService llamaService;
+    private final ExerciseCompiler exerciseCompiler;
     @Inject
-    EntityManager em;
-    @Inject
-    LlamaService llamaService;
-    @Inject
-    ExerciseCompiler exerciseCompiler;
+    TeacherExerciseGenerateResource(EntityManager entityManager, LlamaService llamaService, ExerciseCompiler exerciseCompiler) {
+        this.entityManager = Objects.requireNonNull(entityManager);
+        this.llamaService = Objects.requireNonNull(llamaService);
+        this.exerciseCompiler = Objects.requireNonNull(exerciseCompiler);
+    }
 
     /**
      *
@@ -39,31 +40,27 @@ public class TeacherExerciseGenerateResource {
      * @throws ExerciseGenerationException if generation failed more than 10 times
      */
     @POST
-    public ExerciseDTO generate(UserPrompt prompt) throws ExerciseGenerationException {
+    public ExerciseDTO generate(UserPrompt prompt) throws ExerciseGenerationException, IOException {
         Objects.requireNonNull(prompt);
         int attempts = 0;
         var finalExercise = llamaService.generateExercise(prompt.prompt());
         while (attempts <= 100) {
-            if (finalExercise.isEmpty()) {
+            if (finalExercise.isEmpty()) { // Format error in LLM answer, so regenerate exercise
                 finalExercise = llamaService.generateExercise(prompt.prompt());
                 attempts++;
                 System.out.println("GENERATION FAILED");
                 continue;
             }
             var exercise = finalExercise.orElseThrow();
-            try {
-                if (exerciseCompiler.compile(exercise)) {
-                    return ExerciseMapper.convertToDTO(exercise);
-                }
-                System.out.println("COMPILATION FAILED");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (exerciseCompiler.compile(exercise)) {
+                return ExerciseMapper.convertToDTO(exercise);
             }
+            System.out.println("COMPILATION FAILED");
             finalExercise = llamaService.modifyExercise(exercise,
-                    "L'exercice ne compile pas. Corrigez les erreurs de compilation en vous assurant que :\n" +
-                            "1. Les imports sont corrects (notamment java.util.Arrays; si utilisé)\n" +
-                            "2. La classe Solution est bien définie\n" +
-                            "3. Les tests utilisent correctement la classe Solution\n");
+                    "L'exercice ne compile pas. CORRIGEZ les erreurs de compilation en vous assurant que :" +
+                            "1. Les imports sont corrects (notamment java.util.Arrays; si utilisé)" +
+                            "2. La classe Solution est bien définie" +
+                            "3. Les tests utilisent correctement la classe Solution");
             attempts++;
         }
         throw new ExerciseGenerationException("Error generating an exercise after 10 attempts.");
@@ -72,10 +69,10 @@ public class TeacherExerciseGenerateResource {
     @POST
     @Transactional
     @Path("/save")
-    public ExerciseDTO save(ExerciseDTO dtoExercise) {
+    public ExerciseDTO save(ExerciseDTO dtoExercise) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(dtoExercise);
         var exercise = ExerciseMapper.convertToEntity(dtoExercise);
-        em.persist(exercise);
+        entityManager.persist(exercise);
         return ExerciseMapper.convertToDTO(exercise);
     }
 
