@@ -27,7 +27,7 @@
         <p class="text-muted">Veuillez patienter, cela peut prendre quelques minutes.</p>
       </div>
 
-      <div v-if="mode === 'result'" class="content-container">
+      <div v-if="mode === 'result'" class="content-container mode-result">
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
           <h1 style="font-size: 2em; margin-bottom: 0;">Exercice généré</h1>
           <div class="d-flex gap-2 flex-wrap">
@@ -44,8 +44,8 @@
         </div>
 
         <div class="row g-4">
-          <div class="col-lg-4">
-            <div class="card shadow-sm border-0 mb-4">
+          <div class="col-lg-4 col-xl-3">
+            <div class="card shadow-sm border-0 mb-4 sticky-sidebar">
               <div class="card-header bg-primary text-white py-3">
                 <h5 class="mb-0">Caractéristiques</h5>
               </div>
@@ -76,7 +76,7 @@
             </div>
           </div>
 
-          <div class="col-lg-8">
+          <div class="col-lg-8 col-xl-9">
             <div class="card shadow-sm border-0 mb-4" v-if="generatedExercise.signatureAndBody">
               <div class="card-header bg-success text-white py-3">
                 <h5 class="mb-0">Signature & Corps</h5>
@@ -185,8 +185,14 @@ function revise() {
   border-radius: 8px;
 }
 
-.mode-result .content-container {
+.content-container.mode-result {
   max-width: 1400px;
+}
+
+.sticky-sidebar {
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
 }
 
 h1 {

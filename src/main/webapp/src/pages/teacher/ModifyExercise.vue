@@ -102,7 +102,6 @@
             </h5>
             <p class="mb-0">
               Décrivez les modifications que vous souhaitez apporter à cet exercice.
-              L'IA va régénérer l'exercice complet en tenant compte de vos instructions.
             </p>
           </div>
 
@@ -118,7 +117,7 @@
                     class="form-control"
                     :class="{ 'is-invalid': !modificationDescription?.trim() && showErrors }"
                     rows="6"
-                    placeholder="Exemple : Augmenter la difficulté à L3, ajouter un test pour les cas limites, modifier l'énoncé pour inclure des exemples avec des nombres négatifs..."
+                    placeholder="Exemple : Changer la difficulté de l'exercice, ajouter un test unitaire à la classe de tests, utiliser un stream pour la solution..."
                     required
                   ></textarea>
                   <div class="invalid-feedback">
@@ -135,14 +134,18 @@
                 </div>
                 <div class="card-body">
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-6 text-white">
                       <p><strong>Énoncé:</strong> {{ exercise.description }}</p>
                       <p><strong>Difficulté:</strong> {{ exercise.difficulty }}</p>
                       <p><strong>Concepts:</strong> {{ exercise.concepts?.join(', ') }}</p>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 text-white">
                       <p><strong>Signature:</strong></p>
-                      <pre class="small bg-white p-2 rounded"><code>{{ exercise.signatureAndBody?.substring(0, 200) }}...</code></pre>
+                      <pre class="small bg-white p-2 rounded"><code>{{ exercise.signatureAndBody?.substring(0, 200) }}</code></pre>
+                      <p><strong>Tests Unitaires:</strong></p>
+                      <pre class="small bg-white p-2 rounded"><code>{{ exercise.unitTests?.substring(0, 200) }}</code></pre>
+                      <p><strong>Solution:</strong></p>
+                      <pre class="small bg-white p-2 rounded"><code>{{ exercise.solution?.substring(0, 200) }}</code></pre>
                     </div>
                   </div>
                 </div>

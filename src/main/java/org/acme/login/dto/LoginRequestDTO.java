@@ -1,4 +1,4 @@
-package org.acme.login;
+package org.acme.login.dto;
 
 import java.util.Objects;
 

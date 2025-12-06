@@ -18,7 +18,7 @@ public class ExerciseMapper {
         );
     }
 
-    public static Exercise convertToEntity(ExerciseDTO exerciseDTO) {
+    public static Exercise convertToEntity(ExerciseDTO exerciseDTO) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(exerciseDTO);
         var exercise =  new Exercise(
                 exerciseDTO.description(),
@@ -29,13 +29,9 @@ public class ExerciseMapper {
                 exerciseDTO.solution()
         );
         if (exerciseDTO.id() != null) {
-            try {
-                var idField = Exercise.class.getDeclaredField("id");
-                idField.setAccessible(true);
-                idField.set(exercise, exerciseDTO.id());
-            } catch (Exception e) {
-                throw new RuntimeException("Cannot set exercise ID", e);
-            }
+            var idField = Exercise.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(exercise, exerciseDTO.id());
         }
 
         return exercise;

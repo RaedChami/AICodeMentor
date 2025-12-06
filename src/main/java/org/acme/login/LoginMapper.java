@@ -1,5 +1,7 @@
 package org.acme.login;
 
+import org.acme.login.dto.LoginDTO;
+
 import java.util.Objects;
 
 public class LoginMapper {

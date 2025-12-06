@@ -1,7 +1,8 @@
-package org.acme.exercise;
+package org.acme.exercise.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import org.acme.exercise.exception.ExerciseGenerationException;
+import org.acme.exercise.Difficulty;
+import org.acme.exercise.Exercise;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +21,12 @@ public class ExerciseParser {
     private static final Pattern solutionPattern = Pattern.compile("<SOLUTION>(.*)</SOLUTION>",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
-    public Optional<Exercise> parse(String answer) throws ExerciseGenerationException {
+    /**
+     * Parses the answer of the LLM
+     * @param answer LLM exercise response
+     * @return Parsed exercise
+     */
+    public Optional<Exercise> parse(String answer) {
         Objects.requireNonNull(answer);
         var description = matchPattern(answer, enoncePattern);
         var difficulty = matchDifficultyPattern(answer);
@@ -43,7 +49,7 @@ public class ExerciseParser {
         ));
     }
 
-    private Optional<Difficulty> matchDifficultyPattern(String answer) throws ExerciseGenerationException {
+    private Optional<Difficulty> matchDifficultyPattern(String answer) {
         Objects.requireNonNull(answer);
         var checkDifficulty = matchPattern(answer, difficultyPattern);
         if (checkDifficulty.isPresent()) {
@@ -76,7 +82,7 @@ public class ExerciseParser {
 
     public String getClassName(String code) {
         Objects.requireNonNull(code);
-        return matchPattern(code, classPattern).map(name -> name + ".java").orElse(null);
+        return matchPattern(code, classPattern).map(name -> name + ".java").orElseThrow();
     }
 
 }

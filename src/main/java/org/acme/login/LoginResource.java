@@ -5,6 +5,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.acme.login.dto.LoginDTO;
+import org.acme.login.dto.LoginRequestDTO;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +18,7 @@ import java.util.Optional;
 public class LoginResource {
 
     @Inject
-    EntityManager em;
+    EntityManager entityManager;
 
     @POST
     @Transactional
@@ -49,7 +51,7 @@ public class LoginResource {
     private Optional<Login> findExistingLogin(String name, String lastName) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(lastName);
-        var existing = em.createQuery(
+        var existing = entityManager.createQuery(
                         "SELECT l FROM Login l WHERE l.name = :name AND l.lastName = :lastName",
                         Login.class
                 )
@@ -65,7 +67,7 @@ public class LoginResource {
         Objects.requireNonNull(newRole);
         if (existingLogin.getRole() != newRole) {
             existingLogin.setRole(newRole);
-            em.merge(existingLogin);
+            entityManager.merge(existingLogin);
         }
         return LoginMapper.convertToDTO(existingLogin);
     }
@@ -73,7 +75,7 @@ public class LoginResource {
     private LoginDTO createNewLogin(LoginDTO login) {
         Objects.requireNonNull(login);
         var entity = LoginMapper.convertToEntity(login);
-        em.persist(entity);
+        entityManager.persist(entity);
         return LoginMapper.convertToDTO(entity);
     }
 
@@ -81,7 +83,7 @@ public class LoginResource {
     public List<Login> get(@QueryParam("name") String name, @QueryParam("lastName") String lastName) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(lastName);
-        return em.createQuery(
+        return entityManager.createQuery(
                         "SELECT l FROM Login l WHERE l.name = :name AND l.lastName = :lastName",
                         Login.class
                 )
@@ -98,9 +100,9 @@ public class LoginResource {
             throw new IllegalArgumentException("id < 0");
         }
 
-        Login login = em.find(Login.class, id);
+        Login login = entityManager.find(Login.class, id);
         if (login != null) {
-            em.remove(login);
+            entityManager.remove(login);
         } else {
             throw new NotFoundException("Login with id " + id + " not found");
         }

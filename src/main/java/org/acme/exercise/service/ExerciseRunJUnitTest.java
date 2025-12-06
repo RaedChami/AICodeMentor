@@ -1,4 +1,4 @@
-package org.acme.exercise;
+package org.acme.exercise.service;
 
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -7,11 +7,9 @@ import jakarta.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
-import javax.tools.ToolProvider;
 
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
@@ -20,10 +18,15 @@ import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 
 @ApplicationScoped
 public class ExerciseRunJUnitTest {
+
+    private final ExerciseParser exerciseParser;
+    private final ExerciseCompiler exerciseCompiler;
     @Inject
-    ExerciseParser exerciseParser;
-    @Inject
-    ExerciseCompiler exerciseCompiler;
+    ExerciseRunJUnitTest(ExerciseParser exerciseParser, ExerciseCompiler exerciseCompiler) {
+        this.exerciseParser = Objects.requireNonNull(exerciseParser);
+        this.exerciseCompiler = Objects.requireNonNull(exerciseCompiler);
+    }
+
     private final static Path tmpDirectory = Paths.get("").toAbsolutePath().resolve("tmpDirectory");
     public String runUnitTests(String studentCode, String testCode) throws IOException {
         Objects.requireNonNull(studentCode);
