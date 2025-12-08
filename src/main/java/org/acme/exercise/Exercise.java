@@ -73,8 +73,8 @@ public class Exercise {
     }
 
     public void setId(Long id) {
-        if (id < 0) {
-            throw new IllegalArgumentException("id < 0");
+        if (id <= 0) {
+            throw new IllegalArgumentException("id is inferior or equal to zero");
         }
         this.id = id;
     }

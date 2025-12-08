@@ -12,13 +12,13 @@ import java.util.regex.Pattern;
 
 @ApplicationScoped
 public class ExerciseParser {
-    private static final Pattern classPattern = Pattern.compile("class (.*)\\{");
-    private static final Pattern enoncePattern = Pattern.compile("<ENONCE>(.*)</ENONCE>", Pattern.DOTALL);
-    private static final Pattern difficultyPattern = Pattern.compile("<DIFFICULTE>(.*)</DIFFICULTE>", Pattern.DOTALL);
-    private static final Pattern conceptsPattern = Pattern.compile("<CONCEPTS>(.*)</CONCEPTS>", Pattern.DOTALL);
-    private static final Pattern signatureBodyPattern = Pattern.compile("<SIGNATURE>(.*)</SIGNATURE>", Pattern.DOTALL);
-    private static final Pattern testsPattern = Pattern.compile("<TESTS>(.*)</TESTS>", Pattern.DOTALL);
-    private static final Pattern solutionPattern = Pattern.compile("<SOLUTION>(.*)</SOLUTION>",
+    private final static Pattern classPattern = Pattern.compile("class (.*)\\{");
+    private final static Pattern enoncePattern = Pattern.compile("<ENONCE>(.*)</ENONCE>", Pattern.DOTALL);
+    private final static Pattern difficultyPattern = Pattern.compile("<DIFFICULTE>(.*)</DIFFICULTE>", Pattern.DOTALL);
+    private final static Pattern conceptsPattern = Pattern.compile("<CONCEPTS>(.*)</CONCEPTS>", Pattern.DOTALL);
+    private final static Pattern signatureBodyPattern = Pattern.compile("<SIGNATURE>(.*)</SIGNATURE>", Pattern.DOTALL);
+    private final static Pattern testsPattern = Pattern.compile("<TESTS>(.*)</TESTS>", Pattern.DOTALL);
+    private final static Pattern solutionPattern = Pattern.compile("<SOLUTION>(.*)</SOLUTION>",
             Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     /**

@@ -246,7 +246,7 @@ async function modifyWithLLM() {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        modificationDescription: modificationDescription.value
+        prompt: modificationDescription.value
       })
     })
 

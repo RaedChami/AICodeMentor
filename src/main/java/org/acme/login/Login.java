@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 
+import static jakarta.persistence.GenerationType.SEQUENCE;
+
 @Entity
 @NamedQuery(name = "Login.findAll", query = "SELECT l FROM Login l")
 public class Login {
