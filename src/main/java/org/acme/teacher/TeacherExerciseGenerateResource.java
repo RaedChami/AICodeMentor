@@ -14,6 +14,7 @@ import org.acme.llm.LlamaService;
 import org.acme.exercise.ExerciseMapper;
 import org.acme.exercise.dto.UserPrompt;
 import org.acme.exercise.service.ExerciseCompiler;
+import org.acme.teacher.service.TeacherGenerateService;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -23,14 +24,10 @@ import java.util.Objects;
 @Consumes(MediaType.APPLICATION_JSON)
 public class TeacherExerciseGenerateResource {
 
-    private final EntityManager entityManager;
-    private final LlamaService llamaService;
-    private final ExerciseCompiler exerciseCompiler;
+    private final TeacherGenerateService teacherGenerateService;
     @Inject
-    TeacherExerciseGenerateResource(EntityManager entityManager, LlamaService llamaService, ExerciseCompiler exerciseCompiler) {
-        this.entityManager = Objects.requireNonNull(entityManager);
-        this.llamaService = Objects.requireNonNull(llamaService);
-        this.exerciseCompiler = Objects.requireNonNull(exerciseCompiler);
+    TeacherExerciseGenerateResource(TeacherGenerateService teacherGenerateService) {
+        this.teacherGenerateService = Objects.requireNonNull(teacherGenerateService);
     }
 
     /**
@@ -41,39 +38,13 @@ public class TeacherExerciseGenerateResource {
      */
     @POST
     public ExerciseDTO generate(UserPrompt prompt) throws ExerciseGenerationException, IOException {
-        Objects.requireNonNull(prompt);
-        int attempts = 0;
-        var finalExercise = llamaService.generateExercise(prompt.prompt());
-        while (attempts <= 100) {
-            if (finalExercise.isEmpty()) { // Format error in LLM answer, so regenerate exercise
-                finalExercise = llamaService.generateExercise(prompt.prompt());
-                attempts++;
-                System.out.println("GENERATION FAILED");
-                continue;
-            }
-            var exercise = finalExercise.orElseThrow();
-            if (exerciseCompiler.compile(exercise)) {
-                return ExerciseMapper.convertToDTO(exercise);
-            }
-            System.out.println("COMPILATION FAILED");
-            finalExercise = llamaService.modifyExercise(exercise,
-                    "L'exercice ne compile pas. CORRIGEZ les erreurs de compilation en vous assurant que :" +
-                            "1. Les imports sont corrects (notamment java.util.Arrays; si utilisé)" +
-                            "2. La classe Solution est bien définie" +
-                            "3. Les tests utilisent correctement la classe Solution");
-            attempts++;
-        }
-        throw new ExerciseGenerationException("Error generating an exercise after 10 attempts.");
+        return ExerciseMapper.convertToDTO(teacherGenerateService.generateExerciseService(prompt));
     }
 
     @POST
-    @Transactional
     @Path("/save")
     public ExerciseDTO save(ExerciseDTO dtoExercise) throws NoSuchFieldException, IllegalAccessException {
-        Objects.requireNonNull(dtoExercise);
-        var exercise = ExerciseMapper.convertToEntity(dtoExercise);
-        entityManager.persist(exercise);
-        return ExerciseMapper.convertToDTO(exercise);
+        return ExerciseMapper.convertToDTO(teacherGenerateService.saveGeneratedExercise(dtoExercise));
     }
 
 }

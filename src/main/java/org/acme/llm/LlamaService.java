@@ -64,43 +64,40 @@ public class LlamaService {
         Objects.requireNonNull(existingExercise);
         Objects.requireNonNull(modificationDescription);
 
-        try (var model = new LlamaModel(modelParams)) {
-            var systemPrompt = getSystemPrompt();
+        var systemPrompt = getSystemPrompt();
+        var userPrompt = String.format("""
+        Voici un exercice existant :
+        
+        Énoncé actuel : %s
+        Difficulté actuelle : %s
+        Concepts actuels : %s
+        Signature actuelle : %s
+        Tests actuelle : %s
+        Solution actuelle : %s
+        
+        Instructions de modification : %s
+        
+        Générez la version COMPLÈTE et MODIFIÉE de l'exercice en respectant STRICTEMENT le format avec les balises demandées.
+        Appliquez UNIQUEMENT les modifications demandées tout en conservant la cohérence de l'exercice.
+        Ne modifiez pas du contenu non-demandée
+        """,
+                existingExercise.getDescription(),
+                existingExercise.getDifficulty(),
+                existingExercise.getConcepts(),
+                existingExercise.getSignatureAndBody(),
+                existingExercise.getUnitTests(),
+                existingExercise.getSolution(),
+                modificationDescription);
 
-            var userPrompt = String.format("""
-            Voici un exercice existant :
-            
-            Énoncé actuel : %s
-            Difficulté actuelle : %s
-            Concepts actuels : %s
-            Signature actuelle : %s
-            Tests actuelle : %s
-            Solution actuelle : %s
-            
-            Instructions de modification : %s
-            
-            Générez la version COMPLÈTE et MODIFIÉE de l'exercice en respectant STRICTEMENT le format avec les balises demandées.
-            Appliquez UNIQUEMENT les modifications demandées tout en conservant la cohérence de l'exercice.
-            Ne modifiez pas du contenu non-demandée
-            """,
-                    existingExercise.getDescription(),
-                    existingExercise.getDifficulty(),
-                    existingExercise.getConcepts(),
-                    existingExercise.getSignatureAndBody(),
-                    existingExercise.getUnitTests(),
-                    existingExercise.getSolution(),
-                    modificationDescription);
+        var fullPrompt = buildPrompt(systemPrompt, userPrompt);
+        var inferParams = new InferenceParameters(fullPrompt)
+                .setTemperature(0.1f)
+                .setStopStrings("<|im_end|>")
+                .setNPredict(1024);
 
-            var fullPrompt = buildPrompt(systemPrompt, userPrompt);
-            var inferParams = new InferenceParameters(fullPrompt)
-                    .setTemperature(0.1f)
-                    .setStopStrings("<|im_end|>")
-                    .setNPredict(1024);
-
-            var answer = model.complete(inferParams);
-            System.out.println(answer);
-            return parser.parse(answer);
-        }
+        var answer = model.complete(inferParams);
+        System.out.println(answer);
+        return parser.parse(answer);
     }
 
     private String getSystemPrompt() {
