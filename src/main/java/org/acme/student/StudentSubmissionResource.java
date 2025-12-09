@@ -26,19 +26,42 @@ public class StudentSubmissionResource {
     @Inject
     EntityManager em;
 
-    private ProcessBuilder initProcess(String testClassName, java.nio.file.Path studentFile, java.nio.file.Path testFile) {
-        String classpath = System.getProperty("java.class.path");
-        String outputDir = "target/classes";
-
-        ProcessBuilder pb = new ProcessBuilder(
+    private static ProcessBuilder initProcess(String testClassName, java.nio.file.Path studentFile, java.nio.file.Path testFile) {
+        String classpath =
+                System.getProperty("java.class.path")
+                        + ":" + "target/classes"
+                        + ":" + "target/quarkus-app/lib/*"
+                        + ":" + studentFile.getParent().toString()
+                        + ":" + testFile.getParent().toString();
+        return new ProcessBuilder(
                 "java",
-                "-cp", classpath + ":" + outputDir,
+                "-cp", classpath,
                 "org.acme.student.SubProcessMain",
                 testClassName,
                 studentFile.toString(),
                 testFile.toString()
         );
-        return pb;
+    }
+
+    private static String getProcessOutput(Process process) throws IOException {
+        BufferedReader reader =
+                new BufferedReader(new InputStreamReader(process.getInputStream()));
+        var result = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            result.append(line).append('\n');
+        }
+        BufferedReader errorReader =
+                new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        StringBuilder errors = new StringBuilder();
+        String errLine;
+        while ((errLine = errorReader.readLine()) != null) {
+            errors.append(errLine).append('\n');
+        }
+        if(!errors.isEmpty()) {
+            return errors.toString();
+        }
+        return result.toString();
     }
 
     @POST
@@ -57,16 +80,10 @@ public class StudentSubmissionResource {
         Process process = initProcess(testClassName, studentFile, testFile).start();
         process.waitFor();
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(process.getInputStream()));
-        var result = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            result.append(line).append('\n');
-        }
+        String result = getProcessOutput(process);
+
         return Response.ok(result).build();
     }
-
     public static class CompileRequest {
         public String code;
     }
