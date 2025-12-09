@@ -1,0 +1,17 @@
+<FindBugsFilter>
+    <Match>
+        <Class name="org.acme.llm.LlamaService"/>
+        <Method name="generateExercise"/>
+        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
+    </Match>
+    <Match>
+        <Class name="org.acme.llm.LlamaService"/>
+        <Method name="modifyExercise"/>
+        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
+    </Match>
+    <Match>
+        <Class name="org.acme.llm.LlamaService"/>
+        <Method name="buildPrompt"/>
+        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
+    </Match>
+</FindBugsFilter>

@@ -2,6 +2,7 @@ package org.acme.exercise;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,7 +39,7 @@ public class Exercise {
         Objects.requireNonNull(solution);
         this.description = description;
         this.difficulty = difficulty;
-        this.concepts = concepts;
+        this.concepts = new ArrayList<>(concepts);
         this.signatureAndBody = signatureAndBody;
         this.unitTests = unitTests;
         this.solution = solution;
@@ -57,7 +58,7 @@ public class Exercise {
     }
 
     public List<String> getConcepts() {
-        return concepts;
+        return new ArrayList<>(concepts);
     }
 
     public String getSignatureAndBody() {

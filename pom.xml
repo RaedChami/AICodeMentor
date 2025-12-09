@@ -91,8 +91,24 @@
         </dependency>
     </dependencies>
 
+
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.9.7.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>4.9.7</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <excludeFilterFile>filterFile.xml</excludeFilterFile>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>${quarkus.platform.group-id}</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
