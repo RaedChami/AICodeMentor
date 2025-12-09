@@ -49,11 +49,12 @@ public class ExerciseCompiler {
         return Files.createDirectories(tmpDirectory);
     }
 
-    public void createTemporaryFiles(String program) throws IOException {
+    public Path createTemporaryFiles(String program) throws IOException {
         Objects.requireNonNull(program);
         var fileDirectory = tmpDirectory.resolve(exerciseParser.getClassName(program));
         files.add(fileDirectory.toString());
         Files.writeString(fileDirectory, program);
+        return fileDirectory;
     }
 
     /**
