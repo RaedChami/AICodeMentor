@@ -55,7 +55,6 @@ public class ExerciseRunJUnitTest {
             launcher.execute(request);
             return getOutputSummary(listener);
         } catch (Exception e) {
-            exerciseCompiler.cleanDirectory();
             return "Erreur lors de l'exécution des tests : " + e.getMessage();
         }
     }
@@ -72,11 +71,9 @@ public class ExerciseRunJUnitTest {
                 testFile.toString()
         );
         if (compileResult != 0) {
-            exerciseCompiler.cleanDirectory();
             return "Erreur de compilation.\n";
         }
         var output = getTestOutput(testClassName);
-        exerciseCompiler.cleanDirectory();
         return output;
     }
 }

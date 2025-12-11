@@ -35,7 +35,7 @@ public class StudentSubmissionResource {
         return new ProcessBuilder(
                 "java",
                 "-cp", classpath,
-                "org.acme.student.SubProcessMain",
+                "fr.uge.student.SubProcessMain",
                 testClassName,
                 studentFile.toString(),
                 testFile.toString()
@@ -80,7 +80,7 @@ public class StudentSubmissionResource {
         process.waitFor();
 
         String result = getProcessOutput(process);
-
+        exerciseCompiler.cleanDirectory();
         return Response.ok(result).build();
     }
     public static class CompileRequest {

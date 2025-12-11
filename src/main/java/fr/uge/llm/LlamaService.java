@@ -46,6 +46,38 @@ public class LlamaService {
         this.model.close();
     }
 
+    public LlamaModel getModel() {
+        return model;
+    }
+
+    public String getHint(String studentCode, String exerciseTest) {
+        String userMessage = """
+                Tu es un assistant qui aide un étudiant en Java.
+
+                Donne UN SEUL indice simple, clair et concis pour l’aider à corriger son code.
+                Ne donne surtout pas la solution complète.
+                Les tests unitaire de l'enseignant ne doivent pas être modifié.
+                Les test unitaire de l'enseignant ne doivent surtout pas être montré à l'étudiant.
+
+                Voici son code :
+                %s
+
+                Voici les tests unitaires fournis par son enseignant :
+                %s
+                """.formatted(studentCode, exerciseTest);
+        var prompt = """
+            <|im_start|>user
+            %s
+            <|im_end|>
+            <|im_start|>assistant
+            """.formatted(userMessage);
+        var infer = new InferenceParameters(prompt)
+                .setTemperature(0.7f)
+                .setTopP(0.9f)
+                .setNKeep(0);
+        return model.complete(infer.setPrompt(prompt));
+    }
+
     @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE") // Suppress error caused by false positive in text blocks
     public Optional<Exercise> generateExercise(String userDescription) throws ExerciseGenerationException {
         Objects.requireNonNull(userDescription);

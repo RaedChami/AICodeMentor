@@ -22,6 +22,7 @@
 
       <div class="row g-4">
 
+        <!-- Partie gauche : infos exercice -->
         <div class="col-lg-4">
           <div class="card shadow-sm mb-3">
             <div class="card-header bg-primary text-white">
@@ -54,19 +55,29 @@
           </div>
         </div>
 
+        <!-- Partie droite : code + tests -->
         <div class="col-lg-8">
+
+          <!-- Signature -->
+          <div class="card shadow-sm mb-3">
+            <div class="card-body">
+              <pre class="bg-light p-3 rounded"><code>{{ exercise.signatureAndBody }}</code></pre>
+            </div>
+          </div>
+
+          <!-- Zone de code étudiant -->
           <div class="card shadow-sm mb-3">
             <div class="card-header bg-secondary text-white">
               <h5 class="mb-0">Votre code</h5>
             </div>
             <div class="card-body">
-              <MonacoEditor
+              <textarea
                 v-model="studentCode"
-                language="java"
-                height="450px"
-                :read-only="false"
-                theme="vs-dark"
-              />
+                class="form-control font-monospace"
+                rows="12"
+                placeholder="Écrivez votre code Java ici..."
+              ></textarea>
+
               <button
                 class="btn btn-success mt-3"
                 @click="runTests"
@@ -76,10 +87,31 @@
             </div>
           </div>
 
+          <!-- Résultats des tests -->
           <div class="card shadow-sm" v-if="testResult !== null">
             <div class="card-header bg-info text-white">
               <h5 class="mb-0">Résultat des tests</h5>
             </div>
+            <div class="mt-3" v-if="showHintButton">
+              <button class="btn btn-warning" @click="showHints">
+                Donner des indices
+              </button>
+            </div>
+
+            <div v-if="hintLoading" class="text-center my-3">
+              <div
+                class="spinner-border text-info mb-3"
+                style="width: 3rem; height: 3rem;"
+                role="status"
+              >
+                <span class="visually-hidden">Chargement...</span>
+              </div>
+              <p class="text-muted mb-0">Recherche d'un indice...</p>
+            </div>
+            <div v-if="!hintLoading && hints" class="alert alert-warning mt-3">
+              <pre>{{ hints }}</pre>
+            </div>
+
             <div class="card-body">
               <pre class="bg-light p-3 rounded">{{ testResult }}</pre>
             </div>
@@ -99,7 +131,6 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import DecoBar from '../../components/DecoBar.vue'
-import MonacoEditor from '../../components/MonacoEditor.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -110,8 +141,15 @@ const loading = ref(true)
 const studentCode = ref("")
 const testResult = ref<string | null>(null)
 
+const showHintButton = ref(false)
+const hints = ref<string | null>(null)
+
+const hintLoading = ref(false)
+
 async function runTests() {
   testResult.value = "Exécution des tests en cours..."
+
+  hints.value = null
 
   const res = await fetch(`/api/student/exercises/run-tests/${exercise.value.id}`, {
     method: "POST",
@@ -121,6 +159,7 @@ async function runTests() {
 
   const data = await res.text()
   testResult.value = data
+  showHintButton.value = true
 }
 
 async function fetchExercise() {
@@ -129,9 +168,6 @@ async function fetchExercise() {
     const id = route.params.id
     const res = await fetch(`/api/teacher/exercises/${id}`)
     exercise.value = res.ok ? await res.json() : null
-    if (exercise.value) {
-        studentCode.value = exercise.value.signatureAndBody
-    }
   } finally {
     loading.value = false
   }
@@ -140,6 +176,19 @@ async function fetchExercise() {
 function goBack() {
   router.back()
 }
+
+async function showHints() {
+  hintLoading.value = true
+  const res = await fetch(`/api/student/exercises/get-hint/${exercise.value.id}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code: studentCode.value })
+  })
+
+  hints.value = await res.text()
+  hintLoading.value = false
+}
+
 
 onMounted(fetchExercise)
 </script>
