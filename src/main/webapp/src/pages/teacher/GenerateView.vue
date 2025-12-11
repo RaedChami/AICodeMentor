@@ -82,7 +82,13 @@
                 <h5 class="mb-0">Signature & Corps</h5>
               </div>
               <div class="card-body p-4">
-                <pre class="code-block"><code>{{ generatedExercise.signatureAndBody }}</code></pre>
+                <MonacoEditor
+                  :model-value="generatedExercise.signatureAndBody"
+                  language="java"
+                  height="450px"
+                  :read-only="true"
+                  theme="vs-dark"
+                />
               </div>
             </div>
 
@@ -91,7 +97,13 @@
                 <h5 class="mb-0">Tests Unitaires</h5>
               </div>
               <div class="card-body p-4">
-                <pre class="code-block"><code>{{ generatedExercise.unitTests }}</code></pre>
+                  <MonacoEditor
+                    :model-value="generatedExercise.unitTests"
+                    language="java"
+                    height="450px"
+                    :read-only="true"
+                    theme="vs-dark"
+                  />
               </div>
             </div>
 
@@ -100,7 +112,13 @@
                 <h5 class="mb-0">Solution</h5>
               </div>
               <div class="card-body p-4">
-                <pre class="code-block"><code>{{ generatedExercise.solution }}</code></pre>
+                  <MonacoEditor
+                    :model-value="generatedExercise.solution"
+                    language="java"
+                    height="450px"
+                    :read-only="true"
+                    theme="vs-dark"
+                  />
               </div>
             </div>
           </div>
@@ -112,6 +130,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Navbar from '../../components/NavBar.vue'
+import MonacoEditor from '../../components/MonacoEditor.vue'
 
 const description = ref('')
 const generatedExercise = ref<any>(null)

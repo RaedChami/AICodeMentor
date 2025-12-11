@@ -61,7 +61,13 @@
                   <h5 class="mb-0">Signature & Corps</h5>
                 </div>
                 <div class="card-body">
-                  <pre class="bg-light p-3 rounded"><code>{{ exercise.signatureAndBody }}</code></pre>
+                  <MonacoEditor
+                    :model-value="exercise.signatureAndBody"
+                    language="java"
+                    height="450px"
+                    :read-only="true"
+                    theme="vs-dark"
+                  />
                 </div>
               </div>
 
@@ -70,7 +76,13 @@
                   <h5 class="mb-0">Tests JUnit</h5>
                 </div>
                 <div class="card-body">
-                  <pre class="bg-light p-3 rounded"><code>{{ exercise.unitTests }}</code></pre>
+                  <MonacoEditor
+                    :model-value="exercise.unitTests"
+                    language="java"
+                    height="450px"
+                    :read-only="true"
+                    theme="vs-dark"
+                  />
                 </div>
               </div>
 
@@ -79,7 +91,13 @@
                   <h5 class="mb-0">Solution</h5>
                 </div>
                 <div class="card-body">
-                  <pre class="bg-light p-3 rounded"><code>{{ exercise.solution }}</code></pre>
+                  <MonacoEditor
+                    :model-value="exercise.solution"
+                    language="java"
+                    height="450px"
+                    :read-only="true"
+                    theme="vs-dark"
+                  />
                 </div>
               </div>
             </div>
@@ -141,11 +159,29 @@
                     </div>
                     <div class="col-md-6 text-white">
                       <p><strong>Signature:</strong></p>
-                      <pre class="small bg-white p-2 rounded"><code>{{ exercise.signatureAndBody?.substring(0, 200) }}</code></pre>
+                      <MonacoEditor
+                        :model-value="exercise.signatureAndBody"
+                        language="java"
+                        height="450px"
+                        :read-only="true"
+                        theme="vs-dark"
+                      />
                       <p><strong>Tests Unitaires:</strong></p>
-                      <pre class="small bg-white p-2 rounded"><code>{{ exercise.unitTests?.substring(0, 200) }}</code></pre>
+                      <MonacoEditor
+                        :model-value="exercise.unitTests"
+                        language="java"
+                        height="450px"
+                        :read-only="true"
+                        theme="vs-dark"
+                      />
                       <p><strong>Solution:</strong></p>
-                      <pre class="small bg-white p-2 rounded"><code>{{ exercise.solution?.substring(0, 200) }}</code></pre>
+                      <MonacoEditor
+                        :model-value="exercise.solution"
+                        language="java"
+                        height="450px"
+                        :read-only="true"
+                        theme="vs-dark"
+                      />
                     </div>
                   </div>
                 </div>
@@ -183,6 +219,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import DecoBar from '../../components/DecoBar.vue'
+import MonacoEditor from '../../components/MonacoEditor.vue'
 
 const route = useRoute()
 const router = useRouter()

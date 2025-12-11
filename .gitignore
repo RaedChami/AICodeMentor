@@ -4,6 +4,7 @@ node_modules/
 tmpDirectory/
 models/
 .mvn/
+src/main/resources/META-INF/resources/assets
 *.iml
 *.log
 *.jar
