@@ -8,6 +8,15 @@
       </div>
     </div>
 
+    <div class="row mb-4">
+      <div class="col">
+        <DifficultyFilter
+          v-model="selectedDifficulty"
+          :items="exercises"
+        />
+      </div>
+    </div>
+
     <div v-if="loading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Chargement...</span>
@@ -16,12 +25,16 @@
     </div>
 
     <div v-else-if="exercises.length === 0" class="alert alert-info d-flex justify-content-center w-50 mx-auto bg-warning" role="alert">
-      <div class="text-dark"><strong>Vous n'aviez aucun exercice!</strong></div>
+    <div class="text-dark"><strong>Vous n'aviez aucun exercice!</strong></div>
+    </div>
+
+    <div v-else-if="filteredExercises.length === 0" class="alert alert-info" role="alert">
+    <strong>Aucun exercice</strong> ne correspond au niveau {{ selectedDifficulty }}.
     </div>
 
     <div v-else class="row g-3">
       <div
-        v-for="exercise in exercises"
+        v-for="exercise in filteredExercises"
         :key="exercise.id"
         class="col-12 col-md-6 col-lg-4 col-xl-3"
       >
@@ -36,6 +49,12 @@
             <div class="d-flex align-items-start mb-3">
               <div class="flex-grow-1">
                 <span class="badge bg-info mb-2">Exercice #{{ exercise.id }}</span>
+                <span
+                  class="badge ms-2 mb-2"
+                  :class="getDifficultyBadgeClass(exercise.difficulty)"
+                >
+                  {{ exercise.difficulty }}
+                </span>
               </div>
             </div>
             <p class="card-text flex-grow-1 mb-3">
@@ -54,18 +73,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Navbar from '../../components/NavBar.vue'
+import DifficultyFilter from '../../components/DifficultyFilter.vue'
 
 interface Exercise {
   id: number
   description: string
+  difficulty: 'L1' | 'L2' | 'L3' | 'M1' | 'M2'
 }
 
 const exercises = ref<Exercise[]>([])
 const loading = ref(false)
 const router = useRouter()
+const selectedDifficulty = ref<string | null>(null)
+
+const filteredExercises = computed(() => {
+  if (selectedDifficulty.value === null) {
+    return exercises.value
+  }
+  return exercises.value.filter(ex => ex.difficulty === selectedDifficulty.value)
+})
+
+function getDifficultyBadgeClass(difficulty: string): string {
+  const classes: Record<string, string> = {
+    'L1': 'bg-success',
+    'L2': 'bg-primary',
+    'L3': 'bg-info',
+    'M1': 'bg-warning text-dark',
+    'M2': 'bg-danger'
+  }
+  return classes[difficulty] || 'bg-secondary'
+}
 
 async function fetchExercises() {
   try {
