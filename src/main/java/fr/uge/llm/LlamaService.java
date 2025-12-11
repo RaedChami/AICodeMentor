@@ -46,12 +46,11 @@ public class LlamaService {
         this.model.close();
     }
 
-    public LlamaModel getModel() {
-        return model;
-    }
-
+    @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE") // Suppress error caused by false positive in text blocks
     public String getHint(String studentCode, String exerciseTest) {
-        String userMessage = """
+        Objects.requireNonNull(studentCode);
+        Objects.requireNonNull(exerciseTest);
+        var userMessage = """
                 Tu es un assistant qui aide un étudiant en Java.
 
                 Donne UN SEUL indice simple, clair et concis pour l’aider à corriger son code.

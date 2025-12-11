@@ -19,8 +19,6 @@ import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 @ApplicationScoped
 public class ExerciseRunJUnitTest {
 
-    ExerciseParser exerciseParser = new ExerciseParser();
-    ExerciseCompiler exerciseCompiler = new ExerciseCompiler(exerciseParser);
     private final static Path tmpDirectory = Paths.get("").toAbsolutePath().resolve("tmpDirectory");
 
     private String getOutputSummary(SummaryGeneratingListener listener) {

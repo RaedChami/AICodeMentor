@@ -12,20 +12,24 @@ import fr.uge.exercise.service.ExerciseParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Objects;
 
 @Path("/api/student/exercises")
 public class StudentSubmissionResource {
 
+    private final ExerciseCompiler exerciseCompiler;
+    private final ExerciseParser exerciseParser;
+    private final EntityManager em;
     @Inject
-    ExerciseCompiler exerciseCompiler;
-
-    @Inject
-    ExerciseParser exerciseParser;
-
-    @Inject
-    EntityManager em;
-
+    StudentSubmissionResource(ExerciseCompiler exerciseCompiler, ExerciseParser exerciseParser, EntityManager em) {
+        this.exerciseCompiler = Objects.requireNonNull(exerciseCompiler);
+        this.exerciseParser = Objects.requireNonNull(exerciseParser);
+        this.em = Objects.requireNonNull(em);
+    }
     private static ProcessBuilder initProcess(String testClassName, java.nio.file.Path studentFile, java.nio.file.Path testFile) {
+        Objects.requireNonNull(testClassName);
+        Objects.requireNonNull(studentFile);
+        Objects.requireNonNull(testFile);
         String classpath =
                 System.getProperty("java.class.path")
                         + ":" + "target/classes"
@@ -43,6 +47,7 @@ public class StudentSubmissionResource {
     }
 
     private static String getProcessOutput(Process process) throws IOException {
+        Objects.requireNonNull(process);
         BufferedReader reader =
                 new BufferedReader(new InputStreamReader(process.getInputStream()));
         var result = new StringBuilder();
@@ -71,8 +76,8 @@ public class StudentSubmissionResource {
         Exercise exercise = em.find(Exercise.class, id);
         exerciseCompiler.createTemporaryDirectory();
 
-        java.nio.file.Path studentFile = exerciseCompiler.createTemporaryFiles(request.code);
-        java.nio.file.Path testFile = exerciseCompiler.createTemporaryFiles(exercise.getUnitTests());
+        var studentFile = exerciseCompiler.createTemporaryFiles(request.code);
+        var testFile = exerciseCompiler.createTemporaryFiles(exercise.getUnitTests());
 
         var testClassName = exerciseParser.getClassName(exercise.getUnitTests()).replace(".java", "");
 

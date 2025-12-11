@@ -55,29 +55,19 @@
           </div>
         </div>
 
-        <!-- Partie droite : code + tests -->
         <div class="col-lg-8">
-
-          <!-- Signature -->
-          <div class="card shadow-sm mb-3">
-            <div class="card-body">
-              <pre class="bg-light p-3 rounded"><code>{{ exercise.signatureAndBody }}</code></pre>
-            </div>
-          </div>
-
-          <!-- Zone de code étudiant -->
           <div class="card shadow-sm mb-3">
             <div class="card-header bg-secondary text-white">
               <h5 class="mb-0">Votre code</h5>
             </div>
             <div class="card-body">
-              <textarea
+              <MonacoEditor
                 v-model="studentCode"
-                class="form-control font-monospace"
-                rows="12"
-                placeholder="Écrivez votre code Java ici..."
-              ></textarea>
-
+                language="java"
+                height="450px"
+                :read-only="false"
+                theme="vs-dark"
+              />
               <button
                 class="btn btn-success mt-3"
                 @click="runTests"
@@ -87,7 +77,6 @@
             </div>
           </div>
 
-          <!-- Résultats des tests -->
           <div class="card shadow-sm" v-if="testResult !== null">
             <div class="card-header bg-info text-white">
               <h5 class="mb-0">Résultat des tests</h5>
@@ -131,6 +120,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import DecoBar from '../../components/DecoBar.vue'
+import MonacoEditor from '../../components/MonacoEditor.vue'
 
 const route = useRoute()
 const router = useRouter()
