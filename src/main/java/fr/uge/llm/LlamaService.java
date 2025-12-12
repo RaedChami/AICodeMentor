@@ -97,33 +97,16 @@ public class LlamaService {
     }
 
     @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE") // Suppress error caused by false positive in text blocks
-    public Optional<Exercise> modifyExercise(Exercise existingExercise, String modificationDescription) {
+    public Exercise modifyExercise(Exercise existingExercise, String modificationDescription) {
         Objects.requireNonNull(existingExercise);
         Objects.requireNonNull(modificationDescription);
 
-        var systemPrompt = getSystemPrompt();
+        var systemPrompt = getSystemModifyPrompt();
         var userPrompt = String.format("""
-        Voici un exercice existant :
-        
-        Énoncé actuel : %s
-        Difficulté actuelle : %s
-        Concepts actuels : %s
-        Signature actuelle : %s
-        Tests actuelle : %s
-        Solution actuelle : %s
-        
-        Instructions de modification : %s
-        
-        Générez la version COMPLÈTE et MODIFIÉE de l'exercice en respectant STRICTEMENT le format avec les balises demandées.
-        Appliquez UNIQUEMENT les modifications demandées tout en conservant la cohérence de l'exercice.
-        Ne modifiez pas du contenu non-demandée
+        Voici l'exercice à modifier : %s
+        Respectez les souhaits de modification de l'utilisateur et modifiez UNIQUEMENT la partie demandée: %s
         """,
-                existingExercise.getDescription(),
-                existingExercise.getDifficulty(),
-                existingExercise.getConcepts(),
-                existingExercise.getSignatureAndBody(),
-                existingExercise.getUnitTests(),
-                existingExercise.getSolution(),
+                existingExercise,
                 modificationDescription);
 
         var fullPrompt = buildPrompt(systemPrompt, userPrompt);
@@ -134,7 +117,67 @@ public class LlamaService {
 
         var answer = model.complete(inferParams);
         System.out.println(answer);
-        return parser.parse(answer);
+        return parser.mergeExercise(existingExercise, answer);
+    }
+
+    private String getSystemModifyPrompt() {
+        return """
+                Vous êtes un expert en modification d'exercices en langage Java.
+                vous générez UNIQUEMENT UN SEUL contenu parmi les différentes contenus ci-dessous :
+                Vous devez STRICTEMENT et TOUJOURS structurer votre réponse avec ces balises exactes :
+                <ENONCE>
+                Rédigez un énoncé avec TOUJOURS des exemples d'entrée/sortie (ne pas inclure de code)
+                </ENONCE>
+                OR           
+                <DIFFICULTE>
+                Indiquez seulement le niveau académique de l'exercice : L1 ou L2 ou L3 ou M1 ou M2
+                </DIFFICULTE>
+                OR
+                <CONCEPTS>
+                Listez les concepts à utiliser pour l'exercice, séparés par des virgules (ex: boucles, tableaux, récursivité)
+                </CONCEPTS>
+                OR
+                <SIGNATURE>
+                Écrivez la signature de la méthode à implémenter pour l'exercice (ne pas inclure de code entier à l'exception des noms de méthodes/classe)
+                EXEMPLE:
+                public class Solution {
+                    public String printHelloWorld() {
+                        // TODO
+                    }
+                }
+                </SIGNATURE>
+                OR                
+                <TESTS>
+                Écrivez une classe contenant les tests JUnit 5 complets sans oublier les imports de librairie.
+                TOUJOURS importer java.util.Arrays;java.util.List;java.util.ArrayList; si le code utilise List ou Arrays
+                EXEMPLE:
+                import org.junit.jupiter.api.Test;
+                import static org.junit.jupiter.api.Assertions.*;
+                import java.util.List;
+                import java.util.Arrays;
+                import java.util.ArrayList;
+                public class SolutionTest {
+                    @Test
+                    public void test1() {
+                        Solution solution = new Solution();
+                        // TODO
+                    }
+                }
+                </TESTS>
+                OR
+                <SOLUTION>
+                Écrivez une classe contenant solution complète de l'exercice.
+                TOUJOURS importer java.util.Arrays;java.util.List;java.util.ArrayList; si le code utilise List ou Arrays
+                EXEMPLE:
+                import java.util.List;
+                import java.util.Arrays;
+                import java.util.ArrayList;
+                public class Solution {
+                    // TODO
+                }
+                </SOLUTION>
+                                
+                """;
     }
 
     private String getSystemPrompt() {

@@ -49,6 +49,22 @@ public class ExerciseParser {
         ));
     }
 
+    public Exercise mergeExercise(Exercise initial, String modification) {
+        Objects.requireNonNull(initial);
+        Objects.requireNonNull(modification);
+
+        // ÉNONCÉ
+        matchPattern(modification, enoncePattern)
+                .ifPresent(initial::setDescription);
+
+        // TESTS
+        matchPattern(modification, testsPattern)
+                .ifPresent(initial::setTests);
+
+        return initial;
+    }
+
+
     private Optional<Difficulty> matchDifficultyPattern(String answer) {
         Objects.requireNonNull(answer);
         var checkDifficulty = matchPattern(answer, difficultyPattern);
@@ -58,6 +74,12 @@ public class ExerciseParser {
         return Optional.empty();
     }
 
+    /**
+     * Returns whether a specific pattern was matched to the generated content or not
+     * @param answer
+     * @param pattern
+     * @return
+     */
     private Optional<String> matchPattern(String answer, Pattern pattern) {
         Objects.requireNonNull(answer);
         Objects.requireNonNull(pattern);

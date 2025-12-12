@@ -74,4 +74,14 @@ public class Exercise {
         }
         this.id = id;
     }
+
+    public void setDescription(String description) {
+        Objects.requireNonNull(description);
+        this.description = description;
+    }
+
+    public void setTests(String tests) {
+        Objects.requireNonNull(tests);
+        this.unitTests = tests;
+    }
 }

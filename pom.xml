@@ -85,7 +85,7 @@
             <version>4.9.8</version>
             <scope>compile</scope>
         </dependency>
-        <!--Test JUnit -->
+
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
@@ -94,6 +94,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.13.4</version>
         </dependency>
     </dependencies>
 
