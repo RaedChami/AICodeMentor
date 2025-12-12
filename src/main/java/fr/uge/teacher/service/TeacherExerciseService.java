@@ -68,11 +68,10 @@ public class TeacherExerciseService {
         if (modified.isEmpty()) {
             return null;
         }
-        var exercise = modified.orElseThrow();
-        if (!exerciseCompiler.compile(exercise)) {
+        if (!exerciseCompiler.compile(modified.orElseThrow())) {
             return null;
         }
-        return saveModifiedExercise(exercise, id);
+        return saveModifiedExercise(modified.orElseThrow(), id);
     }
 
     @Transactional
