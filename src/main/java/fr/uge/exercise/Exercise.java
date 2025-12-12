@@ -1,6 +1,7 @@
 package fr.uge.exercise;
 
 import jakarta.persistence.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,12 +77,26 @@ public class Exercise {
     }
 
     public void setDescription(String description) {
-        Objects.requireNonNull(description);
-        this.description = description;
+        this.description = Objects.requireNonNull(description);
     }
 
     public void setTests(String tests) {
-        Objects.requireNonNull(tests);
-        this.unitTests = tests;
+        this.unitTests = Objects.requireNonNull(tests);
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = Objects.requireNonNull(difficulty);
+    }
+
+    public void setConcepts(List<String> concepts) {
+        this.concepts = new ArrayList<>(Objects.requireNonNull(concepts));
+    }
+
+    public void setSignatureAndBody(String signatureAndBody) {
+        this.signatureAndBody = Objects.requireNonNull(signatureAndBody);
+    }
+
+    public void setSolution(String solution) {
+        this.solution = Objects.requireNonNull(solution);
     }
 }

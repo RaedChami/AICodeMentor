@@ -89,7 +89,7 @@ public class LlamaService {
         var inferParams = new InferenceParameters(fullPrompt)
                 .setTemperature(0.1f)
                 .setStopStrings("<|im_end|>")
-                .setNPredict(1024);
+                .setNPredict(1200);
 
         var answer = model.complete(inferParams);
         System.out.println(answer);
@@ -97,87 +97,79 @@ public class LlamaService {
     }
 
     @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE") // Suppress error caused by false positive in text blocks
-    public Exercise modifyExercise(Exercise existingExercise, String modificationDescription) {
+    public Optional<Exercise> modifyExercise(Exercise existingExercise, String modificationDescription) {
         Objects.requireNonNull(existingExercise);
         Objects.requireNonNull(modificationDescription);
 
-        var systemPrompt = getSystemModifyPrompt();
-        var userPrompt = String.format("""
-        Voici l'exercice à modifier : %s
-        Respectez les souhaits de modification de l'utilisateur et modifiez UNIQUEMENT la partie demandée: %s
-        """,
-                existingExercise,
-                modificationDescription);
+        var systemPrompt = getSystemModifyPrompt(existingExercise);
+        var userPrompt = """
+        Générez UNIQUEMENT la balise correspondant à la modification demandée.
+        NE générez PAS les autres balises.
+        Respectez les souhaits de modification de l'utilisateur : %s
+        """.formatted(modificationDescription);
 
         var fullPrompt = buildPrompt(systemPrompt, userPrompt);
         var inferParams = new InferenceParameters(fullPrompt)
                 .setTemperature(0.1f)
                 .setStopStrings("<|im_end|>")
-                .setNPredict(1024);
+                .setNPredict(1200);
 
         var answer = model.complete(inferParams);
         System.out.println(answer);
         return parser.mergeExercise(existingExercise, answer);
     }
 
-    private String getSystemModifyPrompt() {
+    @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE") // Suppress error caused by false positive in text blocks
+    private String getSystemModifyPrompt(Exercise exercise) {
+        Objects.requireNonNull(exercise);
         return """
-                Vous êtes un expert en modification d'exercices en langage Java.
-                vous générez UNIQUEMENT UN SEUL contenu parmi les différentes contenus ci-dessous :
-                Vous devez STRICTEMENT et TOUJOURS structurer votre réponse avec ces balises exactes :
-                <ENONCE>
-                Rédigez un énoncé avec TOUJOURS des exemples d'entrée/sortie (ne pas inclure de code)
-                </ENONCE>
-                OR           
-                <DIFFICULTE>
-                Indiquez seulement le niveau académique de l'exercice : L1 ou L2 ou L3 ou M1 ou M2
-                </DIFFICULTE>
-                OR
-                <CONCEPTS>
-                Listez les concepts à utiliser pour l'exercice, séparés par des virgules (ex: boucles, tableaux, récursivité)
-                </CONCEPTS>
-                OR
-                <SIGNATURE>
-                Écrivez la signature de la méthode à implémenter pour l'exercice (ne pas inclure de code entier à l'exception des noms de méthodes/classe)
-                EXEMPLE:
-                public class Solution {
-                    public String printHelloWorld() {
-                        // TODO
-                    }
-                }
-                </SIGNATURE>
-                OR                
-                <TESTS>
-                Écrivez une classe contenant les tests JUnit 5 complets sans oublier les imports de librairie.
-                TOUJOURS importer java.util.Arrays;java.util.List;java.util.ArrayList; si le code utilise List ou Arrays
-                EXEMPLE:
-                import org.junit.jupiter.api.Test;
-                import static org.junit.jupiter.api.Assertions.*;
-                import java.util.List;
-                import java.util.Arrays;
-                import java.util.ArrayList;
-                public class SolutionTest {
-                    @Test
-                    public void test1() {
-                        Solution solution = new Solution();
-                        // TODO
-                    }
-                }
-                </TESTS>
-                OR
-                <SOLUTION>
-                Écrivez une classe contenant solution complète de l'exercice.
-                TOUJOURS importer java.util.Arrays;java.util.List;java.util.ArrayList; si le code utilise List ou Arrays
-                EXEMPLE:
-                import java.util.List;
-                import java.util.Arrays;
-                import java.util.ArrayList;
-                public class Solution {
-                    // TODO
-                }
-                </SOLUTION>
-                                
-                """;
+            Vous êtes un expert en modification d'exercices Java.
+            
+            RÈGLE ABSOLUE : Vous devez générer EXACTEMENT UNE SEULE balise parmi celles listées ci-dessous.
+            Ne générez JAMAIS plusieurs balises dans la même réponse.
+            Ne générez AUCUN texte avant ou après la balise demandée.
+            
+            Balises disponibles (choisissez UNE SEULE) :
+            
+            1. Pour modifier l'énoncé actuel:
+            <ENONCE>
+            %s
+            </ENONCE>
+            
+            2. Pour modifier la difficulté actuelle :
+            <DIFFICULTE>
+            %s
+            </DIFFICULTE>
+            
+            3. Pour modifier les concepts actuels:
+            <CONCEPTS>
+            %s
+            </CONCEPTS>
+            
+            4. Pour modifier la signature actuelle :
+            <SIGNATURE>
+            %s
+            </SIGNATURE>
+            
+            5. Pour modifier les tests actuelles :
+            <TESTS>
+            %s
+            </TESTS>
+            
+            6. Pour modifier la solution actuelle :
+            <SOLUTION>
+            %s
+            </SOLUTION>
+            
+            IMPORTANT : Générez UNIQUEMENT la balise correspondant à la demande de l'utilisateur.
+            """.formatted(
+                exercise.getDescription(),
+                exercise.getDifficulty(),
+                exercise.getConcepts(),
+                exercise.getSignatureAndBody(),
+                exercise.getUnitTests(),
+                exercise.getSolution()
+        );
     }
 
     private String getSystemPrompt() {

@@ -40,8 +40,7 @@ public class TeacherGenerateService {
                 if (exerciseCompiler.compile(exercise)) {
                     return exercise;
                 }
-                var exo = generatedExercise.orElseThrow();
-                exo = llamaService.modifyExercise(exercise,
+                generatedExercise = llamaService.modifyExercise(exercise,
                         "L'exercice ne compile pas. CORRIGEZ les erreurs de compilation.");
             } else {
                 generatedExercise = regenerateExercise(prompt);

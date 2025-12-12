@@ -7,10 +7,12 @@
       </div>
     </div>
 
-    <div v-if="loading" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Chargement…</span>
+    <div v-if="mode === 'loading'" class="content-container text-center">
+      <div class="spinner-border text-info mb-4" style="width: 4rem; height: 4rem;" role="status">
+        <span class="visually-hidden">Chargement...</span>
       </div>
+      <h3 class="h4 mb-3">{{ isModifying ? 'Modification de l\'exercice en cours...' : 'Génération de l\'exercice...' }}</h3>
+      <p class="text-muted">Veuillez patienter, cela peut prendre quelques minutes.</p>
     </div>
 
     <div v-else-if="exercise">
@@ -192,15 +194,12 @@
           <div class="row mt-4">
             <div class="col">
               <div class="d-flex gap-2 justify-content-end">
-                <button type="button" class="btn btn-secondary" @click="cancelEdit" :disabled="isModifying">
+                <button type="button" class="btn btn-secondary" @click="cancelEdit">
                   Annuler
                 </button>
-                <button type="submit" class="btn btn-success" :disabled="isModifying">
-                  <span v-if="isModifying" class="spinner-border spinner-border-sm me-2" role="status">
-                    <span class="visually-hidden">Génération en cours...</span>
-                  </span>
-                  <i v-else class="bi bi-magic me-2"></i>
-                  {{ isModifying ? 'Génération en cours...' : 'Générer avec IA' }}
+                <button type="submit" class="btn btn-success">
+                  <i class="bi bi-magic me-2"></i>
+                  Générer avec IA
                 </button>
               </div>
             </div>
@@ -225,7 +224,7 @@ const route = useRoute()
 const router = useRouter()
 const exercise = ref<any>(null)
 const loading = ref(true)
-const mode = ref<'view' | 'modify'>('view')
+const mode = ref<'view' | 'modify' | 'loading'>('view')
 const validationErrors = ref<string[]>([])
 const showErrors = ref(false)
 const modificationDescription = ref('')
@@ -279,6 +278,8 @@ async function modifyWithLLM() {
 
   try {
     isModifying.value = true
+    mode.value = 'loading'
+
     const res = await fetch(`/api/teacher/exercises/${exercise.value.id}/modify`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -290,18 +291,19 @@ async function modifyWithLLM() {
     if (res.ok) {
       const updated = await res.json()
       exercise.value = updated
-      mode.value = 'view'
       modificationDescription.value = ''
       validationErrors.value = []
       showErrors.value = false
-      alert('Exercice modifié avec succès par l\'IA !')
+      mode.value = 'view'
     } else {
       const errorData = await res.json().catch(() => ({}))
       alert(`Erreur lors de la modification : ${errorData.message || 'Erreur inconnue'}`)
+      mode.value = 'modify'
     }
   } catch (error) {
     console.error('Erreur:', error)
     alert('Une erreur s\'est produite lors de la modification')
+    mode.value = 'modify'
   } finally {
     isModifying.value = false
   }
@@ -359,5 +361,11 @@ code {
 
 textarea {
   resize: vertical;
+}
+
+.content-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 </style>

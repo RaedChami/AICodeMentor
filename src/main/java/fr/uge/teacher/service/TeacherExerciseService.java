@@ -65,10 +65,13 @@ public class TeacherExerciseService {
 
     private Exercise generateValidModifiedExercise(Exercise findExercise, UserPrompt prompt, long id) throws IOException {
         var modified = llamaService.modifyExercise(findExercise, prompt.prompt());
-        if (!exerciseCompiler.compile(modified)) {
+        if (modified.isEmpty()) {
             return null;
         }
-        return saveModifiedExercise(modified, id);
+        if (!exerciseCompiler.compile(modified.orElseThrow())) {
+            return null;
+        }
+        return saveModifiedExercise(modified.orElseThrow(), id);
     }
 
     @Transactional

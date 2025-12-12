@@ -49,19 +49,28 @@ public class ExerciseParser {
         ));
     }
 
-    public Exercise mergeExercise(Exercise initial, String modification) {
+    public Optional<Exercise> mergeExercise(Exercise initial, String modification) {
         Objects.requireNonNull(initial);
         Objects.requireNonNull(modification);
 
-        // ÉNONCÉ
         matchPattern(modification, enoncePattern)
                 .ifPresent(initial::setDescription);
 
-        // TESTS
+        matchDifficultyPattern(modification)
+                .ifPresent(initial::setDifficulty);
+
+        stockConcepts(modification)
+                .ifPresent(initial::setConcepts);
+
+        matchPattern(modification, signatureBodyPattern)
+                .ifPresent(initial::setSignatureAndBody);
+
         matchPattern(modification, testsPattern)
                 .ifPresent(initial::setTests);
 
-        return initial;
+        matchPattern(modification, solutionPattern)
+                .ifPresent(initial::setSolution);
+        return Optional.of(initial);
     }
 
 
