@@ -76,8 +76,8 @@ public class StudentSubmissionResource {
         Exercise exercise = em.find(Exercise.class, id);
         exerciseCompiler.createTemporaryDirectory();
 
-        var studentFile = exerciseCompiler.createTemporaryFiles(request.code);
-        var testFile = exerciseCompiler.createTemporaryFiles(exercise.getUnitTests());
+        var studentFile = exerciseCompiler.createTemporaryFile(request.code);
+        var testFile = exerciseCompiler.createTemporaryFile(exercise.getUnitTests());
 
         var testClassName = exerciseParser.getClassName(exercise.getUnitTests()).replace(".java", "");
 

@@ -52,7 +52,6 @@ public class ExerciseParser {
     public Optional<Exercise> mergeExercise(Exercise initial, String modification) {
         Objects.requireNonNull(initial);
         Objects.requireNonNull(modification);
-
         matchPattern(modification, enoncePattern)
                 .ifPresent(initial::setDescription);
 
@@ -111,6 +110,11 @@ public class ExerciseParser {
         return Optional.of(concepts);
     }
 
+    /**
+     * Returns the name of the class of a given program
+     * @param code A java class
+     * @return The name of a class
+     */
     public String getClassName(String code) {
         Objects.requireNonNull(code);
         return matchPattern(code, classPattern).map(name -> name + ".java").orElseThrow();

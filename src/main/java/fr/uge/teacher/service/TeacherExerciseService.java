@@ -30,17 +30,30 @@ public class TeacherExerciseService {
         this.exerciseCompiler = Objects.requireNonNull(exerciseCompiler);
     }
 
+    /**
+     * Reusable precondition method for the id of an exercise
+     * @param id serial number of the exercise
+     */
     private void validateExerciseId(long id) {
         if (id <= 0) {
             throw new IllegalArgumentException("exercise ID is < 0");
         }
     }
 
+    /**
+     * Returns all existing exercises
+     * @return The list of existing exercises
+     */
     public List<Exercise> getAllExercises() {
         return entityManager.createNamedQuery("Exercise.findAll", Exercise.class)
-                            .getResultList();
+                .getResultList();
     }
 
+    /**
+     * Returns an exercise corresponding to the given id
+     * @param id serial number of the exercise
+     * @return The exercise if it exists
+     */
     public Exercise getExercise(long id) {
         validateExerciseId(id);
         var findExercise = entityManager.find(Exercise.class, id);
@@ -50,6 +63,15 @@ public class TeacherExerciseService {
         return findExercise;
     }
 
+    /**
+     * Returns an AI-generated modified exercise corresponding to the given id
+     * using the user's prompt.
+     * Fails after 5 attempts of generation.
+     * @param id serial number of the exercise
+     * @param prompt The user's prompt for the modification of the exercise
+     * @return The modified exercise if success of the generation
+     * @throws IOException Propagated exception from writing the files for the compilation
+     */
     public Exercise modifyExerciseById(long id, UserPrompt prompt) throws IOException {
         Objects.requireNonNull(prompt);
         validateExerciseId(id);
@@ -63,6 +85,15 @@ public class TeacherExerciseService {
         throw new ExerciseGenerationException("Impossible de générer une modification valide après 5 tentatives");
     }
 
+    /**
+     * Generates a modified exercise and checks the compilation result of the JUnit tests and solution program
+     * from the modified exercise.
+     * @param findExercise The exercise to be modified
+     * @param prompt The user's prompt for the modification of the exercise
+     * @param id serial number of the exercise
+     * @return The modified exercise if success of compilation, or null in case of failure
+     * @throws IOException Propagated exception from writing the files for the compilation
+     */
     private Exercise generateValidModifiedExercise(Exercise findExercise, UserPrompt prompt, long id) throws IOException {
         var modified = llamaService.modifyExercise(findExercise, prompt.prompt());
         if (modified.isEmpty()) {
@@ -74,6 +105,12 @@ public class TeacherExerciseService {
         return saveModifiedExercise(modified.orElseThrow(), id);
     }
 
+    /**
+     * Merges the modified exercise
+     * @param exercise The modified exercise
+     * @param id serial number of the exercise
+     * @return The merged exercise
+     */
     @Transactional
     Exercise saveModifiedExercise(Exercise exercise, long id) {
         Objects.requireNonNull(exercise);
@@ -81,6 +118,10 @@ public class TeacherExerciseService {
         return entityManager.merge(exercise);
     }
 
+    /**
+     * Deletes an exercise corresponding to a given id
+     * @param id serial number of the exercise
+     */
     @Transactional
     public void deleteExercise(long id) {
         validateExerciseId(id);

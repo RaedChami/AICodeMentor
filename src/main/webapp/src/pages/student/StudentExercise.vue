@@ -22,7 +22,6 @@
 
       <div class="row g-4">
 
-        <!-- Partie gauche : infos exercice -->
         <div class="col-lg-4">
           <div class="card shadow-sm mb-3">
             <div class="card-header bg-primary text-white">
@@ -158,6 +157,9 @@ async function fetchExercise() {
     const id = route.params.id
     const res = await fetch(`/api/teacher/exercises/${id}`)
     exercise.value = res.ok ? await res.json() : null
+    if (exercise.value) {
+        studentCode.value = exercise.value.signatureAndBody
+    }
   } finally {
     loading.value = false
   }
