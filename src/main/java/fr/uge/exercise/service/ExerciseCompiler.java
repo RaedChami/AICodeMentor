@@ -26,18 +26,18 @@ public class ExerciseCompiler {
     private List<String> files = new ArrayList<>();
 
     /**
-     * Creates the conditions for compilation of the JUnit tests
-     * and the solution class of an exercise
+     * Creates the conditions for the compilation of the JUnit tests
+     * and the solution class of an exercise.
      * @param exercise an exercise to be compiled
-     * @return result of compilation
-     * @throws IOException exception thrown by writing in files
+     * @return result of the compilation then cleanup of the temporary directory and its content
+     * @throws IOException thrown from writing the files for the compilation
      */
     public boolean compile(Exercise exercise) throws IOException {
         Objects.requireNonNull(exercise);
         try {
             var directory = createTemporaryDirectory();
-            createTemporaryFiles(exercise.getUnitTests());
-            createTemporaryFiles(exercise.getSolution());
+            createTemporaryFile(exercise.getUnitTests());
+            createTemporaryFile(exercise.getSolution());
             return compilePrograms(directory);
         } finally {
             files = new ArrayList<>();
@@ -45,11 +45,22 @@ public class ExerciseCompiler {
         }
     }
 
+    /**
+     * Creates a temporary directory
+     * @return The path leading to the directory
+     * @throws IOException
+     */
     public Path createTemporaryDirectory() throws IOException {
         return Files.createDirectories(tmpDirectory);
     }
 
-    public Path createTemporaryFiles(String program) throws IOException {
+    /**
+     * Creates a temporary file containing a program
+     * @param program Java class to be compiled
+     * @return The directory path leading to the file
+     * @throws IOException
+     */
+    public Path createTemporaryFile(String program) throws IOException {
         Objects.requireNonNull(program);
         var fileDirectory = tmpDirectory.resolve(exerciseParser.getClassName(program));
         files.add(fileDirectory.toString());
@@ -58,7 +69,7 @@ public class ExerciseCompiler {
     }
 
     /**
-     * Compiles programs in a directory
+     * Compiles java files that are in a directory
      * @param directory temporary directory for compilation
      * @return true if compilation success, otherwise false
      */
@@ -70,6 +81,10 @@ public class ExerciseCompiler {
         return result == 0;
     }
 
+    /**
+     * Cleans up the temporary directory and its content
+     * @throws IOException
+     */
     public void cleanDirectory() throws IOException {
         var directory = tmpDirectory.toFile();
         var files = directory.listFiles();

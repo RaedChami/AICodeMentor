@@ -77,8 +77,13 @@ public class LlamaService {
         return model.complete(infer.setPrompt(prompt));
     }
 
+    /**
+     * Requesting local LLM and Generates an exercise using prompt engineering
+     * @param userDescription Initial prompt sent from the user
+     * @return The proper exercise after cleanup from the initial response of the LLM
+     */
     @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE") // Suppress error caused by false positive in text blocks
-    public Optional<Exercise> generateExercise(String userDescription) throws ExerciseGenerationException {
+    public Optional<Exercise> generateExercise(String userDescription) {
         Objects.requireNonNull(userDescription);
         var systemPrompt = getSystemPrompt();
         var userPrompt = String.format("""
@@ -96,6 +101,12 @@ public class LlamaService {
         return parser.parse(answer);
     }
 
+    /**
+     * Requesting local LLM and Generates a partial modification of a given exercise
+     * @param existingExercise Exercise to be modified
+     * @param modificationDescription Initial prompt sent from the user
+     * @return The proper exercise after cleanup from the initial response of the LLM
+     */
     @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE") // Suppress error caused by false positive in text blocks
     public Optional<Exercise> modifyExercise(Exercise existingExercise, String modificationDescription) {
         Objects.requireNonNull(existingExercise);
@@ -119,6 +130,11 @@ public class LlamaService {
         return parser.mergeExercise(existingExercise, answer);
     }
 
+    /**
+     * Returns the system prompt for the modification of an exercise
+     * @param exercise Exercise to be modified
+     * @return system prompt specific to a given exercise
+     */
     @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE") // Suppress error caused by false positive in text blocks
     private String getSystemModifyPrompt(Exercise exercise) {
         Objects.requireNonNull(exercise);
@@ -172,6 +188,10 @@ public class LlamaService {
         );
     }
 
+    /**
+     * Returns the system prompt for the generation of an exercise
+     * @return system prompt for generating an exercise
+     */
     private String getSystemPrompt() {
         return """
                 Vous êtes un expert en création d'exercices de programmation Java.
@@ -235,6 +255,12 @@ public class LlamaService {
                 """;
     }
 
+    /**
+     * Returns the prompt template specific to Qwen
+     * @param systemPrompt system prompt content
+     * @param userPrompt user prompt content
+     * @return The full prompt integrated to a template
+     */
     @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE") // Suppress error caused by false positive in text blocks
     private String buildPrompt(String systemPrompt, String userPrompt) {
         Objects.requireNonNull(systemPrompt);

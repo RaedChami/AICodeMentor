@@ -31,6 +31,14 @@ public class TeacherGenerateService {
         this.exerciseCompiler = Objects.requireNonNull(exerciseCompiler);
     }
 
+    /**
+     * Returns an AI-generated exercise corresponding to the requested prompt
+     * and fails after a specific number of attempts of generation
+     * @param prompt the requested prompt sent from the user
+     * @return A complete exercise if success of generation
+     * @throws ExerciseGenerationException Lifted if generation failed after a specific number of attempts
+     * @throws IOException Propagated exception from writing the files for the compilation
+     */
     public Exercise generateExerciseService(UserPrompt prompt) throws ExerciseGenerationException, IOException {
         Objects.requireNonNull(prompt);
         var generatedExercise = llamaService.generateExercise(prompt.prompt());
@@ -49,6 +57,11 @@ public class TeacherGenerateService {
         throw new ExerciseGenerationException("Impossible de générer un exercice valide après 10 tentatives.");
     }
 
+    /**
+     * Reusable generation of exercise method
+     * @param prompt the requested prompt sent from the user
+     * @return A generated exercise
+     */
     private Optional<Exercise> regenerateExercise(UserPrompt prompt) {
         return llamaService.generateExercise(prompt.prompt());
     }
