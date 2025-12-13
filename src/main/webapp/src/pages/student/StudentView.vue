@@ -7,6 +7,11 @@
 
               <div class="card shadow-sm border-0">
                 <div class="card-body p-5">
+                    <button @click="seeExercisesSubmitted"
+                        class="btn btn-info mb-3 px-4 py-2">
+                      Continuer les exercices en cours
+                    </button>
+
                     <form @submit.prevent="seeExercise">
                       <button type="submit" class="btn btn-info">
                         Consulter les exercices
@@ -26,5 +31,8 @@ import { useRouter } from "vue-router"
 const router = useRouter()
 async function seeExercise() {
     router.push("/student/exercises")
+}
+async function seeExercisesSubmitted() {
+    router.push("/student/exercises-submitted")
 }
 </script>

@@ -76,6 +76,7 @@ const errorMessage = ref("")
 async function createAccount() {
   roleError.value = false
   errorMessage.value = ""
+
   if (!name.value.trim() || !lastName.value.trim()) return
   if (!role.value) {
     roleError.value = true
@@ -93,18 +94,26 @@ async function createAccount() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(user)
   })
+
   const data = await res.json()
 
-      if (!data || !data.role) {
-        errorMessage.value = "Compte invalide."
-        return
-      }
+  if (!data || !data.id) {
+    errorMessage.value = "Compte invalide."
+    return
+  }
 
-      if (data.role === "Teacher") {
-        router.push("/teacher")
-      } else {
-        router.push("/student")
-      }
+  localStorage.setItem(
+    "user",
+    JSON.stringify({
+      id: data.id,
+      name: data.name,
+      lastName: data.lastName,
+      role: data.role
+    })
+  )
+
+  router.push(data.role === "Teacher" ? "/teacher" : "/student")
 }
+
 </script>
 

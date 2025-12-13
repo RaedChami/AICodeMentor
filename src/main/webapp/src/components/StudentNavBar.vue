@@ -14,7 +14,8 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
+        <!-- Liens à gauche -->
+        <ul class="navbar-nav">
           <li
             v-for="item in navItems"
             :key="item.path"
@@ -29,11 +30,17 @@
             </router-link>
           </li>
         </ul>
+
+        <span
+          v-if="user"
+          class="navbar-text ms-auto text-white fw-semibold"
+        >
+          Bonjour {{ user.name }} {{ user.lastName }}
+        </span>
       </div>
     </div>
   </nav>
 </template>
-
 <script lang="ts">
 import { defineComponent } from "vue";
 
@@ -42,49 +49,23 @@ interface NavItem {
   path: string;
 }
 
+interface User {
+  id: number;
+  name: string;
+  lastName: string;
+  role: string;
+}
+
 export default defineComponent({
   name: "NavBar",
-  data(): { navItems: NavItem[] } {
+  data(): { navItems: NavItem[]; user: User | null } {
     return {
       navItems: [
-        { label: "Mes Exercices", path: "/student/exercises" },
+        { label: "Accueil", path: "/student" },
+        { label: "Les Exercices", path: "/student/exercises" },
       ],
+      user: JSON.parse(localStorage.getItem("user") || "null"),
     };
   },
 });
 </script>
-
-<style scoped>
-.navbar-fixed {
-  width: 100%;
-  position: relative;
-  margin: 0;
-}
-
-.navbar {
-  background-color: #17a2b8 !important;
-}
-
-.navbar .container-fluid {
-  max-width: 100%;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  margin: 0 auto;
-}
-
-.nav-link {
-  color: rgba(255, 255, 255, 0.85) !important;
-  transition: color 0.3s ease;
-}
-
-.nav-link:hover {
-  color: #ffffff !important;
-}
-
-.nav-link.active {
-  color: #ffffff !important;
-  font-weight: 600;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-</style>

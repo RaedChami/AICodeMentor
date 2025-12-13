@@ -3,7 +3,7 @@
   <div class="container-fluid py-4">
     <div class="row mb-4">
       <div class="col">
-        <h2>Tous les Exercices</h2>
+        <h2>Continuer vos Exercices</h2>
         <p class="text-muted">Cliquez sur un exercice pour le consulter</p>
       </div>
     </div>
@@ -25,7 +25,7 @@
     </div>
 
     <div v-else-if="exercises.length === 0" class="alert alert-info d-flex justify-content-center w-50 mx-auto bg-warning" role="alert">
-      <div class="text-dark"><strong>Vous n'aviez aucun exercice!</strong></div>
+      <div class="text-dark"><strong>Vous n'avez essayé aucun Exercice pour l'instant !</strong></div>
     </div>
 
     <div v-else-if="filteredExercises.length === 0" class="alert alert-info" role="alert">
@@ -62,7 +62,7 @@
             </p>
             <div class="mt-auto">
               <button class="btn btn-outline-info btn-sm w-100">
-                Consulter
+                Continuer
               </button>
             </div>
           </div>
@@ -96,6 +96,9 @@ const filteredExercises = computed(() => {
   return exercises.value.filter(ex => ex.difficulty === selectedDifficulty.value)
 })
 
+const user = JSON.parse(localStorage.getItem("user") || "{}")
+
+
 function getDifficultyBadgeClass(difficulty: string): string {
   const classes: Record<string, string> = {
     'L1': 'bg-success',
@@ -110,12 +113,24 @@ function getDifficultyBadgeClass(difficulty: string): string {
 async function fetchExercises() {
   try {
     loading.value = true
-    const res = await fetch('/api/teacher/exercises')
+
+    if (!user.id) {
+      console.error("Utilisateur non connecté")
+      exercises.value = []
+      return
+    }
+
+    const res = await fetch(
+      `/api/student/exercises-submitted?loginId=${user.id}`,
+      { method: "GET" }
+    )
+
     exercises.value = res.ok ? await res.json() : []
   } finally {
     loading.value = false
   }
 }
+
 
 function openExercise(id: number) {
   router.push(`/student/exercises/${id}`)

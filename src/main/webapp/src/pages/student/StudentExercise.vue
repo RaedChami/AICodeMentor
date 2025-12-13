@@ -22,6 +22,7 @@
 
       <div class="row g-4">
 
+        <!-- Partie gauche : infos exercice -->
         <div class="col-lg-4">
           <div class="card shadow-sm mb-3">
             <div class="card-header bg-primary text-white">
@@ -72,6 +73,12 @@
                 @click="runTests"
               >
                 Lancer les tests
+              </button>
+              <button
+                class="btn btn-primary mt-3"
+                @click="submitSolution"
+              >
+                Soumettre
               </button>
             </div>
           </div>
@@ -134,6 +141,7 @@ const showHintButton = ref(false)
 const hints = ref<string | null>(null)
 
 const hintLoading = ref(false)
+const user = JSON.parse(localStorage.getItem("user") || "{}")
 
 async function runTests() {
   testResult.value = "Exécution des tests en cours..."
@@ -154,16 +162,20 @@ async function runTests() {
 async function fetchExercise() {
   try {
     loading.value = true
-    const id = route.params.id
+    const id = Number(route.params.id)
+
     const res = await fetch(`/api/teacher/exercises/${id}`)
     exercise.value = res.ok ? await res.json() : null
+
     if (exercise.value) {
-        studentCode.value = exercise.value.signatureAndBody
+      studentCode.value = exercise.value.signatureAndBody
+      await fetchSubmittedSolution(exercise.value.id)
     }
   } finally {
     loading.value = false
   }
 }
+
 
 function goBack() {
   router.back()
@@ -180,6 +192,47 @@ async function showHints() {
   hints.value = await res.text()
   hintLoading.value = false
 }
+
+async function submitSolution() {
+  if (!user.id) {
+    alert("étudiant non connecté")
+    return
+  }
+
+  const payload = {
+    loginId: user.id,
+    exerciseId: exercise.value.id,
+    solutionSubmitted: studentCode.value
+  }
+
+  const res = await fetch("/api/student/exercises-submitted", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+
+  if (res.ok) {
+    alert("Solution soumise")
+  } else {
+    alert("Erreur lors de la soumission")
+  }
+}
+
+async function fetchSubmittedSolution(exerciseId: number) {
+  if (!user.id) return
+
+  const res = await fetch(
+    `/api/student/exercises-submitted/solution?loginId=${user.id}&exerciseId=${exerciseId}`
+  )
+
+  if (res.ok) {
+    const code = await res.text()
+    if (code) {
+      studentCode.value = code
+    }
+  }
+}
+
 
 
 onMounted(fetchExercise)

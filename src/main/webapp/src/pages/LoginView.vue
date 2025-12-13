@@ -44,12 +44,10 @@ async function login() {
     return
   }
 
-  const user = { name: name.value, lastName: lastName.value }
-
   const res = await fetch("/api/login/check", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user)
+    body: JSON.stringify({ name: name.value, lastName: lastName.value })
   })
 
   if (!res.ok) {
@@ -57,20 +55,25 @@ async function login() {
     return
   }
 
-
   const data = await res.json()
-  localStorage.setItem("user", JSON.stringify(data))
 
-    if (!data || !data.role) {
-      errorMessage.value = "Compte invalide."
-      return
-    }
+  if (!data || !data.id) {
+    errorMessage.value = "Compte invalide."
+    return
+  }
 
-    if (data.role === "Teacher") {
-      router.push("/teacher")
-    } else {
-      router.push("/student")
-    }
+  localStorage.setItem(
+    "user",
+    JSON.stringify({
+      id: data.id,
+      name: data.name,
+      lastName: data.lastName,
+      role: data.role
+    })
+  )
+
+  router.push(data.role === "Teacher" ? "/teacher" : "/student")
 }
+
 
 </script>
