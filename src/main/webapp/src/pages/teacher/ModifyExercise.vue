@@ -4,6 +4,10 @@
     <div class="row mb-4">
       <div class="col">
         <h2 class="mb-0">Exercice {{ exercise?.id }}</h2>
+        <p class="text-light mt-2">
+          <i class="bi bi-person-fill me-1"></i>
+          Créé par : {{ exercise.creator.name }} {{ exercise.creator.lastName }}
+        </p>
       </div>
     </div>
 
@@ -12,7 +16,6 @@
         <span class="visually-hidden">Chargement...</span>
       </div>
       <h3 class="h4 mb-3">{{ isModifying ? 'Modification de l\'exercice en cours...' : 'Génération de l\'exercice...' }}</h3>
-      <p class="text-muted">Veuillez patienter, cela peut prendre quelques minutes.</p>
     </div>
 
     <div v-else-if="exercise">

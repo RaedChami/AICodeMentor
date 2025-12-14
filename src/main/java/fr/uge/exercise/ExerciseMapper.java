@@ -14,7 +14,8 @@ public class ExerciseMapper {
                 exercise.getConcepts(),
                 exercise.getSignatureAndBody(),
                 exercise.getUnitTests(),
-                exercise.getSolution()
+                exercise.getSolution(),
+                exercise.getCreator()
         );
     }
 
