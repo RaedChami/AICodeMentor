@@ -1,5 +1,6 @@
 package fr.uge.exercise;
 
+import fr.uge.login.Login;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +27,9 @@ public class Exercise {
     private String unitTests;
     @Lob
     private String solution;
+    @ManyToOne
+    @JoinColumn(name = "creator_id", nullable = true)
+    private Login creator;
 
     public Exercise() {
         super();
@@ -67,6 +71,14 @@ public class Exercise {
 
     public String getSolution() {
         return solution;
+    }
+
+    public Login getCreator() {
+        return creator;
+    }
+
+    public void setCreator(Login creator) {
+        this.creator = creator;
     }
 
     public void setId(Long id) {

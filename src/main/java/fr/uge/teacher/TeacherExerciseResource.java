@@ -32,7 +32,7 @@ public class TeacherExerciseResource {
      */
     @Path("/")
     @GET
-    public List<ExerciseDTO> getall() {
+    public List<ExerciseDTO> getAll() {
         return teacherExerciseService.getAllExercises()
                                     .stream()
                                     .map(ExerciseMapper::convertToDTO)

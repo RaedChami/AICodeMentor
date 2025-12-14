@@ -1,5 +1,6 @@
 package fr.uge.teacher.service;
 
+import fr.uge.login.Login;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -42,9 +43,12 @@ public class TeacherGenerateService {
     public Exercise generateExerciseService(UserPrompt prompt) throws ExerciseGenerationException, IOException {
         Objects.requireNonNull(prompt);
         var generatedExercise = llamaService.generateExercise(prompt.prompt());
+        var teacher = entityManager.find(Login.class, prompt.creatorId());
+
         for (int i = 0; i < MAX_ATTEMPTS; i++) {
             if (generatedExercise.isPresent()) {
                 var exercise = generatedExercise.orElseThrow();
+                exercise.setCreator(teacher);
                 if (exerciseCompiler.compile(exercise)) {
                     return exercise;
                 }
@@ -70,6 +74,7 @@ public class TeacherGenerateService {
     public Exercise saveGeneratedExercise(ExerciseDTO dtoExercise) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(dtoExercise);
         var exercise = ExerciseMapper.convertToEntity(dtoExercise);
+        exercise.setCreator(dtoExercise.creator());
         entityManager.persist(exercise);
         return exercise;
     }

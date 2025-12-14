@@ -135,14 +135,21 @@ import MonacoEditor from '../../components/MonacoEditor.vue'
 const description = ref('')
 const generatedExercise = ref<any>(null)
 const mode = ref<'form' | 'loading' | 'result'>('form')
+const currentUser = JSON.parse(localStorage.getItem("user") || "{}")
 
 async function createExercise() {
   mode.value = 'loading'
 
+  if (!currentUser.id) {
+    console.error("Enseignant non connecté")
+    alert("Vous devez être connecté pour générer un exercice")
+    mode.value = 'form'
+    return
+  }
   const res = await fetch('/api/teacher/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    body: JSON.stringify({ prompt: description.value })
+    body: JSON.stringify({ prompt: description.value, creatorId: currentUser.id })
   })
 
   if (!res.ok) {

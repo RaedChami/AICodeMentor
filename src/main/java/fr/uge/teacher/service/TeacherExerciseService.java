@@ -49,6 +49,16 @@ public class TeacherExerciseService {
                 .getResultList();
     }
 
+    public List<Exercise> getExercisesByUserId(long userId) {
+        if (userId <= 0) {
+            throw new IllegalArgumentException("user ID is < 0");
+        }
+        return entityManager
+                .createNamedQuery("Exercise.findByCreatorId", Exercise.class)
+                .setParameter("creatorId", userId)
+                .getResultList();
+    }
+
     /**
      * Returns an exercise corresponding to the given id
      * @param id serial number of the exercise
