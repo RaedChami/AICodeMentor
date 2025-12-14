@@ -133,7 +133,7 @@ async function fetchExercises() {
 
 
 function openExercise(id: number) {
-  router.push(`/student/exercises/${id}`)
+  router.push(`/student/exercises-submitted/${id}`)
 }
 
 onMounted(fetchExercises)

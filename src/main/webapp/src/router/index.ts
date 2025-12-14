@@ -9,6 +9,7 @@ import StudentExercisesViewer from "../pages/student/StudentExercisesViewer.vue"
 import ModifyExercise from "../pages/teacher/ModifyExercise.vue"
 import StudentExercise from "../pages/student/StudentExercise.vue"
 import StudentExercisesSubmitted from "../pages/student/StudentExercisesSubmittedView.vue"
+import StudentExerciseSubmitted from "../pages/student/StudentExerciseSubmitted.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -23,7 +24,8 @@ const router = createRouter({
     { path: "/student/exercises", component: StudentExercisesViewer },
     { path: "/teacher/exercises/:id", component: ModifyExercise },
     { path: "/student/exercises/:id", component: StudentExercise },
-    { path: "/student/exercises-submitted", component: StudentExercisesSubmitted }
+    { path: "/student/exercises-submitted", component: StudentExercisesSubmitted },
+    { path: "/student/exercises-submitted/:id", component: StudentExerciseSubmitted }
   ]
 })
 
