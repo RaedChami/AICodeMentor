@@ -4,10 +4,6 @@
     <div class="row mb-4">
       <div class="col">
         <h2 class="mb-0">Exercice {{ exercise?.id }}</h2>
-        <p class="text-light mt-2">
-          <i class="bi bi-person-fill me-1"></i>
-          Créé par : {{ exercise.creator.name }} {{ exercise.creator.lastName }}
-        </p>
       </div>
     </div>
 
@@ -20,14 +16,28 @@
 
     <div v-else-if="exercise">
       <div v-if="mode === 'view'">
+        <p class="text-light mt-2">
+          <i class="bi bi-person-fill me-1"></i>
+          Créé par : {{ exercise.creator.name }} {{ exercise.creator.lastName }}
+        </p>
         <div class="d-flex justify-content-end gap-2 mb-3">
           <button @click="goBack" class="btn btn-primary me-auto bg-primary">
             Retour
           </button>
-          <button @click="mode = 'modify'" class="btn btn-warning">
+          <button
+            @click="mode = 'modify'"
+            class="btn btn-warning"
+            :disabled="!isOwner"
+            :title="!isOwner ? 'Vous ne pouvez modifier que vos propres exercices' : ''"
+          >
             Modifier avec IA
           </button>
-          <button class="btn btn-danger" @click="deleteExercise(exercise.id)">
+
+          <button
+            class="btn btn-danger"
+            @click="deleteExercise(exercise.id)"
+            :disabled="!isOwner"
+          >
             Supprimer
           </button>
         </div>
@@ -218,7 +228,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import DecoBar from '../../components/DecoBar.vue'
 import MonacoEditor from '../../components/MonacoEditor.vue'
@@ -232,7 +242,11 @@ const validationErrors = ref<string[]>([])
 const showErrors = ref(false)
 const modificationDescription = ref('')
 const isModifying = ref(false)
+const currentUser = JSON.parse(localStorage.getItem("user") || "{}")
 
+const isOwner = computed(() => {
+  return exercise.value?.creator?.id === currentUser.id
+})
 async function fetchExercise() {
   try {
     loading.value = true
@@ -254,7 +268,7 @@ async function deleteExercise(id: number) {
     return
   }
 
-  const res = await fetch(`/api/teacher/exercises/${id}`, { method: "DELETE" })
+  const res = await fetch(`/api/teacher/exercises/${id}?userId=${currentUser.id}`, { method: "DELETE" })
   if (res.ok) {
     router.push('/teacher/exercises')
   } else {
@@ -287,7 +301,8 @@ async function modifyWithLLM() {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        prompt: modificationDescription.value
+        prompt: modificationDescription.value,
+        creatorId: currentUser.id
       })
     })
 
@@ -300,6 +315,12 @@ async function modifyWithLLM() {
       mode.value = 'view'
     } else {
       const errorData = await res.json().catch(() => ({}))
+      if (res.status === 403) {
+        alert(errorData.message || "Accès interdit")
+        mode.value = 'view'
+        return
+      }
+
       alert(`Erreur lors de la modification : ${errorData.message || 'Erreur inconnue'}`)
       mode.value = 'modify'
     }

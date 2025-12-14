@@ -14,7 +14,6 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNav">
-        <!-- Liens à gauche -->
         <ul class="navbar-nav">
           <li
             v-for="item in navItems"
@@ -62,7 +61,8 @@ export default defineComponent({
     return {
       navItems: [
         { label: "Accueil", path: "/teacher/generate" },
-        { label: "Mes Exercices", path: "/teacher/exercises" },
+        { label: "Tous les Exercices", path: "/teacher/exercises" },
+        { label: "Mes Exercices", path: "/teacher/my-exercises" },
       ],
       user: JSON.parse(localStorage.getItem("user") || "null"),
     };

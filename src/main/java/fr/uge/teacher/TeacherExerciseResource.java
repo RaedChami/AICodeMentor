@@ -1,5 +1,6 @@
 package fr.uge.teacher;
 
+import fr.uge.exercise.exception.ExerciseUnauthorizedAccess;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -40,6 +41,20 @@ public class TeacherExerciseResource {
     }
 
     /**
+     * Get all exercises created by a specific user
+     * @param userId The ID of the user/creator
+     * @return List of exercises created by this user
+     */
+    @Path("user/{userId}")
+    @GET
+    public List<ExerciseDTO> getByUserId(@RestPath("userId") long userId) {
+        return teacherExerciseService.getExercisesByUserId(userId)
+                .stream()
+                .map(ExerciseMapper::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * @return an existing exercise
      */
     @Path("/{id}")
@@ -59,7 +74,7 @@ public class TeacherExerciseResource {
      */
     @Path("/{id}/modify")
     @PUT
-    public ExerciseDTO modify(@RestPath("id") long id, UserPrompt prompt) throws ExerciseGenerationException, IOException {
+    public ExerciseDTO modify(@RestPath("id") long id, UserPrompt prompt) throws ExerciseGenerationException, ExerciseUnauthorizedAccess, IOException {
         var modified = teacherExerciseService.modifyExerciseById(id, prompt);
         return ExerciseMapper.convertToDTO(modified);
     }
@@ -70,8 +85,8 @@ public class TeacherExerciseResource {
      */
     @Path("/{id}")
     @DELETE
-    public void delete(@RestPath("id") long id) {
-        teacherExerciseService.deleteExercise(id);
+    public void delete(@RestPath("id") long id, @QueryParam("userId") long userId) {
+        teacherExerciseService.deleteExercise(id, userId);
     }
 
 }
