@@ -3,7 +3,7 @@
   <div class="container-fluid py-4">
     <div class="row mb-4">
       <div class="col">
-        <h2>Tous les exercices</h2>
+        <h2>Mes Exercices</h2>
       </div>
     </div>
 
@@ -20,15 +20,18 @@
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Chargement...</span>
       </div>
-      <p class="mt-3 text-muted">Chargement des exercices...</p>
+      <p class="mt-3 text-muted">Chargement de vos exercices...</p>
     </div>
 
     <div v-else-if="exercises.length === 0" class="alert alert-info d-flex justify-content-center w-50 mx-auto bg-warning" role="alert">
-    <div class="text-dark"><strong>Vous n'aviez aucun exercice!</strong></div>
+      <div class="text-dark">
+        <strong>Vous n'avez créé aucun exercice!</strong>
+        <p class="mb-0 mt-2">Commencez par générer un exercice avec l'IA.</p>
+      </div>
     </div>
 
     <div v-else-if="filteredExercises.length === 0" class="alert alert-info" role="alert">
-    <strong>Aucun exercice</strong> ne correspond au niveau {{ selectedDifficulty }}.
+      <strong>Aucun exercice</strong> ne correspond au niveau {{ selectedDifficulty }}.
     </div>
 
     <div v-else class="row g-3">
@@ -81,6 +84,11 @@ interface Exercise {
   id: number
   description: string
   difficulty: 'L1' | 'L2' | 'L3' | 'M1' | 'M2'
+  creator: {
+    id: number
+    name: string
+    lastName: string
+  }
 }
 
 const exercises = ref<Exercise[]>([])
@@ -106,21 +114,50 @@ function getDifficultyBadgeClass(difficulty: string): string {
   return classes[difficulty] || 'bg-secondary'
 }
 
-async function fetchExercises() {
+async function fetchMyExercises() {
   try {
     loading.value = true
-    const res = await fetch('/api/teacher/exercises')
-    exercises.value = res.ok ? await res.json() : []
+
+    const currentUserId = getCurrentUserId()
+
+    if (!currentUserId) {
+      console.error('Utilisateur non connecté')
+      exercises.value = []
+      return
+    }
+
+    const res = await fetch(`/api/teacher/exercises/user/${currentUserId}`)
+
+    if (!res.ok) {
+      throw new Error('Erreur HTTP ' + res.status)
+    }
+
+    exercises.value = await res.json()
+  } catch (error) {
+    console.error('Erreur lors du chargement des exercices:', error)
+    exercises.value = []
   } finally {
     loading.value = false
   }
 }
 
+function getCurrentUserId(): number | null {
+  const user = localStorage.getItem('user')
+  if (!user) return null
+
+  try {
+    return JSON.parse(user).id ?? null
+  } catch {
+    return null
+  }
+}
+
+
 function openExercise(id: number) {
   router.push(`/teacher/exercises/${id}`)
 }
 
-onMounted(fetchExercises)
+onMounted(fetchMyExercises)
 </script>
 
 <style scoped>

@@ -10,7 +10,7 @@ import ModifyExercise from "../pages/teacher/ModifyExercise.vue"
 import StudentExercise from "../pages/student/StudentExercise.vue"
 import StudentExercisesSubmitted from "../pages/student/StudentExercisesSubmittedView.vue"
 import StudentExerciseSubmitted from "../pages/student/StudentExerciseSubmitted.vue"
-
+import MyExercises from "../pages/teacher/MyExercises.vue"
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -23,6 +23,7 @@ const router = createRouter({
     { path: "/teacher/exercises", component: TeacherExercisesViewer },
     { path: "/student/exercises", component: StudentExercisesViewer },
     { path: "/teacher/exercises/:id", component: ModifyExercise },
+    { path: "/teacher/my-exercises", component: MyExercises },
     { path: "/student/exercises/:id", component: StudentExercise },
     { path: "/student/exercises-submitted", component: StudentExercisesSubmitted },
     { path: "/student/exercises-submitted/:id", component: StudentExerciseSubmitted }

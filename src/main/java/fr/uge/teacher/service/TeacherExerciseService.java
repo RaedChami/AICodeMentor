@@ -1,5 +1,6 @@
 package fr.uge.teacher.service;
 
+import fr.uge.exercise.exception.ExerciseUnauthorizedAccess;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -41,6 +42,22 @@ public class TeacherExerciseService {
     }
 
     /**
+     * Validates that the user is the creator of the exercise
+     * @param exercise The exercise to validate
+     * @param userId The user ID to check
+     * @throws IllegalArgumentException if the user is not the creator
+     */
+    private void validateExerciseOwnership(Exercise exercise, long userId) {
+        Objects.requireNonNull(exercise);
+        if (userId <= 0) {
+            throw new IllegalArgumentException("user ID is < 0");
+        }
+        if (exercise.getCreator() == null || exercise.getCreator().getId() != userId) {
+            throw new ExerciseUnauthorizedAccess("You are unauthorized to modify this exercise.");
+        }
+    }
+
+    /**
      * Returns all existing exercises
      * @return The list of existing exercises
      */
@@ -54,8 +71,10 @@ public class TeacherExerciseService {
             throw new IllegalArgumentException("user ID is < 0");
         }
         return entityManager
-                .createNamedQuery("Exercise.findByCreatorId", Exercise.class)
-                .setParameter("creatorId", userId)
+                .createQuery(
+                        "SELECT e FROM Exercise e WHERE e.creator.id = :userId"
+                        , Exercise.class)
+                .setParameter("userId", userId)
                 .getResultList();
     }
 
@@ -82,10 +101,11 @@ public class TeacherExerciseService {
      * @return The modified exercise if success of the generation
      * @throws IOException Propagated exception from writing the files for the compilation
      */
-    public Exercise modifyExerciseById(long id, UserPrompt prompt) throws IOException {
+    public Exercise modifyExerciseById(long id, UserPrompt prompt) throws IOException, ExerciseUnauthorizedAccess {
         Objects.requireNonNull(prompt);
         validateExerciseId(id);
         var findExercise = getExercise(id);
+        validateExerciseOwnership(findExercise, prompt.creatorId());
         for (var i = 0; i < MAX_ATTEMPTS; i++) {
             var result = generateValidModifiedExercise(findExercise, prompt, id);
             if (result != null) { // Valid modified exercise has been generated
@@ -124,6 +144,10 @@ public class TeacherExerciseService {
     @Transactional
     Exercise saveModifiedExercise(Exercise exercise, long id) {
         Objects.requireNonNull(exercise);
+        var existingExercise = entityManager.find(Exercise.class, id);
+        if (existingExercise != null && existingExercise.getCreator() != null) {
+            exercise.setCreator(existingExercise.getCreator());
+        }
         exercise.setId(id);
         return entityManager.merge(exercise);
     }
@@ -133,8 +157,10 @@ public class TeacherExerciseService {
      * @param id serial number of the exercise
      */
     @Transactional
-    public void deleteExercise(long id) {
+    public void deleteExercise(long id, long userId) throws ExerciseUnauthorizedAccess {
         validateExerciseId(id);
+        var exercise = getExercise(id);
+        validateExerciseOwnership(exercise, userId);
         entityManager.remove(getExercise(id));
     }
 }
