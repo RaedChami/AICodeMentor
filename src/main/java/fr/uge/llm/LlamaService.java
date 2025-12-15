@@ -32,9 +32,8 @@ public class LlamaService {
 
     private LlamaModel model;
     private final ModelParameters modelParams = new ModelParameters()
-            .setModel("models/qwen2.5-coder-3b-instruct-q4_k_m.gguf");
-
-// SetNparallel pour concurrence
+            .setModel("models/qwen2.5-coder-3b-instruct-q4_k_m.gguf")
+            .setParallel(5);
 
     @PostConstruct
     void init() {
@@ -94,7 +93,7 @@ public class LlamaService {
         var inferParams = new InferenceParameters(fullPrompt)
                 .setTemperature(0.1f)
                 .setStopStrings("<|im_end|>")
-                .setNPredict(1200);
+                .setNPredict(1024);
 
         var answer = model.complete(inferParams);
         System.out.println(answer);
@@ -123,7 +122,7 @@ public class LlamaService {
         var inferParams = new InferenceParameters(fullPrompt)
                 .setTemperature(0.1f)
                 .setStopStrings("<|im_end|>")
-                .setNPredict(1200);
+                .setNPredict(1024);
 
         var answer = model.complete(inferParams);
         System.out.println(answer);

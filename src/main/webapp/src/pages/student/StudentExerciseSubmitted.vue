@@ -95,7 +95,7 @@ const loading = ref(true)
 
 const studentCode = ref("")
 
-const user = JSON.parse(localStorage.getItem("user") || "{}")
+const user = JSON.parse(sessionStorage.getItem("user") || "{}")
 
 
 async function fetchExercise() {

@@ -128,19 +128,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Navbar from '../../components/NavBar.vue'
 import MonacoEditor from '../../components/MonacoEditor.vue'
 
 const description = ref('')
 const generatedExercise = ref<any>(null)
 const mode = ref<'form' | 'loading' | 'result'>('form')
-const currentUser = JSON.parse(localStorage.getItem("user") || "{}")
+const currentUser = ref(JSON.parse(sessionStorage.getItem("user") || "{}"))
+
+onMounted(() => {
+  currentUser.value = JSON.parse(sessionStorage.getItem("user") || "{}")
+})
 
 async function createExercise() {
   mode.value = 'loading'
 
-  if (!currentUser.id) {
+  if (!currentUser.value.id) {
     console.error("Enseignant non connecté")
     alert("Vous devez être connecté pour générer un exercice")
     mode.value = 'form'
@@ -149,7 +153,7 @@ async function createExercise() {
   const res = await fetch('/api/teacher/generate', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    body: JSON.stringify({ prompt: description.value, creatorId: currentUser.id })
+    body: JSON.stringify({ prompt: description.value, creatorId: currentUser.value.id })
   })
 
   if (!res.ok) {

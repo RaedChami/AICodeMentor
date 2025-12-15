@@ -102,7 +102,7 @@ async function createAccount() {
     return
   }
 
-  localStorage.setItem(
+  sessionStorage.setItem(
     "user",
     JSON.stringify({
       id: data.id,

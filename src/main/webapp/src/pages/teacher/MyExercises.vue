@@ -142,7 +142,7 @@ async function fetchMyExercises() {
 }
 
 function getCurrentUserId(): number | null {
-  const user = localStorage.getItem('user')
+  const user = sessionStorage.getItem('user')
   if (!user) return null
 
   try {
