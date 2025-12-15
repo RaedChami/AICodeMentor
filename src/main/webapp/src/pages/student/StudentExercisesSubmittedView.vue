@@ -96,7 +96,7 @@ const filteredExercises = computed(() => {
   return exercises.value.filter(ex => ex.difficulty === selectedDifficulty.value)
 })
 
-const user = JSON.parse(localStorage.getItem("user") || "{}")
+const user = JSON.parse(sessionStorage.getItem("user") || "{}")
 
 
 function getDifficultyBadgeClass(difficulty: string): string {

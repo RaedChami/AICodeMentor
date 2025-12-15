@@ -242,11 +242,17 @@ const validationErrors = ref<string[]>([])
 const showErrors = ref(false)
 const modificationDescription = ref('')
 const isModifying = ref(false)
-const currentUser = JSON.parse(localStorage.getItem("user") || "{}")
+const currentUser = ref(JSON.parse(sessionStorage.getItem("user") || "{}"))
 
 const isOwner = computed(() => {
-  return exercise.value?.creator?.id === currentUser.id
+  return exercise.value?.creator?.id === currentUser.value.id
 })
+
+onMounted(() => {
+  currentUser.value = JSON.parse(sessionStorage.getItem("user") || "{}")
+  fetchExercise()
+})
+
 async function fetchExercise() {
   try {
     loading.value = true
@@ -268,7 +274,7 @@ async function deleteExercise(id: number) {
     return
   }
 
-  const res = await fetch(`/api/teacher/exercises/${id}?userId=${currentUser.id}`, { method: "DELETE" })
+  const res = await fetch(`/api/teacher/exercises/${id}?userId=${currentUser.value.id}`, { method: "DELETE" })
   if (res.ok) {
     router.push('/teacher/exercises')
   } else {
@@ -302,7 +308,7 @@ async function modifyWithLLM() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         prompt: modificationDescription.value,
-        creatorId: currentUser.id
+        creatorId: currentUser.value.id
       })
     })
 
@@ -344,7 +350,6 @@ function goBack() {
   router.back()
 }
 
-onMounted(fetchExercise)
 </script>
 
 <style scoped>

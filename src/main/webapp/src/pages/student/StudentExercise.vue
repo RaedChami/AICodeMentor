@@ -141,7 +141,7 @@ const showHintButton = ref(false)
 const hints = ref<string | null>(null)
 
 const hintLoading = ref(false)
-const user = JSON.parse(localStorage.getItem("user") || "{}")
+const user = JSON.parse(sessionStorage.getItem("user") || "{}")
 
 async function runTests() {
   testResult.value = "Exécution des tests en cours..."

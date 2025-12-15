@@ -64,7 +64,7 @@ export default defineComponent({
         { label: "Tous les Exercices", path: "/teacher/exercises" },
         { label: "Mes Exercices", path: "/teacher/my-exercises" },
       ],
-      user: JSON.parse(localStorage.getItem("user") || "null"),
+      user: JSON.parse(sessionStorage.getItem("user") || "null"),
     };
   },
 });
