@@ -31,10 +31,16 @@ public record ExerciseDTO(Long id, String description, Difficulty difficulty, Li
         Objects.requireNonNull(unitTests);
         Objects.requireNonNull(solution);
         concepts = new ArrayList<>(Objects.requireNonNull(concepts));
+        creator = creator == null ? null : new Login(creator.getName(), creator.getLastName(), creator.getRole());
     }
 
     @Override
     public List<String> concepts() {
         return new ArrayList<>(concepts);
+    }
+
+    @Override
+    public Login creator() {
+        return creator == null ? null : new Login(creator.getName(), creator.getLastName(), creator.getRole());
     }
 }

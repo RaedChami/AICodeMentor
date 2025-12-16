@@ -15,7 +15,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import fr.uge.exercise.service.ExerciseParser;
 import fr.uge.exercise.Exercise;
-import fr.uge.exercise.exception.ExerciseGenerationException;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -245,7 +244,7 @@ public class LlamaService {
                 <SOLUTION>
                 Écrivez une classe contenant solution complète de l'exercice.
                 EXEMPLE:
-                import java.util.*;                
+                import java.util.*;
                 public class Solution {
                     // TODO
                 }
