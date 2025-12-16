@@ -70,6 +70,13 @@ public class TeacherGenerateService {
         return llamaService.generateExercise(prompt.prompt());
     }
 
+    /**
+     * Saves into DB a newly generated exercise
+     * @param dtoExercise DTO of the generated exercise
+     * @return entity of the saved exercise
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @Transactional
     public Exercise saveGeneratedExercise(ExerciseDTO dtoExercise) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(dtoExercise);

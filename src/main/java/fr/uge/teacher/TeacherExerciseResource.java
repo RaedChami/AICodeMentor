@@ -29,7 +29,8 @@ public class TeacherExerciseResource {
     }
 
     /**
-     * @return all existing exercises
+     * Returns all existing exercises
+     * @return a list of all exercises in DTO format
      */
     @Path("/")
     @GET
@@ -55,7 +56,9 @@ public class TeacherExerciseResource {
     }
 
     /**
-     * @return an existing exercise
+     * Returns an existing exercise
+     * @param id serial number of the exerise
+     * @return DTO of the exercise
      */
     @Path("/{id}")
     @GET
@@ -69,7 +72,8 @@ public class TeacherExerciseResource {
      * @param id ID of an exercise
      * @param prompt Prompt from user
      * @return a Modified exercise
-     * @throws ExerciseGenerationException If generation failed more than 5 times
+     * @throws ExerciseGenerationException thrown if generation failed more than 5 times
+     * @throws ExerciseUnauthorizedAccess thrown if attempt by a user to modify an exercise created by someone else
      * @throws IOException Propagated exception from compiling class
      */
     @Path("/{id}/modify")
@@ -81,7 +85,8 @@ public class TeacherExerciseResource {
 
     /**
      * Deletes an existing exercise
-     * @param id ID of an exercise
+     * @param id serial number of an exercise
+     * @param userId ID of a user
      */
     @Path("/{id}")
     @DELETE

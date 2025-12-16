@@ -27,7 +27,7 @@ public class TeacherExerciseGenerateResource {
     }
 
     /**
-     *
+     * Exercise generation endpoint
      * @param prompt Entered by the user on the web
      * @return DTO of the generated exercise
      * @throws ExerciseGenerationException if generation failed more than 10 times
@@ -37,6 +37,13 @@ public class TeacherExerciseGenerateResource {
         return ExerciseMapper.convertToDTO(teacherGenerateService.generateExerciseService(prompt));
     }
 
+    /**
+     * Exercise saving endpoint
+     * @param dtoExercise DTO of the generated exercise
+     * @return DTO of the generated exercise
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @POST
     @Path("/save")
     public ExerciseDTO save(ExerciseDTO dtoExercise) throws NoSuchFieldException, IllegalAccessException {

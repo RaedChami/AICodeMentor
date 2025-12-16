@@ -66,6 +66,11 @@ public class TeacherExerciseService {
                 .getResultList();
     }
 
+    /**
+     * Returns all existing exercises created by a specific user
+     * @param userId long-typed ID of a user
+     * @return The list of exercises created by a user
+     */
     public List<Exercise> getExercisesByUserId(long userId) {
         if (userId <= 0) {
             throw new IllegalArgumentException("user ID is < 0");
