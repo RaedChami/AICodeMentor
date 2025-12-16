@@ -4,6 +4,10 @@ import fr.uge.login.dto.LoginDTO;
 
 import java.util.Objects;
 
+/**
+ * Mapping class for a user.
+ * Allows to convert a user entity into a DTO and vice versa
+ */
 public class LoginMapper {
     public static LoginDTO convertToDTO(Login login) {
         Objects.requireNonNull(login);

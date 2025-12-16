@@ -112,7 +112,7 @@ async function createAccount() {
     })
   )
 
-  router.push(data.role === "Teacher" ? "/teacher" : "/student")
+  router.push(data.role === "TEACHER" ? "/teacher" : "/student")
 }
 
 </script>

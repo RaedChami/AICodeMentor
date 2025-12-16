@@ -33,7 +33,7 @@ public class LlamaService {
     private LlamaModel model;
     private final ModelParameters modelParams = new ModelParameters()
             .setModel("models/qwen2.5-coder-3b-instruct-q4_k_m.gguf")
-            .setParallel(5);
+            .setParallel(2);
 
     @PostConstruct
     void init() {
@@ -45,6 +45,12 @@ public class LlamaService {
         this.model.close();
     }
 
+    /**
+     * Requests local LLM and generates feedback to a student for its failed submission
+     * @param studentCode program submitted by the student
+     * @param exerciseTest JUnit test class for the corresponding exercise
+     * @return A hint corresponding with the failed tests of a submission by a student
+     */
     @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE") // Suppress error caused by false positive in text blocks
     public String getHint(String studentCode, String exerciseTest) {
         Objects.requireNonNull(studentCode);
@@ -77,7 +83,7 @@ public class LlamaService {
     }
 
     /**
-     * Requesting local LLM and Generates an exercise using prompt engineering
+     * Requests local LLM and Generates an exercise using prompt engineering
      * @param userDescription Initial prompt sent from the user
      * @return The proper exercise after cleanup from the initial response of the LLM
      */
@@ -93,7 +99,7 @@ public class LlamaService {
         var inferParams = new InferenceParameters(fullPrompt)
                 .setTemperature(0.1f)
                 .setStopStrings("<|im_end|>")
-                .setNPredict(1024);
+                .setNPredict(2048);
 
         var answer = model.complete(inferParams);
         System.out.println(answer);
@@ -101,7 +107,7 @@ public class LlamaService {
     }
 
     /**
-     * Requesting local LLM and Generates a partial modification of a given exercise
+     * Requests local LLM and Generates a partial modification of a given exercise
      * @param existingExercise Exercise to be modified
      * @param modificationDescription Initial prompt sent from the user
      * @return The proper exercise after cleanup from the initial response of the LLM
@@ -122,7 +128,7 @@ public class LlamaService {
         var inferParams = new InferenceParameters(fullPrompt)
                 .setTemperature(0.1f)
                 .setStopStrings("<|im_end|>")
-                .setNPredict(1024);
+                .setNPredict(2048);
 
         var answer = model.complete(inferParams);
         System.out.println(answer);
@@ -223,13 +229,10 @@ public class LlamaService {
                 
                 <TESTS>
                 Écrivez une classe contenant les tests JUnit 5 complets sans oublier les imports de librairie.
-                TOUJOURS importer java.util.Arrays;java.util.List;java.util.ArrayList; si le code utilise List ou Arrays
                 EXEMPLE:
                 import org.junit.jupiter.api.Test;
                 import static org.junit.jupiter.api.Assertions.*;
-                import java.util.List;
-                import java.util.Arrays;
-                import java.util.ArrayList;
+                import java.util.*;
                 public class SolutionTest {
                     @Test
                     public void test1() {
@@ -241,11 +244,8 @@ public class LlamaService {
                 
                 <SOLUTION>
                 Écrivez une classe contenant solution complète de l'exercice.
-                TOUJOURS importer java.util.Arrays;java.util.List;java.util.ArrayList; si le code utilise List ou Arrays
                 EXEMPLE:
-                import java.util.List;
-                import java.util.Arrays;
-                import java.util.ArrayList;
+                import java.util.*;                
                 public class Solution {
                     // TODO
                 }

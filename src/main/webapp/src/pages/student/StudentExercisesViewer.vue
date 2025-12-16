@@ -4,7 +4,6 @@
     <div class="row mb-4">
       <div class="col">
         <h2>Tous les Exercices</h2>
-        <p class="text-muted">Cliquez sur un exercice pour le consulter</p>
       </div>
     </div>
 

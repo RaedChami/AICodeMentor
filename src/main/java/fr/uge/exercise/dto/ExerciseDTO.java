@@ -7,6 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * DTO of an exercise
+ * @param id serial number of the exercise
+ * @param description description for the exercise
+ * @param difficulty difficulty level of the exercise
+ * @param concepts programming concepts of the exercise
+ * @param signatureAndBody signature & body of the exercise
+ * @param unitTests JUnit class for the exercise
+ * @param solution solution example for the exercise
+ * @param creator author of the exercise
+ */
 public record ExerciseDTO(Long id, String description, Difficulty difficulty, List<String> concepts, String signatureAndBody,
                           String unitTests, String solution, Login creator) {
     public ExerciseDTO {
