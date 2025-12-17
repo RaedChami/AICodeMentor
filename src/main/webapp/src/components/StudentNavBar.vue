@@ -14,8 +14,7 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navbarNav">
-        <!-- Liens à gauche -->
-        <ul class="navbar-nav">
+        <ul class="navbar-nav align-items-center">
           <li
             v-for="item in navItems"
             :key="item.path"
@@ -29,14 +28,23 @@
               {{ item.label }}
             </router-link>
           </li>
-        </ul>
 
-        <span
-          v-if="user"
-          class="navbar-text ms-auto text-white fw-semibold"
-        >
-          Bonjour {{ user.name }} {{ user.lastName }}
-        </span>
+          <li
+            v-if="user"
+            class="nav-item d-flex align-items-center gap-2 text-white fw-semibold ms-3"
+          >
+            <span class="navbar-text text-white">
+              Bonjour {{ user.name }} {{ user.lastName }}
+            </span>
+
+            <button
+              class="btn btn-outline-light btn-sm"
+              @click="logout"
+            >
+              Déconnexion
+            </button>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -66,6 +74,12 @@ export default defineComponent({
       ],
       user: JSON.parse(sessionStorage.getItem("user") || "null"),
     };
+  },
+  methods: {
+    logout() {
+      sessionStorage.removeItem("user");
+      this.$router.push("/");
+    },
   },
 });
 </script>

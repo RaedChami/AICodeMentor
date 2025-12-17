@@ -30,7 +30,7 @@ public class StudentHintFromLLMRessource {
                     .entity("Exercise not found").build();
         }
 
-        String answer = llama.getHint(request.code, exercise.getUnitTests());
+        String answer = llama.getHint(request.getCode(), exercise.getUnitTests());
 
         return Response.ok(answer).build();
     }

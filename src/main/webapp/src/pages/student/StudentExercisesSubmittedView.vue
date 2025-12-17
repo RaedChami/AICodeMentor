@@ -61,7 +61,7 @@
             </p>
             <div class="mt-auto">
               <button class="btn btn-outline-info btn-sm w-100">
-                Continuer
+                Consulter
               </button>
             </div>
           </div>
