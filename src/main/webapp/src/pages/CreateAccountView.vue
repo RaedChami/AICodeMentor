@@ -25,7 +25,7 @@
               <input
                 class="form-check-input"
                 type="radio"
-                value="Teacher"
+                value="TEACHER"
                 v-model="role"
                 id="roleTeacher"
               />
@@ -38,7 +38,7 @@
               <input
                 class="form-check-input"
                 type="radio"
-                value="Student"
+                value="STUDENT"
                 v-model="role"
                 id="roleStudent"
               />
@@ -112,7 +112,7 @@ async function createAccount() {
     })
   )
 
-  router.push(data.role === "Teacher" ? "/teacher" : "/student")
+  router.push(data.role === "TEACHER" ? "/teacher" : "/student")
 }
 
 </script>

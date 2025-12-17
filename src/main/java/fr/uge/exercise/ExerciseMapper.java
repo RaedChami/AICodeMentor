@@ -1,6 +1,7 @@
 package fr.uge.exercise;
 
 import fr.uge.exercise.dto.ExerciseDTO;
+import fr.uge.login.LoginMapper;
 
 import java.util.Objects;
 
@@ -24,7 +25,7 @@ public class ExerciseMapper {
                 exercise.getSignatureAndBody(),
                 exercise.getUnitTests(),
                 exercise.getSolution(),
-                exercise.getCreator()
+                LoginMapper.convertToDTO(exercise.getCreator())
         );
     }
 
