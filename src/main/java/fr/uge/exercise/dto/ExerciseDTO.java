@@ -1,7 +1,7 @@
 package fr.uge.exercise.dto;
 
 import fr.uge.exercise.Difficulty;
-import fr.uge.login.Login;
+import fr.uge.login.dto.LoginDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.Objects;
  * @param creator author of the exercise
  */
 public record ExerciseDTO(Long id, String description, Difficulty difficulty, List<String> concepts, String signatureAndBody,
-                          String unitTests, String solution, Login creator) {
+                          String unitTests, String solution, LoginDTO creator) {
     public ExerciseDTO {
         if (id != null && id <= 0) {
             throw new IllegalArgumentException("exercise id is inferior than 0");

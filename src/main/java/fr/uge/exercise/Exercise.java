@@ -1,5 +1,6 @@
 package fr.uge.exercise;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import fr.uge.login.Login;
 import jakarta.persistence.*;
 import org.jetbrains.annotations.NotNull;
@@ -76,10 +77,12 @@ public class Exercise {
         return solution;
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "JPA entity relationship must return managed instance")
     public Login getCreator() {
         return creator;
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "JPA entity relationship must store the exact reference")
     public void setCreator(Login creator) {
         this.creator = creator;
     }

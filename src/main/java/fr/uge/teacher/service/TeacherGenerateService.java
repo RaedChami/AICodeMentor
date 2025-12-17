@@ -1,6 +1,7 @@
 package fr.uge.teacher.service;
 
 import fr.uge.login.Login;
+import fr.uge.login.LoginMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -81,7 +82,7 @@ public class TeacherGenerateService {
     public Exercise saveGeneratedExercise(ExerciseDTO dtoExercise) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(dtoExercise);
         var exercise = ExerciseMapper.convertToEntity(dtoExercise);
-        exercise.setCreator(dtoExercise.creator());
+        exercise.setCreator(LoginMapper.convertToEntity(dtoExercise.creator()));
         entityManager.persist(exercise);
         return exercise;
     }

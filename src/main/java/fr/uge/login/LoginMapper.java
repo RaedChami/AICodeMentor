@@ -2,6 +2,7 @@ package fr.uge.login;
 
 import fr.uge.login.dto.LoginDTO;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 /**
@@ -19,7 +20,7 @@ public class LoginMapper {
         );
     }
 
-    public static Login convertToEntity(LoginDTO loginDTO) {
+    public static Login convertToEntity(LoginDTO loginDTO) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(loginDTO);
         var login =  new Login(
                 loginDTO.name(),
@@ -27,13 +28,9 @@ public class LoginMapper {
                 loginDTO.role()
         );
         if (loginDTO.id() != null) {
-            try {
-                var idField = Login.class.getDeclaredField("id");
-                idField.setAccessible(true);
-                idField.set(login, loginDTO.id());
-            } catch (Exception e) {
-                throw new RuntimeException("Cannot set login ID", e);
-            }
+            var idField = Login.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(login, loginDTO.id());
         }
 
         return login;

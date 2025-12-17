@@ -1,5 +1,6 @@
 package fr.uge.exercise;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import fr.uge.login.Login;
 import jakarta.persistence.*;
 
@@ -47,6 +48,7 @@ public class ExerciseSubmitted {
     public ExerciseSubmitted() {
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "JPA entity relationship must store the exact references")
     public ExerciseSubmitted(Login login, Exercise exercise, String solutionSubmitted) {
         this.login = Objects.requireNonNull(login);
         this.exercise = Objects.requireNonNull(exercise);
@@ -57,10 +59,12 @@ public class ExerciseSubmitted {
         return id;
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "JPA entity relationship must return managed instance")
     public Login getLogin() {
         return login;
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "JPA entity relationship must return managed instance")
     public Exercise getExercise() {
         return exercise;
     }

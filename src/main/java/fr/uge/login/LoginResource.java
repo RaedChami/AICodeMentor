@@ -22,7 +22,7 @@ public class LoginResource {
 
     @POST
     @Transactional
-    public LoginDTO create(LoginDTO login) {
+    public LoginDTO create(LoginDTO login) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(login);
         validateLoginDTO(login);
 
@@ -72,7 +72,7 @@ public class LoginResource {
         return LoginMapper.convertToDTO(existingLogin);
     }
 
-    private LoginDTO createNewLogin(LoginDTO login) {
+    private LoginDTO createNewLogin(LoginDTO login) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(login);
         var entity = LoginMapper.convertToEntity(login);
         entityManager.persist(entity);
