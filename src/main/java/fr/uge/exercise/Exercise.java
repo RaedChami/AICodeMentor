@@ -31,6 +31,9 @@ public class Exercise {
     @JoinColumn(name = "creator_id", nullable = true)
     private Login creator;
 
+    /**
+     * Default constructor for exercise entity
+     */
     public Exercise() {
         super();
     }

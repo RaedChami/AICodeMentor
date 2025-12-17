@@ -72,7 +72,7 @@ async function login() {
     })
   )
 
-  router.push(data.role === "TEACHER" ? "/teacher" : "/student")
+  router.push(data.role === "Teacher" ? "/teacher" : "/student")
 }
 
 
