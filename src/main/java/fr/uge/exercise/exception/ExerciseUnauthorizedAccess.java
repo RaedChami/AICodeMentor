@@ -5,7 +5,7 @@ import jakarta.ws.rs.core.Response;
 
 public class ExerciseUnauthorizedAccess extends WebApplicationException {
     public ExerciseUnauthorizedAccess(String message, Throwable cause) {
-        super();
+        super(message, cause);
     }
     public ExerciseUnauthorizedAccess(String message) {
         super(message, Response.Status.FORBIDDEN);
