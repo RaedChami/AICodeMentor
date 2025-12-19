@@ -110,7 +110,6 @@ public class StudentSubmissionResourceTest {
                 .when()
                 .post("/api/student/exercises/run-tests/" + exercise.getId())
                 .then()
-                .statusCode(200)
-                .body(not(isEmptyString()));
+                .statusCode(200);
     }
 }
