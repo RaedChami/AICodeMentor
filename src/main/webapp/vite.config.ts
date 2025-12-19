@@ -7,6 +7,7 @@ export default defineConfig({
     build: {
         outDir: '../resources/META-INF/resources',
         emptyOutDir: true,
+        chunkSizeWarningLimit: 5000
     },
 
 })
