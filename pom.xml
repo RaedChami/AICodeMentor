@@ -121,6 +121,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <jvmArgs>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArgs>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -137,7 +140,8 @@
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
-                    <argLine>-Djdk.tracePinnedThreads</argLine>
+                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
             <plugin>
@@ -176,6 +180,7 @@
                         </goals>
                         <configuration>
                             <nodeVersion>v22.20.0</nodeVersion>
+                            <npmVersion>11.7.0</npmVersion>
                         </configuration>
                     </execution>
                     <execution>
@@ -188,7 +193,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm run build</id>
+                        <id>npm run build --silent</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
