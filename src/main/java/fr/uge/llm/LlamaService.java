@@ -219,6 +219,7 @@ public class LlamaService {
                 <SIGNATURE>
                 Écrivez la signature de la méthode à implémenter pour l'exercice (ne pas inclure de code entier à l'exception des noms de méthodes/classe)
                 EXEMPLE:
+                import java.util.*;
                 public class Solution {
                     public String printHelloWorld() {
                         // TODO
