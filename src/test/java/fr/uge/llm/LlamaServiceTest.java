@@ -11,10 +11,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @QuarkusTest
 public class LlamaServiceTest {
+
+    private final LlamaService llamaService;
+    private final ExerciseParser exerciseParser;
     @Inject
-    LlamaService llamaService;
-    @Inject
-    ExerciseParser exerciseParser;
+    LlamaServiceTest(LlamaService llamaService, ExerciseParser exerciseParser) {
+        this.llamaService = llamaService;
+        this.exerciseParser = exerciseParser;
+    }
 
     private String validContent() {
         return "content for testing";

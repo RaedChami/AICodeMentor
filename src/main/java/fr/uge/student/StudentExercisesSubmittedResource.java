@@ -20,8 +20,11 @@ import java.util.Objects;
 @Consumes(MediaType.APPLICATION_JSON)
 public class StudentExercisesSubmittedResource {
 
+    private final EntityManager em;
     @Inject
-    EntityManager em;
+    StudentExercisesSubmittedResource(EntityManager entityManager) {
+        this.em = entityManager;
+    }
 
     /**
      * @return all exercises submitted by the student

@@ -1,5 +1,6 @@
 package fr.uge.login;
 
+import fr.uge.exercise.service.ExerciseParser;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -17,8 +18,11 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class LoginResource {
 
+    private final EntityManager entityManager;
     @Inject
-    EntityManager entityManager;
+    LoginResource(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     @POST
     @Transactional

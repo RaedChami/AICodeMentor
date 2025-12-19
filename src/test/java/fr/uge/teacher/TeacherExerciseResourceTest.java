@@ -25,8 +25,12 @@ import static org.hamcrest.Matchers.hasSize;
 @QuarkusTest
 @TestHTTPEndpoint(TeacherExerciseResource.class)
 public class TeacherExerciseResourceTest {
+
+    private final EntityManager entityManager;
     @Inject
-    EntityManager entityManager;
+    TeacherExerciseResourceTest(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     private Login testCreator1;
     private Login testCreator2;

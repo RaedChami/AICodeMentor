@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.urlEncodingEnabled;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -20,8 +21,11 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 @TestHTTPEndpoint(LoginResource.class)
 public class LoginResourceTest {
 
+    private final EntityManager entityManager;
     @Inject
-    EntityManager entityManager;
+    LoginResourceTest(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     private String validNameForTests() {
         return "gaston";

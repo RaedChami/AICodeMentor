@@ -25,8 +25,11 @@ import static org.hamcrest.CoreMatchers.*;
 @TestHTTPEndpoint(TeacherExerciseGenerateResource.class)
 public class TeacherExerciseGenerateResourceTest {
 
+    private final EntityManager entityManager;
     @Inject
-    EntityManager entityManager;
+    TeacherExerciseGenerateResourceTest(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     private Login testTeacher;
     private ExerciseDTO testExercise;

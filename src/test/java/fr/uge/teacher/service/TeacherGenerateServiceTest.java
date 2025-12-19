@@ -25,11 +25,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTest
 public class TeacherGenerateServiceTest {
 
+    private final TeacherGenerateService teacherGenerateService;
+    private final EntityManager entityManager;
     @Inject
-    TeacherGenerateService teacherGenerateService;
-
-    @Inject
-    EntityManager entityManager;
+    TeacherGenerateServiceTest(TeacherGenerateService teacherGenerateService, EntityManager entityManager) {
+        this.teacherGenerateService = teacherGenerateService;
+        this.entityManager = entityManager;
+    }
 
     private Login testTeacher;
 
