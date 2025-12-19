@@ -12,11 +12,13 @@ import fr.uge.llm.LlamaService;
 @Path("/api/student/exercises")
 public class StudentHintFromLLMRessource {
 
+    private final EntityManager em;
+    private final LlamaService llama;
     @Inject
-    EntityManager em;
-
-    @Inject
-    LlamaService llama;
+    StudentHintFromLLMRessource(EntityManager entityManager, LlamaService llama) {
+        this.em = entityManager;
+        this.llama = llama;
+    }
 
     @POST
     @Path("/get-hint/{id}")

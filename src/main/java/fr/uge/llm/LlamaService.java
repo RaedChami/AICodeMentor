@@ -16,6 +16,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import fr.uge.exercise.service.ExerciseParser;
 import fr.uge.exercise.Exercise;
 
+import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,12 +28,24 @@ public class LlamaService {
     @Inject
     LlamaService(ExerciseParser parser) {
         this.parser = Objects.requireNonNull(parser);
+        configureLibPath();
+    }
+
+    private void configureLibPath() {
+        var libFile = new File("libgpu/libjllama.so");
+        if (libFile.exists()) {
+            var path = libFile.getParent();
+            System.setProperty("de.kherud.llama.lib.path", path);
+            System.setProperty("java.library.path", path);
+        }
     }
 
     private LlamaModel model;
+
     private final ModelParameters modelParams = new ModelParameters()
             .setModel("models/qwen2.5-coder-3b-instruct-q4_k_m.gguf")
-            .setParallel(2);
+            .setParallel(2)
+            .setGpuLayers(20);
 
     @PostConstruct
     void init() {
@@ -75,9 +88,7 @@ public class LlamaService {
             <|im_start|>assistant
             """.formatted(userMessage);
         var infer = new InferenceParameters(prompt)
-                .setTemperature(0.7f)
-                .setTopP(0.9f)
-                .setNKeep(0);
+                .setTemperature(0.1f);
         return model.complete(infer.setPrompt(prompt));
     }
 
