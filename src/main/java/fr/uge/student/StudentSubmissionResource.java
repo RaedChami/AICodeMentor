@@ -26,6 +26,14 @@ public class StudentSubmissionResource {
         this.studentSubmissionService = studentSubmissionService;
     }
 
+    /**
+     * Call getTestOuput method which launch the Junit test on student Code
+     * @param id
+     * @param request
+     * @return the result of the Junit test
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @POST
     @Path("/run-tests/{id}")
     @Consumes(MediaType.APPLICATION_JSON)

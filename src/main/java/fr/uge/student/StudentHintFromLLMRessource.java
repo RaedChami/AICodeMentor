@@ -12,14 +12,18 @@ import fr.uge.llm.LlamaService;
 @Path("/api/student/exercises")
 public class StudentHintFromLLMRessource {
 
-    private final EntityManager em;
-    private final LlamaService llama;
     @Inject
-    StudentHintFromLLMRessource(EntityManager entityManager, LlamaService llama) {
-        this.em = entityManager;
-        this.llama = llama;
-    }
+    EntityManager em;
 
+    @Inject
+    LlamaService llama;
+
+    /**
+     * Call the llm to get a hint on student code to help him by using the Junit test from the teacher
+     * @param id
+     * @param request
+     * @return the answer of the llm
+     */
     @POST
     @Path("/get-hint/{id}")
     @Consumes(MediaType.APPLICATION_JSON)

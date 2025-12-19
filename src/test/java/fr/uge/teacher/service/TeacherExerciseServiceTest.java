@@ -19,13 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTest
 public class TeacherExerciseServiceTest {
 
-    private final TeacherExerciseService teacherExerciseService;
-    private final EntityManager entityManager;
     @Inject
-    TeacherExerciseServiceTest(TeacherExerciseService teacherExerciseService, EntityManager entityManager) {
-        this.teacherExerciseService = teacherExerciseService;
-        this.entityManager = entityManager;
-    }
+    TeacherExerciseService teacherExerciseService;
+
+    @Inject
+    EntityManager entityManager;
 
     private Login testCreator;
     private Login otherUser;

@@ -261,6 +261,7 @@
                 <quarkus.native.enabled>true</quarkus.native.enabled>
             </properties>
         </profile>
+
         <profile>
             <id>build-gpu</id>
             <activation>
@@ -294,5 +295,6 @@
                 </plugins>
             </build>
         </profile>
+
     </profiles>
 </project>

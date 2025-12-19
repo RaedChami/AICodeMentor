@@ -4,11 +4,9 @@ import fr.uge.exercise.Difficulty;
 import fr.uge.exercise.Exercise;
 import fr.uge.exercise.dto.ExerciseDTO;
 import fr.uge.exercise.dto.UserPrompt;
-import fr.uge.exercise.exception.ExerciseGenerationException;
 import fr.uge.login.Login;
 import fr.uge.login.LoginMapper;
 import fr.uge.login.Role;
-import fr.uge.login.dto.LoginDTO;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -25,13 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @QuarkusTest
 public class TeacherGenerateServiceTest {
 
-    private final TeacherGenerateService teacherGenerateService;
-    private final EntityManager entityManager;
     @Inject
-    TeacherGenerateServiceTest(TeacherGenerateService teacherGenerateService, EntityManager entityManager) {
-        this.teacherGenerateService = teacherGenerateService;
-        this.entityManager = entityManager;
-    }
+    TeacherGenerateService teacherGenerateService;
+
+    @Inject
+    EntityManager entityManager;
 
     private Login testTeacher;
 
