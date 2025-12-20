@@ -4,13 +4,18 @@ set -e
 LIBGPU_DIR="libgpu"
 BUILD_DIR="target/java-llama.cpp"
 
+if ! command -v nvcc &> /dev/null; then
+    echo "CUDA non détecté, compilation GPU ignorée"
+    exit 0
+fi
+
 if [ ! -d "$BUILD_DIR" ]; then
     git clone https://github.com/kherud/java-llama.cpp "$BUILD_DIR"
 fi
 
 cd "$BUILD_DIR"
 
-mvn compile -Dmaven.compiler.release=25
+mvn compile
 mkdir -p build
 cd build
 
