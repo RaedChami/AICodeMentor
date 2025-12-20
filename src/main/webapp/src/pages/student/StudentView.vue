@@ -9,7 +9,7 @@
                 <div class="card-body p-5">
                     <button @click="seeExercisesSubmitted"
                         class="btn btn-info mb-3 px-4 py-2">
-                      Continuer les exercices en cours
+                      Consulter mes soumissions
                     </button>
 
                     <form @submit.prevent="seeExercise">
