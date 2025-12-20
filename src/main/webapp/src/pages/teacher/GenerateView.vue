@@ -24,7 +24,7 @@
           <span class="visually-hidden">Chargement...</span>
         </div>
         <h3 class="h4 mb-3">Génération de l'exercice...</h3>
-        <p class="text-muted">Veuillez patienter, cela peut prendre quelques minutes.</p>
+        <p class="text-muted">Veuillez patienter, cela peut prendre quelques secondes.</p>
       </div>
 
       <div v-if="mode === 'result'" class="content-container mode-result">
