@@ -77,7 +77,6 @@ public class ExerciseCompiler {
         Objects.requireNonNull(directory);
         var compiler = ToolProvider.getSystemJavaCompiler();
         var result = compiler.run(null, null, null, files.toArray(String[]::new));
-        System.out.println(result);
         return result == 0;
     }
 
