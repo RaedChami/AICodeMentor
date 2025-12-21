@@ -33,8 +33,8 @@ public class ExerciseMapper {
      * Converts the DTO of an exercise into an entity
      * @param exerciseDTO DTO of an exercise
      * @return entity of an exercise
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
+     * @throws NoSuchFieldException if a required field is missing in the target class
+     * @throws IllegalAccessException if a field cannot be accessed during mapping
      */
     public static Exercise convertToEntity(ExerciseDTO exerciseDTO) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(exerciseDTO);

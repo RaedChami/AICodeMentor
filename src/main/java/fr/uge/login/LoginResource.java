@@ -27,8 +27,8 @@ public class LoginResource {
      * Creates an account and checks if user exists
      * @param login DTO of user entity
      * @return DTO of user entity
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
+     * @throws NoSuchFieldException Propagated exception from LoginMapper
+     * @throws IllegalAccessException Propagated exception from LoginMapper
      */
     @POST
     @Transactional
@@ -79,7 +79,7 @@ public class LoginResource {
                 .setParameter("lastName", lastName)
                 .getResultList();
 
-        return existing.isEmpty() ? Optional.empty() : Optional.of(existing.get(0));
+        return existing.isEmpty() ? Optional.empty() : Optional.of(existing.getFirst());
     }
 
     /**
@@ -102,8 +102,8 @@ public class LoginResource {
      * Creates a new account for user
      * @param login DTO of user
      * @return DTO of user
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
+     * @throws NoSuchFieldException Propagated exception from LoginMapper
+     * @throws IllegalAccessException Propagated exception from LoginMapper
      */
     private LoginDTO createNewLogin(LoginDTO login) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(login);

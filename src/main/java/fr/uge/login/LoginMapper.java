@@ -2,7 +2,6 @@ package fr.uge.login;
 
 import fr.uge.login.dto.LoginDTO;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 /**
@@ -10,6 +9,11 @@ import java.util.Objects;
  * Allows to convert a user entity into a DTO and vice versa
  */
 public class LoginMapper {
+    /**
+     * Converts a Login entity into a DTO
+     * @param login Login entity
+     * @return converted entity
+     */
     public static LoginDTO convertToDTO(Login login) {
         Objects.requireNonNull(login);
         return new LoginDTO(
@@ -20,6 +24,13 @@ public class LoginMapper {
         );
     }
 
+    /**
+     * Converts a LoginDTO into an entity
+     * @param loginDTO DTO of login
+     * @return converted DTO
+     * @throws NoSuchFieldException if a required field is missing in the target class
+     * @throws IllegalAccessException if a field cannot be accessed during mapping
+     */
     public static Login convertToEntity(LoginDTO loginDTO) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(loginDTO);
         var login =  new Login(

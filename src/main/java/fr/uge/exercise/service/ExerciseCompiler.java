@@ -30,7 +30,7 @@ public class ExerciseCompiler {
      * and the solution class of an exercise.
      * @param exercise an exercise to be compiled
      * @return result of the compilation then cleanup of the temporary directory and its content
-     * @throws IOException thrown from writing the files for the compilation
+     * @throws IOException if an I/O error occurs while creating, writing or deleting temporary files or directories
      */
     public boolean compile(Exercise exercise) throws IOException {
         Objects.requireNonNull(exercise);
@@ -39,7 +39,7 @@ public class ExerciseCompiler {
             createTemporaryFile(exercise.getUnitTests());
             createTemporaryFile(exercise.getSolution());
             return compilePrograms(directory);
-        } finally {
+        } finally { // reset files and cleanup the directory
             files = new ArrayList<>();
             cleanDirectory();
         }
@@ -48,7 +48,7 @@ public class ExerciseCompiler {
     /**
      * Creates a temporary directory
      * @return The path leading to the directory
-     * @throws IOException
+     * @throws IOException if the temporary directory cannot be created
      */
     public Path createTemporaryDirectory() throws IOException {
         return Files.createDirectories(tmpDirectory);
@@ -58,7 +58,7 @@ public class ExerciseCompiler {
      * Creates a temporary file containing a program
      * @param program Java class to be compiled
      * @return The directory path leading to the file
-     * @throws IOException
+     * @throws IOException if an I/O error occurs while writing the temporary file
      */
     public Path createTemporaryFile(String program) throws IOException {
         Objects.requireNonNull(program);
@@ -82,14 +82,14 @@ public class ExerciseCompiler {
 
     /**
      * Cleans up the temporary directory and its content
-     * @throws IOException
+     * @throws IOException if an I/O error occurs while deleting files or the directory
      */
     public void cleanDirectory() throws IOException {
         var directory = tmpDirectory.toFile();
         var files = directory.listFiles();
         if (directory.exists()) {
             if (files != null) {
-                for (var file : files) {
+                for (var file : files) { // delete all files in the directory
                     Files.deleteIfExists(file.toPath());
                 }
             }
