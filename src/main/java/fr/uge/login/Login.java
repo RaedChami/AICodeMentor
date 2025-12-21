@@ -15,6 +15,9 @@ public class Login {
     private String lastName;
     private Role role;
 
+    /**
+     * Default constructor of login entity
+     */
     public Login() {}
 
     public Login(String name, String lastName, Role role) {
@@ -23,18 +26,34 @@ public class Login {
         this.role = Objects.requireNonNull(role);
     }
 
+    /**
+     * ID of author getter
+     * @return ID of author
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * first name of author getter
+     * @return first name of author
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * last name of author getter
+     * @return last name of author
+     */
     public String getLastName() {
         return lastName;
     }
 
+    /**
+     * role of author getter
+     * @return role of author
+     */
     public Role getRole() {
         return role;
     }
@@ -48,6 +67,10 @@ public class Login {
                 '}';
     }
 
+    /**
+     * role of author setter
+     * @param role role to be set
+     */
     public void setRole(Role role) {
         Objects.requireNonNull(role);
         this.role = role;

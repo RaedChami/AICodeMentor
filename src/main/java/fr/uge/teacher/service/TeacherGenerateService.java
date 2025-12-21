@@ -46,16 +46,16 @@ public class TeacherGenerateService {
         var generatedExercise = llamaService.generateExercise(prompt.prompt());
         var teacher = entityManager.find(Login.class, prompt.creatorId());
 
-        for (int i = 0; i < MAX_ATTEMPTS; i++) {
-            if (generatedExercise.isPresent()) {
+        for (int i = 0; i < MAX_ATTEMPTS; i++) { // bounded generation loop
+            if (generatedExercise.isPresent()) { // generation output is valid
                 var exercise = generatedExercise.orElseThrow();
                 exercise.setCreator(teacher);
-                if (exerciseCompiler.compile(exercise)) {
+                if (exerciseCompiler.compile(exercise)) { // compilation check for generated programs
                     return exercise;
                 }
-                generatedExercise = llamaService.modifyExercise(exercise,
+                generatedExercise = llamaService.modifyExercise(exercise, // regenerate with modification to resolve compilation
                         "L'exercice ne compile pas. CORRIGEZ les erreurs de compilation.");
-            } else {
+            } else { // generation output is unvalid
                 generatedExercise = regenerateExercise(prompt);
             }
         }
@@ -82,7 +82,7 @@ public class TeacherGenerateService {
     public Exercise saveGeneratedExercise(ExerciseDTO dtoExercise) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(dtoExercise);
         var exercise = ExerciseMapper.convertToEntity(dtoExercise);
-        exercise.setCreator(LoginMapper.convertToEntity(dtoExercise.creator()));
+        exercise.setCreator(LoginMapper.convertToEntity(dtoExercise.creator())); // set the author before saving exercise
         entityManager.persist(exercise);
         return exercise;
     }

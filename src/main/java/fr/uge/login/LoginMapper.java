@@ -27,7 +27,7 @@ public class LoginMapper {
                 loginDTO.lastName(),
                 loginDTO.role()
         );
-        if (loginDTO.id() != null) {
+        if (loginDTO.id() != null) { // reflexion used to restore the ID of the login entity
             var idField = Login.class.getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(login, loginDTO.id());
