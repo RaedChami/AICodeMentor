@@ -9,6 +9,8 @@ import jakarta.ws.rs.core.Response;
 import fr.uge.exercise.Exercise;
 import fr.uge.llm.LlamaService;
 
+import java.util.Objects;
+
 @Path("/api/student/exercises")
 public class StudentHintFromLLMRessource {
 
@@ -29,7 +31,10 @@ public class StudentHintFromLLMRessource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public Response getHintFromLlama(@PathParam("id") long id, StudentSubmissionResource.CompileRequest request) {
-
+        Objects.requireNonNull(request);
+        if (id <= 0) {
+            throw new IllegalArgumentException();
+        }
         Exercise exercise = em.find(Exercise.class, id);
         if (exercise == null) {
             return Response.status(Response.Status.NOT_FOUND)
