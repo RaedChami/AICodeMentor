@@ -45,6 +45,9 @@ public class ExerciseSubmitted {
     @Column(nullable = false)
     private String solutionSubmitted;
 
+    /**
+     * Default constructor for ExerciseSubmitted entity
+     */
     public ExerciseSubmitted() {
     }
 
@@ -55,24 +58,44 @@ public class ExerciseSubmitted {
         this.solutionSubmitted = Objects.requireNonNull(solutionSubmitted);
     }
 
+    /**
+     * submitted exercise ID getter
+     * @return ID of exercise
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * submitted exercise author getter
+     * @return author of submitted exercise
+     */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "JPA entity relationship must return managed instance")
     public Login getLogin() {
         return login;
     }
 
+    /**
+     * submitted exercise getter
+     * @return code of submitted exercise
+     */
     @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "JPA entity relationship must return managed instance")
     public Exercise getExercise() {
         return exercise;
     }
 
+    /**
+     * solution of submitted exercise
+     * @return solution code of submitted exercise
+     */
     public String getSolutionSubmitted() {
         return solutionSubmitted;
     }
 
+    /**
+     * solution of submitted exercise setter
+     * @param solutionSubmitted solution code to be set
+     */
     public void setSolutionSubmitted(String solutionSubmitted) {
         this.solutionSubmitted = Objects.requireNonNull(solutionSubmitted);
     }

@@ -1,6 +1,5 @@
 package fr.uge.login;
 
-import fr.uge.exercise.service.ExerciseParser;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -21,9 +20,16 @@ public class LoginResource {
     private final EntityManager entityManager;
     @Inject
     LoginResource(EntityManager entityManager) {
-        this.entityManager = entityManager;
+        this.entityManager = Objects.requireNonNull(entityManager);
     }
 
+    /**
+     * Creates an account and checks if user exists
+     * @param login DTO of user entity
+     * @return DTO of user entity
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     @POST
     @Transactional
     public LoginDTO create(LoginDTO login) throws NoSuchFieldException, IllegalAccessException {
@@ -39,6 +45,10 @@ public class LoginResource {
         return createNewLogin(login);
     }
 
+    /**
+     * Checks if name, last name and role are valid
+     * @param login DTO of user
+     */
     private void validateLoginDTO(LoginDTO login) {
         Objects.requireNonNull(login);
         if (login.name() == null || login.name().isBlank()) {
@@ -52,6 +62,12 @@ public class LoginResource {
         }
     }
 
+    /**
+     * Checks if a user exists
+     * @param name first name of usr
+     * @param lastName last name of user
+     * @return an optional empty if the user is not found
+     */
     private Optional<Login> findExistingLogin(String name, String lastName) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(lastName);
@@ -66,16 +82,29 @@ public class LoginResource {
         return existing.isEmpty() ? Optional.empty() : Optional.of(existing.get(0));
     }
 
+    /**
+     * Updates role of user
+     * @param existingLogin existing account
+     * @param newRole new role of the account
+     * @return DTO of login entity
+     */
     private LoginDTO updateExistingLoginIfNeeded(Login existingLogin, Role newRole) {
         Objects.requireNonNull(existingLogin);
         Objects.requireNonNull(newRole);
-        if (existingLogin.getRole() != newRole) {
+        if (existingLogin.getRole() != newRole) { // set the new role if the existing account's role is different
             existingLogin.setRole(newRole);
             entityManager.merge(existingLogin);
         }
         return LoginMapper.convertToDTO(existingLogin);
     }
 
+    /**
+     * Creates a new account for user
+     * @param login DTO of user
+     * @return DTO of user
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
     private LoginDTO createNewLogin(LoginDTO login) throws NoSuchFieldException, IllegalAccessException {
         Objects.requireNonNull(login);
         var entity = LoginMapper.convertToEntity(login);
@@ -83,6 +112,12 @@ public class LoginResource {
         return LoginMapper.convertToDTO(entity);
     }
 
+    /**
+     * Returns a user or many user corresponding to the same name and last name
+     * @param name first name of user
+     * @param lastName last name of usre
+     * @return list of user
+     */
     @GET
     public List<Login> get(@QueryParam("name") String name, @QueryParam("lastName") String lastName) {
         Objects.requireNonNull(name);
@@ -96,6 +131,10 @@ public class LoginResource {
                 .getResultList();
     }
 
+    /**
+     * Deletes the account of the user with the corresponding ID
+     * @param id ID of the user
+     */
     @DELETE
     @Path("/{id}")
     @Transactional
@@ -103,22 +142,25 @@ public class LoginResource {
         if (id < 0) {
             throw new IllegalArgumentException("id < 0");
         }
-
-        Login login = entityManager.find(Login.class, id);
-        if (login != null) {
+        var login = entityManager.find(Login.class, id);
+        if (login != null) { // if user exists, deletes it
             entityManager.remove(login);
         } else {
             throw new NotFoundException("Login with id " + id + " not found");
         }
     }
 
+    /**
+     * Checks if a user that tries to log in exists
+     * @param login user request DTO
+     * @return Login DTO
+     */
     @POST
     @Path("/check")
     @Transactional
     public LoginDTO checkUser(LoginRequestDTO login) {
         Objects.requireNonNull(login);
-        Optional<Login> existingLogin = findExistingLogin(login.name(), login.lastName());
-
+        var existingLogin = findExistingLogin(login.name(), login.lastName());
         if (existingLogin.isEmpty()) {
             throw new NotFoundException("User not found");
         }

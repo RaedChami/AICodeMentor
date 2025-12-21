@@ -46,7 +46,7 @@ public class ExerciseMapper {
                 exerciseDTO.unitTests(),
                 exerciseDTO.solution()
         );
-        if (exerciseDTO.id() != null) {
+        if (exerciseDTO.id() != null) { // reflexion used to restore the id of the exercise
             var idField = Exercise.class.getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(exercise, exerciseDTO.id());

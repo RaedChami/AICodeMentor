@@ -52,7 +52,7 @@ public class TeacherExerciseService {
         if (userId <= 0) {
             throw new IllegalArgumentException("user ID is < 0");
         }
-        if (exercise.getCreator() == null || exercise.getCreator().getId() != userId) {
+        if (exercise.getCreator() == null || exercise.getCreator().getId() != userId) { // exercise ownership check
             throw new ExerciseUnauthorizedAccess("You are unauthorized to modify this exercise.");
         }
     }
@@ -63,7 +63,7 @@ public class TeacherExerciseService {
      */
     public List<Exercise> getAllExercises() {
         return entityManager.createNamedQuery("Exercise.findAll", Exercise.class)
-                .getResultList();
+                            .getResultList();
     }
 
     /**
@@ -91,7 +91,7 @@ public class TeacherExerciseService {
     public Exercise getExercise(long id) {
         validateExerciseId(id);
         var findExercise = entityManager.find(Exercise.class, id);
-        if (findExercise == null) {
+        if (findExercise == null) { // exercise doesn't exist
             throw new NotFoundException("exercise ID not found");
         }
         return findExercise;
@@ -110,10 +110,10 @@ public class TeacherExerciseService {
         Objects.requireNonNull(prompt);
         validateExerciseId(id);
         var findExercise = getExercise(id);
-        validateExerciseOwnership(findExercise, prompt.creatorId());
-        for (var i = 0; i < MAX_ATTEMPTS; i++) {
+        validateExerciseOwnership(findExercise, prompt.creatorId()); // check ownership
+        for (var i = 0; i < MAX_ATTEMPTS; i++) { // bounded generation loop for modification
             var result = generateValidModifiedExercise(findExercise, prompt, id);
-            if (result != null) { // Valid modified exercise has been generated
+            if (result != null) { // A valid modified output has been generated
                 return result;
             }
         }
@@ -131,13 +131,13 @@ public class TeacherExerciseService {
      */
     private Exercise generateValidModifiedExercise(Exercise findExercise, UserPrompt prompt, long id) throws IOException {
         var modified = llamaService.modifyExercise(findExercise, prompt.prompt());
-        if (modified.isEmpty()) {
+        if (modified.isEmpty()) { // empty output
             return null;
         }
-        if (!exerciseCompiler.compile(modified.orElseThrow())) {
+        if (!exerciseCompiler.compile(modified.orElseThrow())) { // output that had an unsuccessful compilation
             return null;
         }
-        return saveModifiedExercise(modified.orElseThrow(), id);
+        return saveModifiedExercise(modified.orElseThrow(), id); // save the valid output
     }
 
     /**
@@ -150,7 +150,7 @@ public class TeacherExerciseService {
     Exercise saveModifiedExercise(Exercise exercise, long id) {
         Objects.requireNonNull(exercise);
         var existingExercise = entityManager.find(Exercise.class, id);
-        if (existingExercise != null && existingExercise.getCreator() != null) {
+        if (existingExercise != null && existingExercise.getCreator() != null) { // set the author of the modified exercise
             exercise.setCreator(existingExercise.getCreator());
         }
         exercise.setId(id);
@@ -165,7 +165,7 @@ public class TeacherExerciseService {
     public void deleteExercise(long id, long userId) throws ExerciseUnauthorizedAccess {
         validateExerciseId(id);
         var exercise = getExercise(id);
-        validateExerciseOwnership(exercise, userId);
+        validateExerciseOwnership(exercise, userId); // check ownership
         entityManager.remove(getExercise(id));
     }
 }

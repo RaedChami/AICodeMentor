@@ -36,7 +36,7 @@ public class ExerciseParser {
         var solution = matchPattern(answer, solutionPattern);
 
         if (description.isEmpty() || difficulty.isEmpty() || concepts.isEmpty() || signatureAndBody.isEmpty()
-                || unitTests.isEmpty() || solution.isEmpty()) {
+                || unitTests.isEmpty() || solution.isEmpty()) {  // missing tag in LLM response
             return Optional.empty();
         }
         return Optional.of(new Exercise(
@@ -89,7 +89,7 @@ public class ExerciseParser {
         if (checkDifficulty.isPresent()) {
             return Optional.of(Difficulty.valueOf(checkDifficulty.orElseThrow().toUpperCase().trim()));
         }
-        return Optional.empty();
+        return Optional.empty(); // missing difficulty tag
     }
 
     /**
@@ -105,7 +105,7 @@ public class ExerciseParser {
         if (matcher.find()) {
             return Optional.of(matcher.group(1).trim());
         }
-        return Optional.empty();
+        return Optional.empty(); // missing tag
     }
 
     /**
@@ -117,11 +117,13 @@ public class ExerciseParser {
         Objects.requireNonNull(answer);
         Objects.requireNonNull(ExerciseParser.conceptsPattern);
         var matcher = matchPattern(answer, ExerciseParser.conceptsPattern);
-        if (matcher.isEmpty()) {
+        if (matcher.isEmpty()) { // missing concepts tag
             return Optional.empty();
         }
         var words = matcher.get().split(",");
-        var concepts = Arrays.stream(words).map(String::trim).toList();
+        var concepts = Arrays.stream(words) // retrieval of concepts into a list
+                            .map(String::trim)
+                            .toList();
         return Optional.of(concepts);
     }
 

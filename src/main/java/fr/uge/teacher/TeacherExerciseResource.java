@@ -50,9 +50,9 @@ public class TeacherExerciseResource {
     @GET
     public List<ExerciseDTO> getByUserId(@RestPath("userId") long userId) {
         return teacherExerciseService.getExercisesByUserId(userId)
-                .stream()
-                .map(ExerciseMapper::convertToDTO)
-                .collect(Collectors.toList());
+                                    .stream()
+                                    .map(ExerciseMapper::convertToDTO)
+                                    .collect(Collectors.toList());
     }
 
     /**
