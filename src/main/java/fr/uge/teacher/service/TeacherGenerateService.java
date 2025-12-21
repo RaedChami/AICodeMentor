@@ -75,8 +75,8 @@ public class TeacherGenerateService {
      * Saves into DB a newly generated exercise
      * @param dtoExercise DTO of the generated exercise
      * @return entity of the saved exercise
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
+     * @throws NoSuchFieldException propagated exception from mappers
+     * @throws IllegalAccessException propagated exception from mappers
      */
     @Transactional
     public Exercise saveGeneratedExercise(ExerciseDTO dtoExercise) throws NoSuchFieldException, IllegalAccessException {

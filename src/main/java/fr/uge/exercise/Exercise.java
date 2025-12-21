@@ -3,7 +3,6 @@ package fr.uge.exercise;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import fr.uge.login.Login;
 import jakarta.persistence.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +41,7 @@ public class Exercise {
     public Exercise(String description, Difficulty difficulty, List<String> concepts, String signatureAndBody, String unitTests, String solution) {
         Objects.requireNonNull(concepts);
         this.description = Objects.requireNonNull(description);
-        this.difficulty = Objects.requireNonNull(difficulty);;
+        this.difficulty = Objects.requireNonNull(difficulty);
         this.concepts = new ArrayList<>(Objects.requireNonNull(concepts));
         this.signatureAndBody = Objects.requireNonNull(signatureAndBody);
         this.unitTests = Objects.requireNonNull(unitTests);

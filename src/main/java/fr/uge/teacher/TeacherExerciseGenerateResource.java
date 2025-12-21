@@ -41,8 +41,8 @@ public class TeacherExerciseGenerateResource {
      * Exercise saving endpoint
      * @param dtoExercise DTO of the generated exercise
      * @return DTO of the generated exercise
-     * @throws NoSuchFieldException
-     * @throws IllegalAccessException
+     * @throws NoSuchFieldException propagated exception from mappers
+     * @throws IllegalAccessException propagated exception from mappers
      */
     @POST
     @Path("/save")
