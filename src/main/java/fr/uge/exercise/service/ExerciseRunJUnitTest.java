@@ -22,6 +22,7 @@ public class ExerciseRunJUnitTest {
     private final static Path tmpDirectory = Paths.get("").toAbsolutePath().resolve("tmpDirectory");
 
     private String getOutputSummary(SummaryGeneratingListener listener) {
+        Objects.requireNonNull(listener);
         var summary = listener.getSummary();
         var output = new StringBuilder();
 
@@ -37,6 +38,7 @@ public class ExerciseRunJUnitTest {
     }
 
     private String getTestOutput(String testClassName) throws IOException {
+        Objects.requireNonNull(testClassName);
         try {
             URLClassLoader classLoader = new URLClassLoader(
                     new URL[]{tmpDirectory.toUri().toURL()},

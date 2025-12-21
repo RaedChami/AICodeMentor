@@ -23,7 +23,7 @@ public class StudentSubmissionResource {
 
     @Inject
     StudentSubmissionResource(StudentSubmissionService studentSubmissionService) {
-        this.studentSubmissionService = studentSubmissionService;
+        this.studentSubmissionService = Objects.requireNonNull(studentSubmissionService);
     }
 
     /**
@@ -39,6 +39,10 @@ public class StudentSubmissionResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public Response runTests(@PathParam("id") long id, CompileRequest request) throws IOException, InterruptedException {
+        Objects.requireNonNull(request);
+        if (id <= 0) {
+            throw new IllegalArgumentException();
+        }
         try {
             var output = studentSubmissionService.getTestOutput(id, request.getCode());
             return Response.ok(output).build();

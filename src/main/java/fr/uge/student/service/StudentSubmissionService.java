@@ -90,6 +90,9 @@ public class StudentSubmissionService {
     }
 
     private static String startProcess(String testClassName, Path studentFile, Path testFile) throws IOException, InterruptedException {
+        Objects.requireNonNull(testClassName);
+        Objects.requireNonNull(studentFile);
+        Objects.requireNonNull(testFile);
         Process process = initProcess(testClassName, studentFile, testFile).start();
         process.waitFor();
         return getProcessOutput(process);
@@ -105,6 +108,10 @@ public class StudentSubmissionService {
      * @throws InterruptedException
      */
     public String getTestOutput(long id, String studentCode) throws IOException, InterruptedException {
+        Objects.requireNonNull(studentCode);
+        if (id <= 0) {
+            throw new IllegalArgumentException();
+        }
         Exercise exercise = em.find(Exercise.class, id);
         if (exercise == null) {
             throw new NotFoundException("Exercise not found");
