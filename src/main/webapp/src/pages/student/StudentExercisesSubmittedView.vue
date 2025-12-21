@@ -3,7 +3,7 @@
   <div class="container-fluid py-4">
     <div class="row mb-4">
       <div class="col">
-        <h2>Continuer vos Exercices</h2>
+        <h2>Consulter mes soumissions</h2>
       </div>
     </div>
 

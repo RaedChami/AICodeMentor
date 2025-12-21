@@ -112,7 +112,6 @@ public class LlamaService {
                 .setNPredict(2048);
 
         var answer = model.complete(inferParams);
-        System.out.println(answer);
         return parser.parse(answer);
     }
 
@@ -141,7 +140,6 @@ public class LlamaService {
                 .setNPredict(2048);
 
         var answer = model.complete(inferParams);
-        System.out.println(answer);
         return parser.mergeExercise(existingExercise, answer);
     }
 
