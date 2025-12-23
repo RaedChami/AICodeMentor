@@ -15,7 +15,7 @@ fi
 
 cd "$BUILD_DIR"
 
-mvn compile
+mvn compile -Dmaven.compiler.release=25
 mkdir -p build
 cd build
 
