@@ -4,7 +4,6 @@ import fr.uge.exercise.Difficulty;
 import fr.uge.login.Role;
 import fr.uge.login.dto.LoginDTO;
 import io.quarkus.test.junit.QuarkusTest;
-import org.apache.commons.lang3.builder.Diff;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

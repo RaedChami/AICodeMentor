@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.urlEncodingEnabled;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -48,7 +47,7 @@ public class LoginResourceTest {
     @Test
     @DisplayName("creating a login is successful")
     public void successfulCreateLogin() {
-        var loginDTO = new LoginDTO(null, validNameForTests(), validLastNameForTests(), validRoleForTests());
+        var loginDTO = new LoginDTO(0, validNameForTests(), validLastNameForTests(), validRoleForTests());
         given()
             .contentType(ContentType.JSON)
             .body(loginDTO)
@@ -65,7 +64,7 @@ public class LoginResourceTest {
     @Test
     @DisplayName("getting an existing login is successful")
     public void testGetLogin_Success() {
-        var loginDTO = new LoginDTO(null, validNameForTests(), validLastNameForTests(), validRoleForTests());
+        var loginDTO = new LoginDTO(0, validNameForTests(), validLastNameForTests(), validRoleForTests());
         given()
             .contentType(ContentType.JSON)
             .body(loginDTO)
@@ -98,7 +97,7 @@ public class LoginResourceTest {
     @Test
     @DisplayName("deleting an existing login is successful")
     public void testDeleteLogin_Success() {
-        var loginDTO = new LoginDTO(null, validNameForTests(), validLastNameForTests(), validRoleForTests());
+        var loginDTO = new LoginDTO(0, validNameForTests(), validLastNameForTests(), validRoleForTests());
         var id = given()
                     .contentType(ContentType.JSON)
                     .body(loginDTO)
@@ -128,7 +127,7 @@ public class LoginResourceTest {
     @Test
     @DisplayName("Verification of existing user is valid")
     public void testCheckUser_Success() {
-        var loginDTO = new LoginDTO(null, validNameForTests(), validLastNameForTests(), validRoleForTests());
+        var loginDTO = new LoginDTO(0, validNameForTests(), validLastNameForTests(), validRoleForTests());
         given()
             .contentType(ContentType.JSON)
             .body(loginDTO)

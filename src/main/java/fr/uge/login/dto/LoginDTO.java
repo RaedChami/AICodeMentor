@@ -11,9 +11,9 @@ import java.util.Objects;
  * @param lastName last name of the user
  * @param role role of the user (teacher or student)
  */
-public record LoginDTO(Long id, String name, String lastName, Role role) {
+public record LoginDTO(long id, String name, String lastName, Role role) {
     public LoginDTO {
-        if (id != null && id < 0) {
+        if (id < 0) {
             throw new IllegalArgumentException("login id is inferior than 0");
         }
         Objects.requireNonNull(name);

@@ -1,6 +1,5 @@
 package fr.uge.login.dto;
 
-import fr.uge.login.Role;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 

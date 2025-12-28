@@ -1,9 +1,7 @@
 package fr.uge.login.dto;
 
-import fr.uge.exercise.dto.UserPrompt;
 import fr.uge.login.Role;
 import io.quarkus.test.junit.QuarkusTest;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

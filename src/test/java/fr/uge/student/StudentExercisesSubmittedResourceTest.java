@@ -78,7 +78,7 @@ public class StudentExercisesSubmittedResourceTest {
     @DisplayName("should return exercises submitted by the student")
     public void testFindExercisesByLoginId_Success() {
         ExerciseSubmittedDTO dto = new ExerciseSubmittedDTO(
-                null,
+                1,
                 student.getId(),
                 exercise.getId(),
                 "solution"
@@ -108,7 +108,7 @@ public class StudentExercisesSubmittedResourceTest {
     @DisplayName("should submit an exercise successfully")
     public void testSubmitExercise_Success() {
         ExerciseSubmittedDTO dto = new ExerciseSubmittedDTO(
-                null,
+                1,
                 student.getId(),
                 exercise.getId(),
                 "my solution"
@@ -137,7 +137,7 @@ public class StudentExercisesSubmittedResourceTest {
     @DisplayName("should return 404 if login does not exist")
     public void testSubmitExercise_LoginNotFound() {
         ExerciseSubmittedDTO dto = new ExerciseSubmittedDTO(
-                null,
+                1,
                 999L,
                 exercise.getId(),
                 "solution"
@@ -156,7 +156,7 @@ public class StudentExercisesSubmittedResourceTest {
     @DisplayName("should return 404 if exercise does not exist")
     public void testSubmitExercise_ExerciseNotFound() {
         ExerciseSubmittedDTO dto = new ExerciseSubmittedDTO(
-                null,
+                1,
                 student.getId(),
                 999L,
                 "solution"
@@ -189,7 +189,7 @@ public class StudentExercisesSubmittedResourceTest {
     @DisplayName("should return submitted solution")
     public void testGetSubmittedSolution_Success() {
         ExerciseSubmittedDTO dto = new ExerciseSubmittedDTO(
-                null,
+                1,
                 student.getId(),
                 exercise.getId(),
                 "expected solution"

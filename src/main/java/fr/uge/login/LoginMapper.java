@@ -16,8 +16,9 @@ public class LoginMapper {
      */
     public static LoginDTO convertToDTO(Login login) {
         Objects.requireNonNull(login);
+        var id = (login.getId() == null) ? 0L : login.getId();
         return new LoginDTO(
-                login.getId(),
+                id,
                 login.getName(),
                 login.getLastName(),
                 login.getRole()
@@ -38,7 +39,7 @@ public class LoginMapper {
                 loginDTO.lastName(),
                 loginDTO.role()
         );
-        if (loginDTO.id() != null) { // reflexion used to restore the ID of the login entity
+        if (loginDTO.id() > 0) { // reflexion used to restore the ID of the login entity
             var idField = Login.class.getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(login, loginDTO.id());

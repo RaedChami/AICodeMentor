@@ -44,7 +44,7 @@ public class TeacherExerciseGenerateResourceTest {
         entityManager.persist(testTeacher);
         entityManager.flush();
         testExercise = new ExerciseDTO(
-                null,
+                0,
                 "*description*",
                 Difficulty.L1,
                 List.of("concept"),

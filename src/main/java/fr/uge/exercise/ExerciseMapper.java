@@ -17,8 +17,9 @@ public class ExerciseMapper {
      */
     public static ExerciseDTO convertToDTO(Exercise exercise) {
         Objects.requireNonNull(exercise);
+        var id = (exercise.getId() == null) ? 0L : exercise.getId();
         return new ExerciseDTO(
-                exercise.getId(),
+                id,
                 exercise.getDescription(),
                 exercise.getDifficulty(),
                 exercise.getConcepts(),
@@ -46,7 +47,7 @@ public class ExerciseMapper {
                 exerciseDTO.unitTests(),
                 exerciseDTO.solution()
         );
-        if (exerciseDTO.id() != null) { // reflexion used to restore the id of the exercise
+        if (exerciseDTO.id() > 0) { // reflexion used to restore the id of the exercise
             var idField = Exercise.class.getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(exercise, exerciseDTO.id());
