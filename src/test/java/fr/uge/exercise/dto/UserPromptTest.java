@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UserPromptTest {
     @Test
     public void userPromptIsNotNull() {
-        assertThrows(NullPointerException.class, () -> new UserPrompt("*prompt*", null));
-        assertThrows(NullPointerException.class, () -> new UserPrompt(null, null));
+        assertThrows(IllegalArgumentException.class, () -> new UserPrompt("*prompt*", -1));
+        assertThrows(IllegalArgumentException.class, () -> new UserPrompt(null, -1));
         assertThrows(NullPointerException.class, () -> new UserPrompt(null, 1L));
     }
 }

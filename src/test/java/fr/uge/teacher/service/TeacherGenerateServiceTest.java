@@ -45,7 +45,7 @@ public class TeacherGenerateServiceTest {
 
     private ExerciseDTO exerciseDTOForTest() {
         return new ExerciseDTO(
-                null,
+                0,
                 "description",
                 Difficulty.L3,
                 List.of("streams"),

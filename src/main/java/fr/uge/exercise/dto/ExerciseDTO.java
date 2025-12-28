@@ -18,10 +18,10 @@ import java.util.Objects;
  * @param solution solution example for the exercise
  * @param creator author of the exercise
  */
-public record ExerciseDTO(Long id, String description, Difficulty difficulty, List<String> concepts, String signatureAndBody,
+public record ExerciseDTO(long id, String description, Difficulty difficulty, List<String> concepts, String signatureAndBody,
                           String unitTests, String solution, LoginDTO creator) {
     public ExerciseDTO {
-        if (id != null && id <= 0) {
+        if (id < 0) {
             throw new IllegalArgumentException("exercise id is inferior than 0");
         }
         Objects.requireNonNull(description);
