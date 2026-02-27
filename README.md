@@ -1,7 +1,7 @@
 # AICodeMentor
 ## About the project
 **AICodeMentor** is an intelligent educational platform designed for computer science teachers and students.
-It allows for teachers, an automatic generation of Java programming exercises from a single natural language description, powered by a locally executed Large Language Models (LLM).
+It allows for teachers, an automatic generation of Java programming exercises from a single natural language description, powered by a locally executed Large Language Model (LLM).
 Students are then provided exercises with various difficulties, ready to be completed.
 
 ### Features
